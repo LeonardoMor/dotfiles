@@ -72,6 +72,7 @@ local plugins = {
   },
   {
     -- https://github.com/zbirenbaum/copilot.lua
+    -- https://raw.githubusercontent.com/github/copilot.vim/release/doc/copilot.txt
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
     event = "InsertEnter",
