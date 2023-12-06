@@ -100,6 +100,12 @@ local plugins = {
       require'cmp'.setup(opts)
     end,
   },
+  {
+    -- https://raw.githubusercontent.com/tpope/vim-fugitive/master/doc/fugitive.txt
+    "tpop/vim-fugitive",
+    url = "https://github.com/tpope/vim-fugitive.git",
+    lazy = false,
+  }
 }
 
 return plugins
