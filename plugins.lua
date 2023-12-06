@@ -78,7 +78,7 @@ local plugins = {
     config = function()
       require("copilot").setup({
         suggestion = { enabled = false },
-        panel = { enabled = false },      
+        panel = { enabled = false },
       })
     end,
   },
@@ -91,12 +91,12 @@ local plugins = {
         config = function ()
           require("copilot_cmp").setup()
         end
-      }, 
+      },
     },
     config = function(_, opts)
-      local conf = require "plugins.configs.cmp"
-      table.insert(conf.sources, { name = "copilot", group_index = 2 })
-      require'cmp'.setup(conf)
+      -- local conf = require "plugins.configs.cmp"
+      table.insert(opts.sources, { name = "copilot", group_index = 2 })
+      require'cmp'.setup(opts)
     end,
   },
 }
