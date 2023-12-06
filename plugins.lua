@@ -4,7 +4,7 @@ local plugins = {
     opts = {
       ensure_installed = {
         "black",
-        --        "pyright",
+        -- "pyright",
         -- "mypy",
         "ruff",
         "awk-language-server",
@@ -55,14 +55,12 @@ local plugins = {
   },
   {
     "neovim/nvim-lspconfig",
-
     dependencies = {
       "jose-elias-alvarez/null-ls.nvim",
       config = function()
         require "custom.configs.null-ls"
       end,
     },
-
     config = function()
       require "plugins.configs.lspconfig"
       require "custom.configs.lspconfig"
@@ -71,6 +69,33 @@ local plugins = {
   {
     "christoomey/vim-tmux-navigator",
     lazy = false,
+  },
+  {
+    -- https://github.com/zbirenbaum/copilot.lua
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        suggestion = { enabled = false },
+        panel = { enabled = false },      
+      })
+    end,
+  },
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      {
+        -- https://github.com/zbirenbaum/copilot-cmp
+        "zbirenbaum/copilot-cmp",
+        config = function ()
+          require("copilot_cmp").setup()
+        end
+      }, 
+    },
+    config = function()
+      require "custom.configs.cmp"
+    end,
   },
 }
 
