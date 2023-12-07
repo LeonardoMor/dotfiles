@@ -70,40 +70,57 @@ local plugins = {
     "christoomey/vim-tmux-navigator",
     lazy = false,
   },
-  {
+  -- {
     -- https://github.com/zbirenbaum/copilot.lua
     -- https://raw.githubusercontent.com/github/copilot.vim/release/doc/copilot.txt
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-        suggestion = { enabled = false },
-        panel = { enabled = false },
-      })
-    end,
-  },
-  {
-    "hrsh7th/nvim-cmp",
-    dependencies = {
-      {
-        -- https://github.com/zbirenbaum/copilot-cmp
-        "zbirenbaum/copilot-cmp",
-        config = function ()
-          require("copilot_cmp").setup()
-        end
-      },
-    },
-    config = function(_, opts)
-      -- local conf = require "plugins.configs.cmp"
-      table.insert(opts.sources, { name = "copilot", group_index = 2 })
-      require'cmp'.setup(opts)
-    end,
-  },
+  --   "zbirenbaum/copilot.lua",
+  --   cmd = "Copilot",
+  --   event = "InsertEnter",
+  --   config = function()
+  --     require("copilot").setup({
+  --       suggestion = { enabled = false },
+  --       panel = { enabled = false },
+  --     })
+  --   end,
+  -- },
+  -- {
+  --   "hrsh7th/nvim-cmp",
+  --   dependencies = {
+  --     {
+  --       -- https://github.com/zbirenbaum/copilot-cmp
+  --       "zbirenbaum/copilot-cmp",
+  --       config = function ()
+  --         require("copilot_cmp").setup()
+  --       end
+  --     },
+  --   },
+  --   config = function(_, opts)
+  --     -- local conf = require "plugins.configs.cmp"
+  --     table.insert(opts.sources, { name = "copilot", group_index = 2 })
+  --     require'cmp'.setup(opts)
+  --   end,
+  -- },
   {
     -- https://raw.githubusercontent.com/tpope/vim-fugitive/master/doc/fugitive.txt
-    "tpop/vim-fugitive",
-    url = "https://github.com/tpope/vim-fugitive.git",
+    "tpope/vim-fugitive",
+    lazy = false,
+  },
+  {
+    "tpope/vim-surround",
+    lazy = false,
+  },
+  {
+    "Exafunction/codeium.vim",
+    config = function()
+      vim.g.codeium_server_config = {
+        portal_url = 'https://codeium.delllabs.net',
+        api_url = 'https://codeium.delllabs.net/_route/api_server'
+      }
+      -- vim.keymap.set('i', '<M-l>', function () return vim.fn['codeium#Accept']() end, { expr = true })
+      -- vim.keymap.set('i', '<c-;>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true })
+      -- vim.keymap.set('i', '<c-,>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true })
+      -- vim.keymap.set('i', '<c-x>', function() return vim.fn['codeium#Clear']() end, { expr = true })
+    end,
     lazy = false,
   }
 }
