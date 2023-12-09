@@ -123,7 +123,13 @@ local plugins = {
       vim.keymap.set('i', '<C-]>', function() return vim.fn['codeium#Clear']() end, { expr = true })
     end,
     event = "VeryLazy",
-  }
+  },
+  -- {
+  --   'windwp/nvim-autopairs',
+  --   event = "InsertEnter",
+  --   config = function()
+  --     require "custom.configs.nvim-autopairs"
+  -- }
 }
 
 return plugins
