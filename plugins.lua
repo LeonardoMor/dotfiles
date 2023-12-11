@@ -124,12 +124,14 @@ local plugins = {
     end,
     event = "VeryLazy",
   },
-  -- {
-  --   'windwp/nvim-autopairs',
-  --   event = "InsertEnter",
-  --   config = function()
-  --     require "custom.configs.nvim-autopairs"
-  -- }
+  {
+    'windwp/nvim-autopairs',
+    dependencies = { 'hrsh7th/nvim-cmp' },
+    event = "InsertEnter",
+    config = function()
+      require "custom.configs.nvim-autopairs"
+    end,
+  },
 }
 
 return plugins
