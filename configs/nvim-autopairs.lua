@@ -1,8 +1,20 @@
-local Rule = require('nvim-autopairs.rule')
 local npairs = require('nvim-autopairs')
-local cond = require('nvim-autopairs.conds')
+-- local Rule = require('nvim-autopairs.rule')
+-- local cond = require('nvim-autopairs.conds')
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+local cmp = require('cmp')
 
-npairs.add_rules({
-    Rule("(", ")", "bash")
-        
+opts = {
+  fast_wrap = {},
+  disable_filetype = { "TelescopePrompt", "vim" },
+}
+
+npairs.setup(opts)
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done({
+    filetypes = {
+      sh = false
+    }
   })
+)
