@@ -56,9 +56,9 @@ local plugins = {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "jose-elias-alvarez/null-ls.nvim",
+      "nvimtools/none-ls.nvim",
       config = function()
-        require "custom.configs.null-ls"
+        require "custom.configs.none-ls"
       end,
     },
     config = function()
@@ -71,8 +71,8 @@ local plugins = {
     lazy = false,
   },
   -- {
-    -- https://github.com/zbirenbaum/copilot.lua
-    -- https://raw.githubusercontent.com/github/copilot.vim/release/doc/copilot.txt
+  -- https://github.com/zbirenbaum/copilot.lua
+  -- https://raw.githubusercontent.com/github/copilot.vim/release/doc/copilot.txt
   --   "zbirenbaum/copilot.lua",
   --   cmd = "Copilot",
   --   event = "InsertEnter",
@@ -113,20 +113,34 @@ local plugins = {
     "Exafunction/codeium.vim",
     config = function()
       vim.g.codeium_server_config = {
-        portal_url = 'https://codeium.delllabs.net',
-        api_url = 'https://codeium.delllabs.net/_route/api_server'
+        portal_url = "https://codeium.delllabs.net",
+        api_url = "https://codeium.delllabs.net/_route/api_server",
       }
     end,
     event = "VeryLazy",
   },
   {
-    'windwp/nvim-autopairs',
-    dependencies = { 'hrsh7th/nvim-cmp' },
+    "windwp/nvim-autopairs",
+    dependencies = { "hrsh7th/nvim-cmp" },
     event = "InsertEnter",
     config = function()
       require "custom.configs.nvim-autopairs"
     end,
   },
+  -- {
+  --   "jackMort/ChatGPT.nvim",
+  --   event = "VeryLazy",
+  --   dependencies = {
+  --     "MunifTanjim/nui.nvim",
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-telescope/telescope.nvim",
+  --   },
+  --   config = function()
+  --     require("chatgpt").setup {
+  --       api_key_cmd = "pass show api/tokens/openai",
+  --     }
+  --   end,
+  -- },
 }
 
 return plugins
