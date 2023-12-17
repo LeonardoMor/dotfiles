@@ -1,37 +1,5 @@
 local plugins = {
   {
-    "williamboman/mason.nvim",
-    dependencies = "williamboman/mason-lspconfig.nvim",
-    opts = {
-      ensure_installed = {
-        "black",
-        -- "pyright",
-        -- "mypy",
-        "ruff",
-        "awk-language-server",
-        "bash-debug-adapter",
-        "bash-language-server",
-        "shellcheck",
-        "docker-compose-language-service",
-        -- "dockerfile-language-server",
-        -- "json-lsp",
-        "python-lsp-server",
-        "prettier",
-        "stylua",
-        "shfmt",
-        "marksman",
-      },
-    },
-    cmd = {
-      "Mason",
-      "MasonInstall",
-      "MasonUpdate",
-      "MasonUninstall",
-      "MasonUninstallAll",
-      "MasonLog",
-    },
-  },
-  {
     "nvim-treesitter/nvim-treesitter",
     opts = {
       ensure_installed = {
@@ -69,10 +37,40 @@ local plugins = {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "nvimtools/none-ls.nvim",
-      config = function()
-        require "custom.configs.none-ls"
-      end,
+      {
+        "williamboman/mason.nvim",
+        dependencies = "williamboman/mason-lspconfig.nvim",
+        opts = {
+          ensure_installed = {
+            "black",
+            -- "pyright",
+            -- "mypy",
+            "ruff",
+            "awk-language-server",
+            "bash-debug-adapter",
+            "bash-language-server",
+            "shellcheck",
+            "docker-compose-language-service",
+            -- "dockerfile-language-server",
+            -- "json-lsp",
+            "python-lsp-server",
+            "prettier",
+            "stylua",
+            "shfmt",
+            "marksman",
+            "grammarly-languageserver",
+          },
+        },
+        cmd = {
+          "MasonInstallAll",
+        },
+      },
+      {
+        "nvimtools/none-ls.nvim",
+        config = function()
+          require "custom.configs.none-ls"
+        end,
+      },
     },
     config = function()
       require "plugins.configs.lspconfig"

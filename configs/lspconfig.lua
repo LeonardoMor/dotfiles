@@ -9,8 +9,10 @@ local servers = {
   "dockerls",
   "lua_ls",
   "marksman",
+  -- "grammarly", -- This has to use node 16, will be removed once they fix it
   -- "pylsp" -- We'll set this up separately
 }
+local home_dir = os.getenv("HOME")
 
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
@@ -18,6 +20,13 @@ for _, lsp in ipairs(servers) do
     capabilities = capabilities,
   }
 end
+
+lspconfig.grammarly.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  -- Workaround
+  cmd = { home_dir .. "/bin/grammarlywo.sh" },
+}
 
 -- Set up pylsp
 lspconfig.pylsp.setup {
