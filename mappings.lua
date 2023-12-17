@@ -2,17 +2,17 @@ local M = {}
 
 M.general = {
   n = {
-    ["<C-d>"] = { "<C-d>zz", "scroll down half page and center the cursor vertically" },
-    ["<C-u>"] = { "<C-u>zz", "scroll up half page and center the cursor vertically" },
+    ["<C-d>"] = { "<C-d>zz", "Scroll down half page and center the cursor vertically" },
+    ["<C-u>"] = { "<C-u>zz", "Scroll up half page and center the cursor vertically" },
   },
 }
 
 M.tmux = {
   n = {
-    ["<C-h>"] = { "<cmd> TmuxNavigateLeft<CR>", "window left" },
-    ["<C-l>"] = { "<cmd> TmuxNavigateRight<CR>", "window right" },
-    ["<C-j>"] = { "<cmd> TmuxNavigateDown<CR>", "window down" },
-    ["<C-k>"] = { "<cmd> TmuxNavigateUp<CR>", "window up" },
+    ["<C-h>"] = { "<cmd> TmuxNavigateLeft<CR>", "Window left" },
+    ["<C-l>"] = { "<cmd> TmuxNavigateRight<CR>", "Window right" },
+    ["<C-j>"] = { "<cmd> TmuxNavigateDown<CR>", "Window down" },
+    ["<C-k>"] = { "<cmd> TmuxNavigateUp<CR>", "Window up" },
   },
 }
 
@@ -23,28 +23,28 @@ M.codeium = {
       function()
         return vim.fn["codeium#Accept"]()
       end,
-      "accept completion",
+      "Accept completion",
       opts = { expr = true },
     },
     ["<A-]>"] = {
       function()
         return vim.fn["codeium#CycleCompletions"](1)
       end,
-      "cycle completions forward",
+      "Cycle completions forward",
       opts = { expr = true },
     },
     ["<A-[>"] = {
       function()
         return vim.fn["codeium#CycleCompletions"](-1)
       end,
-      "cycle completions backward",
+      "Cycle completions backward",
       opts = { expr = true },
     },
     ["<C-]>"] = {
       function()
         return vim.fn["codeium#Clear"]()
       end,
-      "clear completion",
+      "Clear completion",
       opts = { expr = true },
     },
   },
