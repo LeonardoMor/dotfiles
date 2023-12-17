@@ -1,6 +1,7 @@
 local plugins = {
   {
     "williamboman/mason.nvim",
+    dependencies = "williamboman/mason-lspconfig.nvim",
     opts = {
       ensure_installed = {
         "black",
@@ -12,13 +13,21 @@ local plugins = {
         "bash-language-server",
         "shellcheck",
         "docker-compose-language-service",
-        "dockerfile-language-server",
+        -- "dockerfile-language-server",
         -- "json-lsp",
         "python-lsp-server",
         "prettier",
         "stylua",
         "shfmt",
       },
+    },
+    cmd = {
+      "Mason",
+      "MasonInstall",
+      "MasonUpdate",
+      "MasonUninstall",
+      "MasonUninstallAll",
+      "MasonLog",
     },
   },
   {
@@ -51,6 +60,9 @@ local plugins = {
         "xml",
         "yaml",
       },
+    },
+    cmd = {
+      "TSUpdate",
     },
   },
   {
