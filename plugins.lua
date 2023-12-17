@@ -19,6 +19,7 @@ local plugins = {
         "prettier",
         "stylua",
         "shfmt",
+        "marksman",
       },
     },
     cmd = {

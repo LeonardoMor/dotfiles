@@ -8,6 +8,7 @@ local servers = {
   "bashls",
   "dockerls",
   "lua_ls",
+  "marksman",
   -- "pylsp" -- We'll set this up separately
 }
 
@@ -35,7 +36,7 @@ lspconfig.pylsp.setup {
         mypy = { enabled = false },
         pyflakes = { enabled = false },
         bandit = { enabled = false },
-        black = { enabled = false},
+        black = { enabled = false },
         ruff = { enabled = false },
         memestra = { enabled = false },
       },
