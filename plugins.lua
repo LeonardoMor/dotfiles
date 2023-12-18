@@ -6,18 +6,15 @@ local plugins = {
         -- defaults
         "vim",
         "lua",
-
         -- low level
         "c",
         "zig",
-
         -- scripting
         "bash",
         "awk",
         "python",
         "go",
         "perl",
-
         -- misc
         "json",
         "make",
@@ -52,16 +49,6 @@ local plugins = {
         },
         opts = {
           ensure_installed = {
-            -- "pyright",
-            -- "mypy",
-            -- "awk-language-server",
-            -- "bash-language-server",
-            -- "docker-compose-language-service",
-            -- -- "dockerfile-language-server",
-            -- -- "json-lsp",
-            -- "python-lsp-server",
-            -- "marksman",
-            -- "grammarly-languageserver",
             "awk_ls",
             "bashls",
             "dockerls",
@@ -86,7 +73,7 @@ local plugins = {
   },
   {
     "christoomey/vim-tmux-navigator",
-    lazy = false,
+    event = "VeryLazy",
   },
   -- {
   -- https://github.com/zbirenbaum/copilot.lua
@@ -121,11 +108,11 @@ local plugins = {
   {
     -- https://raw.githubusercontent.com/tpope/vim-fugitive/master/doc/fugitive.txt
     "tpope/vim-fugitive",
-    event = "VeryLazy",
+    event = "InsertEnter",
   },
   {
     "tpope/vim-surround",
-    event = "VeryLazy",
+    event = "InsertEnter",
   },
   {
     "Exafunction/codeium.vim",
@@ -135,7 +122,7 @@ local plugins = {
         api_url = "https://codeium.delllabs.net/_route/api_server",
       }
     end,
-    event = "VeryLazy",
+    event = "InsertEnter",
   },
   {
     "windwp/nvim-autopairs",
@@ -160,13 +147,29 @@ local plugins = {
   --   end,
   -- },
   {
-    'stevearc/aerial.nvim',
-    opts = {},
-    -- Optional dependencies
-    dependencies = {
-       "nvim-treesitter/nvim-treesitter",
-       "nvim-tree/nvim-web-devicons"
+    "stevearc/aerial.nvim",
+    opts = {
+      backends = {
+        ["_"] = { "lsp", "treesitter" },
+        bash = { "treesitter" },
+        python = { "lsp", "treesitter" },
+      },
     },
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+      {
+        "stevearc/stickybuf.nvim",
+        -- opts = {},
+        config = function()
+          require("stickybuf").setup()
+        end,
+      },
+    },
+    event = "VeryLazy",
+    config = function()
+      require("aerial").setup()
+    end,
   },
 }
 
