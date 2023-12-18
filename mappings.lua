@@ -12,6 +12,12 @@ M.general = {
   },
 }
 
+M.aerial = {
+  n = {
+    ["<F8>"] = { "<cmd>AerialToggle<CR>", "Toggle aerial" },
+  },
+}
+
 M.quickfix = {
   n = {
     ["<C-j>"] = { "<cmd>cnext<CR>zz", "Next quickfix item" },

@@ -151,7 +151,6 @@ local plugins = {
     opts = {
       backends = {
         ["_"] = { "lsp", "treesitter" },
-        bash = { "treesitter" },
         python = { "lsp", "treesitter" },
       },
     },
