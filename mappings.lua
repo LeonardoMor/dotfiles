@@ -4,6 +4,7 @@ M.general = {
   n = {
     ["<C-d>"] = { "<C-d>zz", "Scroll down half page and center the cursor vertically" },
     ["<C-u>"] = { "<C-u>zz", "Scroll up half page and center the cursor vertically" },
+    ["<leader>s"] = { [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], "Replace word under cursor" },
   },
   v = {
     ["J"] = { ":m '>+1<CR>gv=gv", "Move current selection down" },
