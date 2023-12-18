@@ -30,39 +30,46 @@ local plugins = {
         "yaml",
       },
     },
-    cmd = {
-      "TSUpdate",
-    },
   },
   {
     "neovim/nvim-lspconfig",
     dependencies = {
       {
-        "williamboman/mason.nvim",
-        dependencies = "williamboman/mason-lspconfig.nvim",
-        opts = {
-          ensure_installed = {
-            "black",
-            -- "pyright",
-            -- "mypy",
-            "ruff",
-            "awk-language-server",
-            "bash-debug-adapter",
-            "bash-language-server",
-            "shellcheck",
-            "docker-compose-language-service",
-            -- "dockerfile-language-server",
-            -- "json-lsp",
-            "python-lsp-server",
-            "prettier",
-            "stylua",
-            "shfmt",
-            "marksman",
-            "grammarly-languageserver",
+        "williamboman/mason-lspconfig.nvim",
+        dependencies = {
+          "williamboman/mason.nvim",
+          opts = {
+            ensure_installed = {
+              "black",
+              "ruff",
+              "bash-debug-adapter",
+              "shellcheck",
+              "prettier",
+              "stylua",
+              "shfmt",
+            },
           },
         },
-        cmd = {
-          "MasonInstallAll",
+        opts = {
+          ensure_installed = {
+            -- "pyright",
+            -- "mypy",
+            -- "awk-language-server",
+            -- "bash-language-server",
+            -- "docker-compose-language-service",
+            -- -- "dockerfile-language-server",
+            -- -- "json-lsp",
+            -- "python-lsp-server",
+            -- "marksman",
+            -- "grammarly-languageserver",
+            "awk_ls",
+            "bashls",
+            "dockerls",
+            "lua_ls",
+            "marksman",
+            "grammarly",
+            "pylsp",
+          },
         },
       },
       {
@@ -114,11 +121,11 @@ local plugins = {
   {
     -- https://raw.githubusercontent.com/tpope/vim-fugitive/master/doc/fugitive.txt
     "tpope/vim-fugitive",
-    lazy = false,
+    event = "VeryLazy",
   },
   {
     "tpope/vim-surround",
-    lazy = false,
+    event = "VeryLazy",
   },
   {
     "Exafunction/codeium.vim",
@@ -152,6 +159,15 @@ local plugins = {
   --     }
   --   end,
   -- },
+  {
+    'stevearc/aerial.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = {
+       "nvim-treesitter/nvim-treesitter",
+       "nvim-tree/nvim-web-devicons"
+    },
+  },
 }
 
 return plugins
