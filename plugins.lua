@@ -75,6 +75,88 @@ local plugins = {
     "christoomey/vim-tmux-navigator",
     event = "VeryLazy",
   },
+  {
+    -- https://raw.githubusercontent.com/tpope/vim-fugitive/master/doc/fugitive.txt
+    "tpope/vim-fugitive",
+    dependencies = {
+      "stevearc/stickybuf.nvim",
+    },
+    event = "InsertEnter",
+  },
+  {
+    "tpope/vim-surround",
+    event = "InsertEnter",
+  },
+  {
+    "Exafunction/codeium.vim",
+    config = function()
+      vim.g.codeium_server_config = {
+        portal_url = "https://codeium.delllabs.net",
+        api_url = "https://codeium.delllabs.net/_route/api_server",
+      }
+    end,
+    event = "InsertEnter",
+  },
+  {
+    "windwp/nvim-autopairs",
+    dependencies = { "hrsh7th/nvim-cmp" },
+    event = "InsertEnter",
+    config = function()
+      require "custom.configs.nvim-autopairs"
+    end,
+  },
+  {
+    "stevearc/stickybuf.nvim",
+    config = function()
+      require("stickybuf").setup()
+    end,
+  },
+  {
+    "nvim-tree/nvim-tree.lua",
+    dependencies = {
+      "stevearc/stickybuf.nvim",
+    },
+  },
+  {
+    "stevearc/aerial.nvim",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+      "stevearc/stickybuf.nvim",
+    },
+    event = "LspAttach",
+    opts = {
+      filter_kind = {
+        "Class",
+        "Constructor",
+        "Enum",
+        "Function",
+        "Interface",
+        "Module",
+        "Method",
+        "Struct",
+        "Variable",
+      },
+    },
+  },
+  {
+    "utilyre/barbecue.nvim",
+    name = "barbecue",
+    version = "*",
+    dependencies = {
+      {
+        "SmiteshP/nvim-navic",
+        config = function()
+          require "custom.configs.nvim-navic"
+        end,
+      },
+      "nvim-tree/nvim-web-devicons", -- optional dependency
+    },
+    opts = {
+      attach_navic = false,
+    },
+    event = "LspAttach",
+  },
   -- {
   -- https://github.com/zbirenbaum/copilot.lua
   -- https://raw.githubusercontent.com/github/copilot.vim/release/doc/copilot.txt
@@ -105,33 +187,6 @@ local plugins = {
   --     require'cmp'.setup(opts)
   --   end,
   -- },
-  {
-    -- https://raw.githubusercontent.com/tpope/vim-fugitive/master/doc/fugitive.txt
-    "tpope/vim-fugitive",
-    event = "InsertEnter",
-  },
-  {
-    "tpope/vim-surround",
-    event = "InsertEnter",
-  },
-  {
-    "Exafunction/codeium.vim",
-    config = function()
-      vim.g.codeium_server_config = {
-        portal_url = "https://codeium.delllabs.net",
-        api_url = "https://codeium.delllabs.net/_route/api_server",
-      }
-    end,
-    event = "InsertEnter",
-  },
-  {
-    "windwp/nvim-autopairs",
-    dependencies = { "hrsh7th/nvim-cmp" },
-    event = "InsertEnter",
-    config = function()
-      require "custom.configs.nvim-autopairs"
-    end,
-  },
   -- {
   --   "jackMort/ChatGPT.nvim",
   --   event = "VeryLazy",
@@ -146,30 +201,6 @@ local plugins = {
   --     }
   --   end,
   -- },
-  {
-    "stevearc/aerial.nvim",
-    opts = {
-      backends = {
-        ["_"] = { "lsp", "treesitter" },
-        python = { "lsp", "treesitter" },
-      },
-    },
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons",
-      {
-        "stevearc/stickybuf.nvim",
-        -- opts = {},
-        config = function()
-          require("stickybuf").setup()
-        end,
-      },
-    },
-    event = "VeryLazy",
-    config = function()
-      require("aerial").setup()
-    end,
-  },
 }
 
 return plugins
