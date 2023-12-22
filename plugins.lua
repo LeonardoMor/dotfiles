@@ -37,13 +37,16 @@ local plugins = {
           "williamboman/mason.nvim",
           opts = {
             ensure_installed = {
+              -- Python
+              "yapf",
               "black",
               "ruff",
               "bash-debug-adapter",
+              -- Shell
               "shellcheck",
+              "shfmt",
               "prettier",
               "stylua",
-              "shfmt",
             },
           },
         },
@@ -120,27 +123,40 @@ local plugins = {
     },
   },
   {
-    "stevearc/aerial.nvim",
+    "hedyhli/outline.nvim",
     dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons",
-      "stevearc/stickybuf.nvim",
+      "onsails/lspkind.nvim",
     },
     event = "LspAttach",
+    cmd = { "Outline", "OutlineOpen" },
     opts = {
-      filter_kind = {
-        "Class",
-        "Constructor",
-        "Enum",
-        "Function",
-        "Interface",
-        "Module",
-        "Method",
-        "Struct",
-        "Variable",
+      symbols = {
+        icon_source = "lspkind",
       },
     },
   },
+  -- {
+  --   "stevearc/aerial.nvim",
+  --   dependencies = {
+  --     "nvim-treesitter/nvim-treesitter",
+  --     "nvim-tree/nvim-web-devicons",
+  --     "stevearc/stickybuf.nvim",
+  --   },
+  --   event = "LspAttach",
+  --   opts = {
+  --     filter_kind = {
+  --       "Class",
+  --       "Constructor",
+  --       "Enum",
+  --       "Function",
+  --       "Interface",
+  --       "Module",
+  --       "Method",
+  --       "Struct",
+  --       "Variable",
+  --     },
+  --   },
+  -- },
   {
     "utilyre/barbecue.nvim",
     name = "barbecue",
