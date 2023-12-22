@@ -132,6 +132,9 @@ local plugins = {
     opts = {
       symbols = {
         icon_source = "lspkind",
+        filter = {
+          sh = { 'Function' },
+        },
       },
     },
   },
