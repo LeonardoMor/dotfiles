@@ -36,18 +36,14 @@ lspconfig.pylsp.setup {
   settings = {
     pylsp = {
       plugins = {
-        pycodestyle = { enabled = false },
-        flake8 = { enabled = false },
-        pylint = { enabled = false },
-        pydocstyle = { enabled = false },
-        yapf = { enabled = false },
-        isort = { enabled = false },
-        mypy = { enabled = false },
-        pyflakes = { enabled = false },
-        bandit = { enabled = false },
-        black = { enabled = false },
-        ruff = { enabled = false },
-        memestra = { enabled = false },
+        jedi_completion = { 
+          include_class_objects = true,
+          include_function_objects = true,
+        },
+        rope_autoimport = {
+          enabled = true,
+          memory = true,
+        },
       },
     },
   },
