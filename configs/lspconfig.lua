@@ -28,22 +28,16 @@ lspconfig.grammarly.setup {
   cmd = { home_dir .. "/bin/grammarlywo.sh" },
 }
 
--- Set up pylsp
-lspconfig.pylsp.setup {
+lspconfig.pyright.setup {
   on_attach = on_attach,
   capabilities = capabilities,
-  filetypes = { "python" },
   settings = {
-    pylsp = {
-      plugins = {
-        jedi_completion = { 
-          include_class_objects = true,
-          include_function_objects = true,
-        },
-        rope_autoimport = {
-          enabled = true,
-          memory = true,
-        },
+    python = {
+      analysis = {
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
+        diagnosticMode = "workspace",
+        typeCheckingMode = "basic",
       },
     },
   },

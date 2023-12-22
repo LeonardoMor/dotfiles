@@ -58,7 +58,7 @@ local plugins = {
             "lua_ls",
             "marksman",
             "grammarly",
-            "pylsp",
+            "pyright",
           },
         },
       },
