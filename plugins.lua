@@ -60,9 +60,11 @@ local plugins = {
         },
       },
       {
-        "nvimtools/none-ls.nvim",
+        "stevearc/conform.nvim",
+        event = { "BufWritePre" },
+        cmd = { "ConformInfo" },
         config = function()
-          require "custom.configs.none-ls"
+          require "custom.configs.conform"
         end,
       },
     },
