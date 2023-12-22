@@ -12,9 +12,14 @@ M.general = {
   },
 }
 
-M.aerial = {
+-- M.aerial = {
+--   n = {
+--     ["<F8>"] = { "<cmd>AerialToggle<CR>", "Toggle aerial" },
+--   },
+-- }
+M.outline = {
   n = {
-    ["<F8>"] = { "<cmd>AerialToggle<CR>", "Toggle aerial" },
+    ["<F8>"] = { "<cmd>Outline<CR>", "Toggle outline" },
   },
 }
 
