@@ -64,7 +64,7 @@ local plugins = {
       },
       {
         "stevearc/conform.nvim",
-        event = { "BufWritePre" },
+        event = "BufWritePre",
         cmd = { "ConformInfo" },
         config = function()
           require "custom.configs.conform"
@@ -86,11 +86,11 @@ local plugins = {
     dependencies = {
       "stevearc/stickybuf.nvim",
     },
-    event = "InsertEnter",
+    event = "VeryLazy",
   },
   {
     "tpope/vim-surround",
-    event = "InsertEnter",
+    event = "VeryLazy",
   },
   {
     "Exafunction/codeium.vim",
@@ -133,7 +133,7 @@ local plugins = {
       symbols = {
         icon_source = "lspkind",
         filter = {
-          sh = { 'Function' },
+          sh = { "Function" },
         },
       },
     },
