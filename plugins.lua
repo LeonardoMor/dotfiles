@@ -64,7 +64,6 @@ local plugins = {
       },
       {
         "stevearc/conform.nvim",
-        event = "BufWritePre",
         cmd = { "ConformInfo" },
         config = function()
           require "custom.configs.conform"
