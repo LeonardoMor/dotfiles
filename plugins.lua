@@ -112,7 +112,7 @@ local plugins = {
   {
     "stevearc/stickybuf.nvim",
     config = function()
-      require("stickybuf").setup()
+      require "custom.configs.stickybuf"
     end,
   },
   {
@@ -170,7 +170,7 @@ local plugins = {
           require "custom.configs.nvim-navic"
         end,
       },
-      "nvim-tree/nvim-web-devicons", -- optional dependency
+      "nvim-tree/nvim-web-devicons",
     },
     opts = {
       attach_navic = false,
