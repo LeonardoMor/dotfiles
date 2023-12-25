@@ -1,3 +1,4 @@
+require("stickybuf").setup()
 vim.api.nvim_create_autocmd("BufEnter", {
   desc = "Pin the buffer to any window that is fixed width or height",
   callback = function(args)
@@ -7,5 +8,3 @@ vim.api.nvim_create_autocmd("BufEnter", {
     end
   end,
 })
-
-require("stickybuf").setup()
