@@ -25,6 +25,8 @@ local plugins = {
         "ssh_config",
         "xml",
         "yaml",
+        "vim",
+        "vimdoc",
       },
     },
   },
