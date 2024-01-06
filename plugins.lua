@@ -139,6 +139,40 @@ local plugins = {
       },
     },
   },
+  {
+    "utilyre/barbecue.nvim",
+    name = "barbecue",
+    version = "*",
+    dependencies = {
+      {
+        "SmiteshP/nvim-navic",
+        config = function()
+          require "custom.configs.nvim-navic"
+        end,
+      },
+      "nvim-tree/nvim-web-devicons",
+    },
+    opts = {
+      attach_navic = false,
+    },
+    event = "LspAttach",
+  },
+  {
+    "pwntester/octo.nvim",
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+    event = "VeryLazy",
+    config = function()
+      require("octo").setup()
+    end,
+  },
+  {
+    "tpope/vim-obsession",
+    event = "VeryLazy",
+  },
   -- {
   --   "stevearc/aerial.nvim",
   --   dependencies = {
@@ -161,24 +195,6 @@ local plugins = {
   --     },
   --   },
   -- },
-  {
-    "utilyre/barbecue.nvim",
-    name = "barbecue",
-    version = "*",
-    dependencies = {
-      {
-        "SmiteshP/nvim-navic",
-        config = function()
-          require "custom.configs.nvim-navic"
-        end,
-      },
-      "nvim-tree/nvim-web-devicons",
-    },
-    opts = {
-      attach_navic = false,
-    },
-    event = "LspAttach",
-  },
   -- {
   -- https://github.com/zbirenbaum/copilot.lua
   -- https://raw.githubusercontent.com/github/copilot.vim/release/doc/copilot.txt
