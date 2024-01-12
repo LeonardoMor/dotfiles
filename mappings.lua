@@ -39,7 +39,6 @@ M.tmux = {
   },
 }
 
-vim.g.codeium_disable_bindings = 1
 M.codeium = {
   i = {
     ["<A-l>"] = {
