@@ -91,11 +91,11 @@ local plugins = {
   },
   {
     "kylechui/nvim-surround",
-    version = "*",
+    version = "*", -- Use for stability; omit to use `main` branch for the latest features
     event = "VeryLazy",
     config = function()
-      require("nvim-surround").setup()
-    end,
+      require("nvim-surround").setup({})
+    end
   },
   {
     "Exafunction/codeium.vim",
