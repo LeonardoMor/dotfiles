@@ -90,8 +90,12 @@ local plugins = {
     event = "VeryLazy",
   },
   {
-    "tpope/vim-surround",
+    "kylechui/nvim-surround",
+    version = "*",
     event = "VeryLazy",
+    config = function()
+      require("nvim-surround").setup()
+    end,
   },
   {
     "Exafunction/codeium.vim",
