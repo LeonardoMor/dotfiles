@@ -1,4 +1,5 @@
 local M = {}
+local fn = vim.fn
 
 M.general = {
   n = {
@@ -55,28 +56,28 @@ M.codeium = {
   i = {
     ["<A-l>"] = {
       function()
-        return vim.fn["codeium#Accept"]()
+        return fn["codeium#Accept"]()
       end,
       "Accept completion",
       opts = { expr = true },
     },
     ["<A-]>"] = {
       function()
-        return vim.fn["codeium#CycleCompletions"](1)
+        return fn["codeium#CycleCompletions"](1)
       end,
       "Cycle completions forward",
       opts = { expr = true },
     },
     ["<A-[>"] = {
       function()
-        return vim.fn["codeium#CycleCompletions"](-1)
+        return fn["codeium#CycleCompletions"](-1)
       end,
       "Cycle completions backward",
       opts = { expr = true },
     },
-    ["<C-]>"] = {
+    ["<C-l>"] = {
       function()
-        return vim.fn["codeium#Clear"]()
+        return fn["codeium#Clear"]()
       end,
       "Clear completion",
       opts = { expr = true },
