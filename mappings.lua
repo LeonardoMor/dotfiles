@@ -1,15 +1,28 @@
 local M = {}
+local fn = vim.fn
 
 M.general = {
   n = {
     ["<C-d>"] = { "<C-d>zz", "Scroll down half page and center the cursor vertically" },
     ["<C-u>"] = { "<C-u>zz", "Scroll up half page and center the cursor vertically" },
     ["<leader>s"] = { [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], "Replace word under cursor" },
+    ["J"] = { "mzJ`z", "Append the next line to the current but don't move the cursor" },
+    ["n"] = { "nzzzv", "Next search result and center the cursor vertically" },
+    ["N"] = { "Nzzzv", "Previous search result and center the cursor vertically" },
+    ["<leader>y"] = { '"+y', "Copy to system clipboard" },
+    ["<leader>Y"] = { '"+Y', "Copy to system clipboard" },
+    ["<S-Insert>"] = { '"+p', "Paste from system clipboard" },
   },
   v = {
     ["J"] = { ":m '>+1<CR>gv=gv", "Move current selection down" },
     ["K"] = { ":m '<-2<CR>gv=gv", "Move current selection up" },
+    ["<leader>y"] = { '"+y', "Copy to system clipboard" },
+    ["<S-Insert>"] = { '"+p', "Paste from system clipboard" },
   },
+  -- keeping this as it might be useful, but NvChad already handles this in the way I want
+  -- x = {
+  --   ["<leader>p"] = { '"_pdP', "Paste and hold what was just pasted, so I can be pasted again" },
+  -- },
 }
 
 -- M.aerial = {
@@ -43,28 +56,28 @@ M.codeium = {
   i = {
     ["<A-l>"] = {
       function()
-        return vim.fn["codeium#Accept"]()
+        return fn["codeium#Accept"]()
       end,
       "Accept completion",
       opts = { expr = true },
     },
     ["<A-]>"] = {
       function()
-        return vim.fn["codeium#CycleCompletions"](1)
+        return fn["codeium#CycleCompletions"](1)
       end,
       "Cycle completions forward",
       opts = { expr = true },
     },
     ["<A-[>"] = {
       function()
-        return vim.fn["codeium#CycleCompletions"](-1)
+        return fn["codeium#CycleCompletions"](-1)
       end,
       "Cycle completions backward",
       opts = { expr = true },
     },
-    ["<C-]>"] = {
+    ["<C-l>"] = {
       function()
-        return vim.fn["codeium#Clear"]()
+        return fn["codeium#Clear"]()
       end,
       "Clear completion",
       opts = { expr = true },
