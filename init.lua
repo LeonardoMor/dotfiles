@@ -1,8 +1,7 @@
--- Variables to simplify
+-- vars to simplify
 local opt = vim.opt
 local g = vim.g
 local api = vim.api
-local cmd = vim.cmd
 -- Relative line numbers on by default
 opt.relativenumber = true
 -- Keep system clipboard and nvim registries separated
