@@ -9,18 +9,18 @@ M.general = {
     ["J"] = { "mzJ`z", "Append the next line to the current but don't move the cursor" },
     ["n"] = { "nzzzv", "Next search result and center the cursor vertically" },
     ["N"] = { "Nzzzv", "Previous search result and center the cursor vertically" },
-    ["<leader>y"] = { '"+y', "Copy to system clipboard" },
-    ["<leader>Y"] = { '"+Y', "Copy to system clipboard" },
-    ["<S-Insert>"] = { '"+p', "Paste from system clipboard" },
+    ["<leader>y"] = { '"+y', "Copy to clipboard" },
+    ["<leader>Y"] = { '"+Y', "Copy to clipboard" },
+    ["<S-Insert>"] = { '"+p', "Paste from clipboard" },
   },
   i = {
-    ["<S-Insert>"] = { '"+p', "Paste from system clipboard" },
+    ["<S-Insert>"] = { '"+p', "Paste from clipboard" },
   },
   v = {
     ["J"] = { ":m '>+1<CR>gv=gv", "Move current selection down" },
     ["K"] = { ":m '<-2<CR>gv=gv", "Move current selection up" },
-    ["<leader>y"] = { '"+y', "Copy to system clipboard" },
-    ["<S-Insert>"] = { '"+p', "Paste from system clipboard" },
+    ["<leader>y"] = { '"+y', "Copy to clipboard" },
+    ["<S-Insert>"] = { '"+p', "Paste from clipboard" },
   },
   -- keeping this as it might be useful, but NvChad already handles this in the way I want
   -- x = {
