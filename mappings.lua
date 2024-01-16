@@ -13,6 +13,9 @@ M.general = {
     ["<leader>Y"] = { '"+Y', "Copy to system clipboard" },
     ["<S-Insert>"] = { '"+p', "Paste from system clipboard" },
   },
+  i = {
+    ["<S-Insert>"] = { '"+p', "Paste from system clipboard" },
+  },
   v = {
     ["J"] = { ":m '>+1<CR>gv=gv", "Move current selection down" },
     ["K"] = { ":m '<-2<CR>gv=gv", "Move current selection up" },
