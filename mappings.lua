@@ -68,14 +68,14 @@ M.codeium = {
       function()
         return fn["codeium#CycleCompletions"](1)
       end,
-      "Cycle completions forward",
+      "Cycle completions forwards",
       opts = { expr = true },
     },
     ["<A-[>"] = {
       function()
         return fn["codeium#CycleCompletions"](-1)
       end,
-      "Cycle completions backward",
+      "Cycle completions backwards",
       opts = { expr = true },
     },
     ["<C-l>"] = {
