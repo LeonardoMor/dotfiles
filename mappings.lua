@@ -78,7 +78,7 @@ M.codeium = {
       "Cycle completions backwards",
       opts = { expr = true },
     },
-    ["<C-l>"] = {
+    ["<A-BS>"] = {
       function()
         return fn["codeium#Clear"]()
       end,
