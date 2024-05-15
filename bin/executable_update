@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Complete system upgrade
+paru -Syu
+
+# Update global npm modules
+sleep 1
+npm update -g
+
+# Update snaps
+sleep 1
+sudo snap refresh
+
+# Update flatpaks
+sleep 1
+flatpak update -y

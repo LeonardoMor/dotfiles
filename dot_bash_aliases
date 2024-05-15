@@ -1,0 +1,5 @@
+#
+# .bash_aliases
+#
+#alias open='xdg-open'
+alias clip='wl-copy'

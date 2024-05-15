@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+NAME="$(basename "$0")"
+
+help() {
+	cat <<EOF
+Install packages if new packages were added.
+
+usage: $NAME [-h]
+
+options:
+	-h	Show this message and exit
+EOF
+}
+
+while getopts 'h' option; do
+	case "$option" in
+		h)
+			help
+			exit
+			;;
+		*)
+			help >&2
+			exit 1
+			;;
+	esac
+done
+
+{{.install_cmd}} <<EOF
+{{ range .packages.common -}}
+{{ . }}
+{{ end -}}
+{{ if eq .chezmoi.hostname "cassini" -}}
+{{ range .packages.personal -}}
+{{ . }}
+{{ end -}}
+{{ else if eq .chezmoi.hostname .work_host -}}
+{{ range .packages.work -}}
+{{ . }}
+{{ end -}}
+{{ end -}}
+EOF

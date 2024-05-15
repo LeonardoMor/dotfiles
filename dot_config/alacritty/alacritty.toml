@@ -1,0 +1,19 @@
+[env]
+TERM = "xterm-256color"
+
+[window]
+padding.x = 10
+padding.y = 10
+decorations = "none"
+opacity = 0.9
+blur = false
+startup_mode = "Fullscreen"
+
+[font]
+normal.family = "JetBrainsMono Nerd Font"
+
+[general]
+# import = ["~/.config/alacritty/themes/themes/tokyonight_night.toml"]
+import = [
+	"~/.local/share/nvim/lazy/tokyonight.nvim/extras/alacritty/tokyonight_night.toml",
+]

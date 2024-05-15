@@ -1,0 +1,12 @@
+[user]
+	name = {{ .name | quote }}
+	email = {{ .email | quote }}
+[safe]
+        directory = /home/leo/dotfiles
+[core]
+	autocrlf = false
+	editor = nvim
+[credential "https://github.com"]
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = !/usr/bin/gh auth git-credential

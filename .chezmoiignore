@@ -1,0 +1,4 @@
+.config/nvim/LICENSE
+.config/nvim/*lock.json
+.config/tmux/plugins
+.ssh/known_hosts*

@@ -1,0 +1,36 @@
+encryption = "gpg"
+[gpg]
+    recipient = "leomc145@gmail.com"
+
+[edit]
+    command = "nvim"
+
+[merge]
+    command = "nvim"
+    args = ["-d", {{ print "{{.Destination}}" | quote }}, {{ print "{{.Source}}" | quote }}, {{ print "{{.Target}}" | quote }}]
+
+[hooks.read-source-state.pre]
+    command = "{{.chezmoi.sourceDir}}/.chezmoiscripts/.init.sh"
+
+[hooks.apply.post]
+    command = "{{.chezmoi.homeDir}}/bin/uninstall-removed.sh"
+
+[git]
+    autoPush = true
+    commitMessageTemplate = {{ print "{{ promptString \"Commit message\" }}" | quote }}
+
+[data]
+    name = "Leonardo Mora Castro"
+{{- if eq .chezmoi.hostname "worklaptop"}}
+    email = "lmoracas@cisco.com"
+{{- else}}
+    email = "leomc145@gmail.com"
+{{- end}}
+    work_host = "worklaptop"
+{{- if eq .chezmoi.osRelease.id "arch" }}
+    install_cmd = "paru -S --needed -"
+    uninstall_cmd = "paru -Rsn --noconfirm "
+{{- else if eq .chezmoi.osRelease.id "ubuntu" }}
+    install_cmd = "xargs sudo apt-get -y install"
+    uninstall_cmd = "sudo apt-get -y purge "
+{{ end }}
