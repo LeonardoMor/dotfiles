@@ -99,8 +99,9 @@ To do so, this is my chezmoi configuration for git:
     commitMessageTemplate = "{{ promptString \"Commit message\" }}"
 ```
 
-> [!WARNING] If any secrets are to be managed, add them with
-> `chezmoi add --encrypt`.
+<!-- prettier-ignore -->
+> [!WARNING]
+> If any secrets are to be managed, add them with `chezmoi add --encrypt`.
 
 chezmoi has hooks that we can use. For this usecase, I'm simply using the
 `apply.post` hook to run a command. Specifically:
