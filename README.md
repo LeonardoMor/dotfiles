@@ -110,7 +110,7 @@ chezmoi has hooks that we can use. For this usecase, I'm simply using the
     command = "{{.chezmoi.homeDir}}/bin/uninstall-removed.sh"
 ```
 
-The `uninstall-removed.sh` comes with a template that will use the correct
+The `uninstall-removed.sh` comes from a template that will use the correct
 command to uninstall the packages that were removed from the relevant lists.
 
 ## Encrypt secrets
