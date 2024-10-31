@@ -60,7 +60,7 @@ soon. So here is my way to do it. Very likely there are better ways.
 
 ### Installing packages
 
-I have 3 lists of packages defined inside `.chezmoidata`. It lookks like this:
+I have 3 lists of packages defined inside `.chezmoidata`. It looks like this:
 
 ```output
 .chezmoidata
