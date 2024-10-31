@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 # Complete system upgrade
+{{- if eq .chezmoi.osRelease.id "arch" }}
 paru -Syu
+{{ end -}}
 
 # Update global npm modules
 sleep 1
