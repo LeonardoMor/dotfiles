@@ -1,0 +1,9 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+{{ range .packages.darwin.brews -}}
+brew install {{ . | quote }}
+{{ end -}}
+{{ range .packages.darwin.casks -}}
+brew install --no-quarantine --cask {{ . | quote }}
+{{ end -}}

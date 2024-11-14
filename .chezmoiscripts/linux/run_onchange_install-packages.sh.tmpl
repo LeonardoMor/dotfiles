@@ -26,17 +26,6 @@ while getopts 'h' option; do
 	esac
 done
 
-{{.install_cmd}} <<EOF
-{{ range .packages.common -}}
-{{ . }}
+{{ range .packages.linux -}}
+{{.install_cmd}} {{ . }}
 {{ end -}}
-{{ if eq .chezmoi.hostname "cassini" -}}
-{{ range .packages.personal -}}
-{{ . }}
-{{ end -}}
-{{ else if eq .chezmoi.hostname .work_host -}}
-{{ range .packages.work -}}
-{{ . }}
-{{ end -}}
-{{ end -}}
-EOF

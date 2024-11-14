@@ -6,7 +6,7 @@ NAME="$(basename "$0")"
 
 help() {
 	cat <<EOF
-This does things needed to initialize the computing environment.
+Prepares to install packages properly on Linux.
 
 usage: $NAME [-h]
 
@@ -40,7 +40,7 @@ install_paru() {
 		return
 	fi
 	change_dir "$HOME"
-	sudo pacman -S --needed base-devel
+	sudo pacman --sync --needed base-devel
 	git clone https://aur.archlinux.org/paru.git
 	sudo mv paru /opt
 	change_dir /opt/paru

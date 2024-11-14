@@ -9,12 +9,6 @@ encryption = "gpg"
     command = "nvim"
     args = ["-d", {{ print "{{.Destination}}" | quote }}, {{ print "{{.Source}}" | quote }}, {{ print "{{.Target}}" | quote }}]
 
-[hooks.read-source-state.pre]
-    command = "{{.chezmoi.sourceDir}}/.chezmoiscripts/.init.sh"
-
-[hooks.apply.post]
-    command = "{{.chezmoi.homeDir}}/bin/uninstall-removed.sh"
-
 [git]
     autoPush = true
     commitMessageTemplate = {{ print "{{ promptString \"Commit message\" }}" | quote }}
@@ -28,9 +22,7 @@ encryption = "gpg"
 {{- end}}
     work_host = "worklaptop"
 {{- if eq .chezmoi.osRelease.id "arch" }}
-    install_cmd = "paru -S --needed -"
-    uninstall_cmd = "paru -Rsn --noconfirm "
+    install_cmd = "paru -S --needed"
 {{- else if eq .chezmoi.osRelease.id "ubuntu" }}
-    install_cmd = "xargs sudo apt-get -y install"
-    uninstall_cmd = "sudo apt-get -y purge "
+    install_cmd = "sudo apt-get -y install"
 {{ end }}
