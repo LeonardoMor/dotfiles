@@ -27,7 +27,9 @@ while getopts 'h' option; do
 	esac
 done
 
+xargs --no-run-if-empty {{ .install_cmd }} <<EOF
 {{ range .packages.linux -}}
-{{.install_cmd}} {{ . }}
+{{ . }}
 {{ end -}}
+EOF
 {{ end -}}

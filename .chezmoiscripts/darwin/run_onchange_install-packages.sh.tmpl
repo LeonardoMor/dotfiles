@@ -2,8 +2,9 @@
 #!/bin/bash
 
 {{ range .packages.darwin.brews -}}
-brew install {{ . | quote }}
+brew install {{ . }}
 {{ end -}}
 {{ range .packages.darwin.casks -}}
-brew install --no-quarantine --cask {{ . | quote }}
+brew install --no-quarantine --cask {{ . }}
+{{ end -}}
 {{ end -}}
