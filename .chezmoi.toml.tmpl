@@ -22,7 +22,7 @@ encryption = "gpg"
 {{- end}}
     work_host = "worklaptop"
 {{- if eq .chezmoi.osRelease.id "arch" }}
-    install_cmd = "paru -S --needed"
+    install_cmd = "paru --sync --needed"
 {{- else if eq .chezmoi.osRelease.id "ubuntu" }}
     install_cmd = "sudo apt-get -y install"
 {{ end }}
