@@ -1,0 +1,10 @@
+#!/bin/env bash
+
+if gpg --version >/dev/null 2>&1; then
+	exit
+fi
+{{ if eq .chezmoi.os "linux" }}
+{{ .install_cmd }} gnupg
+{{ else if eq .chezmoi.os "darwin" }}
+brew install gnupg
+{{ end }}
