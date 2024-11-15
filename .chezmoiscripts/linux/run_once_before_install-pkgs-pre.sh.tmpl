@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
 set -e
@@ -58,3 +59,4 @@ case "$OPERATING_SYSTEM" in
 		exit 1
 		;;
 esac
+{{- end }}
