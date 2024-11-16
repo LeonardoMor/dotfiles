@@ -2,6 +2,9 @@ encryption = "gpg"
 [gpg]
     recipient = "leomc145@gmail.com"
 
+[hooks.read-source-state.pre]
+    command = "{{ .chezmoi.sourceDir }}/.chezmoiscripts/{{ .chezmoi.os }}/.prereqs.sh"
+
 [edit]
     command = "nvim"
 
@@ -26,7 +29,7 @@ encryption = "gpg"
 {{- else if eq .chezmoi.osRelease.id "ubuntu" }}
     install_cmd = "sudo apt-get -y install"
 {{ end }}
-{{- if eq isExecutable "/opt/homebrew/bin/brew" }}
+{{- if isExecutable "/opt/homebrew/bin/brew" }}
     homebrew = "/opt/homebrew/bin/brew"
 {{- else if isExecutable "/usr/local/bin/brew" }}
     homebrew = "/usr/local/bin/brew"

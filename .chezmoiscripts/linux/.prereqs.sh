@@ -1,4 +1,3 @@
-{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
 set -e
@@ -7,7 +6,7 @@ NAME="$(basename "$0")"
 
 help() {
 	cat <<EOF
-Prepares to install packages properly on Linux.
+Handles pre requisites on Linux systems.
 
 usage: $NAME [-h]
 
@@ -36,27 +35,26 @@ change_dir() {
 	}
 }
 
-install_paru() {
-	if paru --version >/dev/null 2>&1; then
-		return
-	fi
-	change_dir "$HOME"
-	sudo pacman --sync --needed base-devel
-	git clone https://aur.archlinux.org/paru.git
-	sudo mv paru /opt
-	change_dir /opt/paru
-	makepkg -si
-}
-
 # Main logic goes here
 OPERATING_SYSTEM="$(awk -F= '/^ID=/{print $2}' /etc/*-release)"
 case "$OPERATING_SYSTEM" in
 	arch)
-		install_paru
+		paru --version >/dev/null 2>&1 || (
+			change_dir "$HOME"
+			sudo pacman --sync --needed base-devel
+			git clone https://aur.archlinux.org/paru.git
+			sudo mv paru /opt
+			change_dir /opt/paru
+			makepkg -si
+		)
+		install_cmd='paru --sync --needed'
 		;;
 	*)
-		printf 'Unsupported operating system: %s\n' "$OPERATING_SYSTEM"
+		printf 'Unsupported operating system: %s\n' "$OPERATING_SYSTEM" >&2
 		exit 1
 		;;
 esac
-{{- end }}
+
+{
+	gpg --version >/dev/null 2>&1 || "$install_cmd" gnupg
+} && "$(chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"
