@@ -9,12 +9,12 @@ export BLESH_PATH=/usr/share/blesh
 source "${BLESH_PATH}/ble.sh" --noattach
 
 # Command history settings
-# don't put duplicate lines or lines starting with space in the history.
+# Don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
-# append to the history file, don't overwrite it
+# Append to the history file, don't overwrite it
 shopt -s histappend
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+# For setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=3000
 HISTFILESIZE=4000
 
@@ -22,7 +22,7 @@ HISTFILESIZE=4000
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
 
-# Enable color support of ls and also add handy aliases
+# Enable color support of ls and grep and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
 	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 	alias ls='ls --color=auto'
@@ -46,13 +46,12 @@ fi
 
 # XDG Base Dir spec https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 # https://wiki.archlinux.org/title/XDG_Base_Directory
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
-export XDG_DATA_DIRS="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
-export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-/etc/xdg}"
-export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-{{.XDG_CONFIG_HOME}}}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-{{.XDG_CACHE_HOME}}}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-{{.XDG_DATA_HOME}}}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-{{.XDG_STATE_HOME}}}"
+export XDG_DATA_DIRS="${XDG_DATA_DIRS:-{{.XDG_DATA_DIRS}}}"
+export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-{{.XDG_CONFIG_DIRS}}}"
 for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"; do
 	mkdir -p "$d"
 done
@@ -61,6 +60,7 @@ export EDITOR="$VISUAL"
 export NVIM_LOG_FILE="${XDG_CACHE_HOME}/nvim/log"
 export BROWSER=firefox
 export LIBVIRT_DEFAULT_URI='qemu:///system'
+
 # fzf theme
 source "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/fzf/tokyonight_night.sh"
 

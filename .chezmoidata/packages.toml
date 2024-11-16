@@ -2,6 +2,7 @@
 linux = [
 	"alacritty",
 	"asciinema",
+	"bash-completion",
 	"bat",
 	"bc",
 	"blesh-git",
@@ -41,6 +42,7 @@ casks = ["alacritty", "google-chrome", "obsidian", "slack", "zoom"]
 brews = [
 	"asciinema",
 	"bash",
+	"bash-completion",
 	"bat",
 	"bc",
 	"btop",

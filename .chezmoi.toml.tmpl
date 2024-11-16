@@ -35,4 +35,11 @@ encryption = "gpg"
     homebrew = "/usr/local/bin/brew"
 {{- else if isExecutable "/home/linuxbrew/.linuxbrew/bin/brew" }}
     homebrew = "/home/linuxbrew/.linuxbrew/bin/brew"
-{{- end}}
+{{- end -}}
+{{/*- XDG spec variables */}}
+    XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
+    XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
+    XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
+    XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
+    XDG_DATA_DIRS = "/usr/local/share:/usr/share"
+    XDG_CONFIG_DIRS = "/etc/xdg"
