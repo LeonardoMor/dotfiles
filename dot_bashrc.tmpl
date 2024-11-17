@@ -85,16 +85,12 @@ fi
 if [[ -f $(brew --prefix)/etc/brew-wrap ]]; then
 	source $(brew --prefix)/etc/brew-wrap
 
-	_post_brewfile_update() (
-		cd "$(chezmoi source-path)" || {
-			printf 'Failed to cd to %s\n' "$(chezmoi source-path)" >&2
-			return 1
-		}
-		git add .
-		read -rp 'Commit message: '
-		git commit -m "$REPLY"
-		git push origin master
-	)
+	_post_brewfile_update() {
+		chezmoi git add .
+		read -rp 'Commit message? '
+		chezmoi git -- commit -m "$REPLY"
+		chezmoi git push origin master
+	}
 fi
 {{- end }}
 
