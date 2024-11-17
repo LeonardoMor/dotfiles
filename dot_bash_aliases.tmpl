@@ -2,4 +2,9 @@
 # .bash_aliases
 #
 #alias open='xdg-open'
-alias clip='wl-copy'
+alias clip=
+{{- if eq .chezmoi.hostname "cassini" -}}
+'wl-copy --trim-newline'
+{{- else if eq .chezmoi.os "darwin" -}}
+xargs printf '%s' | pbcopy
+{{ end }}
