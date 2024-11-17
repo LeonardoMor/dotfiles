@@ -18,6 +18,9 @@ import = [
 	"~/.local/share/nvim/lazy/tokyonight.nvim/extras/alacritty/tokyonight_night.toml",
 ]
 
+[selection]
+save_to_clipboard = true
+
 {{- if eq .chezmoi.os "darwin" }}
 [shell]
 program = "{{ .brew_prefix }}/bin/bash"
