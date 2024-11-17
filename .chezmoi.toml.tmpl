@@ -30,11 +30,11 @@ encryption = "gpg"
     install_cmd = "sudo apt-get -y install"
 {{ end }}
 {{- if isExecutable "/opt/homebrew/bin/brew" }}
-    homebrew = "/opt/homebrew/bin/brew"
+    brew_prefix = "/opt/homebrew"
 {{- else if isExecutable "/usr/local/bin/brew" }}
-    homebrew = "/usr/local/bin/brew"
+    brew_prefix = "/usr/local"
 {{- else if isExecutable "/home/linuxbrew/.linuxbrew/bin/brew" }}
-    homebrew = "/home/linuxbrew/.linuxbrew/bin/brew"
+    brew_prefix = "/home/linuxbrew/.linuxbrew"
 {{- end -}}
 {{/*- XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"

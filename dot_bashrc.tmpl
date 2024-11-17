@@ -58,8 +58,10 @@ done
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 export NVIM_LOG_FILE="${XDG_CACHE_HOME}/nvim/log"
+{{- if eq .chezmoi.hostname "cassini" }}
 export BROWSER=firefox
 export LIBVIRT_DEFAULT_URI='qemu:///system'
+{{- end }}
 
 # fzf theme
 source "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/fzf/tokyonight_night.sh"
@@ -69,7 +71,7 @@ source "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/fzf/tokyonight_night.s
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
 	if [[ -f ${XDG_CONFIG_HOME}/bash-completion/bash_completion ]]; then
-		export BASH_COMPLETION_USER_FILE="$XDG_CONFIG_HOME"/bash-completion/bash_completion
+		export BASH_COMPLETION_USER_FILE="${XDG_CONFIG_HOME}/bash-completion/bash_completion"
 		. "$BASH_COMPLETION_USER_FILE"
 	elif [[ -f /etc/bash_completion ]]; then
 		. /etc/bash_completion

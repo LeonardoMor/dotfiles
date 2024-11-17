@@ -17,3 +17,9 @@ normal.family = "JetBrainsMono Nerd Font"
 import = [
 	"~/.local/share/nvim/lazy/tokyonight.nvim/extras/alacritty/tokyonight_night.toml",
 ]
+
+{{- if eq .chezmoi.os "darwin" }}
+[shell]
+program = "{{ .brew_prefix }}/bin/bash"
+args = ["--login"]
+{{ end }}
