@@ -7,3 +7,6 @@ Brewfile
 {{- if eq .chezmoi.hostname "cassini" }}
 .config/brewfile
 {{- end }}
+{{- if eq .chezmoi.hostname .work_host }}
+.config/nvim/lua/plugins/neocodeium.lua
+{{- end }}
