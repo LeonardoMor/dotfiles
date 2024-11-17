@@ -17,6 +17,9 @@ brew --version >/dev/null 2>&1 || {
 	echo "eval \$($homebrew shellenv)" >>~/.profile
 }
 
+# Will manage brew packages with Homebrew-file
+brew-file --version >/dev/null 2>&1 || "$homebrew" install rcmdnk/file/brew-file
+
 {
 	gpg --version >/dev/null 2>&1 || "$homebrew" install gnupg
 } && "$(chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"

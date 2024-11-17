@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if gpg -K | grep -q 19E2D77D03858CB897E78CABFD14E47B11D7C460; then
+	exit
+fi
+
 read -rp "Import GPG keys? [y/N] "
 
 if ! [[ $REPLY =~ ^[Yy]$ ]]; then

@@ -36,33 +36,3 @@ linux = [
 	"vim",
 	"wget",
 ]
-
-[packages.darwin]
-casks = ["alacritty", "google-chrome", "obsidian", "slack", "zoom"]
-brews = [
-	"asciinema",
-	"bash",
-	"bash-completion",
-	"bat",
-	"bc",
-	"btop",
-	"curl",
-	"fastfetch",
-	"fzf",
-	"gcc",
-	"git",
-	"go",
-	"keychain",
-	"less",
-	"lftp",
-	"neovim",
-	"nvm",
-	"pandoc",
-	"ripgrep",
-	"starship",
-	"tmux",
-	"tree",
-	"unzip",
-	"vim",
-	"wget",
-]

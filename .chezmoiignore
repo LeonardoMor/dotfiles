@@ -3,3 +3,7 @@
 .config/tmux/plugins
 .ssh/known_hosts*
 README.md
+Brewfile
+{{- if eq .chezmoi.hostname "cassini" }}
+.config/brewfile
+{{- end }}

@@ -55,6 +55,8 @@ export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-{{.XDG_CONFIG_DIRS}}}"
 for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"; do
 	mkdir -p "$d"
 done
+
+# Other environment variables
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 export NVIM_LOG_FILE="${XDG_CACHE_HOME}/nvim/log"
@@ -77,6 +79,13 @@ if ! shopt -oq posix; then
 		. /etc/bash_completion
 	fi
 fi
+
+{{- if eq .chezmoi.os "darwin" }}
+# Set Homebrew-file
+if [ -f $(brew --prefix)/etc/brew-wrap ]; then
+	source $(brew --prefix)/etc/brew-wrap
+fi
+{{- end }}
 
 # This will take care of the ssh agent and keys
 eval "$(keychain --quiet --nogui --eval id_ed25519)"
