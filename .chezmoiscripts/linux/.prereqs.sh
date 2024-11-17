@@ -47,7 +47,7 @@ case "$OPERATING_SYSTEM" in
 			change_dir /opt/paru
 			makepkg -si
 		)
-		install_cmd='paru --sync --needed'
+		install_cmd='paru --noconfirm --sync --needed'
 		;;
 	*)
 		printf 'Unsupported operating system: %s\n' "$OPERATING_SYSTEM" >&2
