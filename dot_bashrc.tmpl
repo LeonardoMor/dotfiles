@@ -46,12 +46,12 @@ fi
 
 # XDG Base Dir spec https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 # https://wiki.archlinux.org/title/XDG_Base_Directory
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:- {{- .XDG_CONFIG_HOME }}}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:- {{- .XDG_CACHE_HOME }}}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:- {{- .XDG_DATA_HOME  }}}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:- {{- .XDG_STATE_HOME  }}}"
-export XDG_DATA_DIRS="${XDG_DATA_DIRS:- {{- .XDG_DATA_DIRS  }}}"
-export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:- {{- .XDG_CONFIG_DIRS  }}}"
+export XDG_CONFIG_HOME={{ printf "${XDG_CONFIG_HOME:-%s}" .XDG_CONFIG_HOME | quote }}
+export XDG_CACHE_HOME={{ printf "${XDG_CACHE_HOME:-%s}" .XDG_CACHE_HOME | quote }}
+export XDG_DATA_HOME={{ printf "${XDG_DATA_HOME:-%s}" .XDG_DATA_HOME | quote }}
+export XDG_STATE_HOME={{ printf "${XDG_STATE_HOME:-%s}" .XDG_STATE_HOME | quote }}
+export XDG_DATA_DIRS={{ printf "${XDG_DATA_DIRS:-%s}" .XDG_DATA_DIRS | quote }}
+export XDG_CONFIG_DIRS={{ printf "${XDG_CONFIG_DIRS:-%s}" .XDG_CONFIG_DIRS | quote }}
 for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"; do
 	mkdir -p "$d"
 done
