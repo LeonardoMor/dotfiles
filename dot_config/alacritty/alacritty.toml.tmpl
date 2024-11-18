@@ -4,7 +4,12 @@ TERM = "xterm-256color"
 [window]
 padding.x = 10
 padding.y = 10
+{{- if eq .chezmoi.os "linux" }}
 decorations = "none"
+{{- end }}
+{{- if eq .chezmoi.os "darwin" }}
+decorations = "Transparent"
+{{- end }}
 opacity = 0.9
 blur = false
 startup_mode = "Fullscreen"
