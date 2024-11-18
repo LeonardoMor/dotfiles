@@ -29,6 +29,7 @@ brew unbound
 
 tap homebrew/cask
 cask alacritty
+cask google-chrome
 
 tap rcmdnk/file
 brew brew-file
