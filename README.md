@@ -6,6 +6,12 @@ will still require some manual interventions like
 
 I'll automate and improve things as I go along.
 
+To deploy the dotfiles on a new machine, run:
+
+```sh
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --verbose --apply LeonardoMor
+```
+
 ## How it works
 
 `chezmoi` [documentation](https://www.chezmoi.io/user-guide/) is pretty
