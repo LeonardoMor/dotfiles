@@ -1,4 +1,6 @@
+{{- if findExecutable "bat" (list "/opt/homebrew/bin/") | isExecutable }}
 pager = "bat -pp --language diff"
+{{- end }}
 encryption = "gpg"
 [gpg]
     recipient = "leomc145@gmail.com"
@@ -25,11 +27,13 @@ encryption = "gpg"
     email = "leomc145@gmail.com"
 {{- end}}
     work_host = "LMORACAS-M-D6L6"
+{{- if eq .chezmoi.os "linux" }}
 {{- if eq .chezmoi.osRelease.id "arch" }}
     install_cmd = "paru --noconfirm --sync --needed"
 {{- else if eq .chezmoi.osRelease.id "ubuntu" }}
     install_cmd = "sudo apt-get -y install"
 {{ end }}
+{{- end}}
 {{- if isExecutable "/opt/homebrew/bin/brew" }}
     brew_prefix = "/opt/homebrew"
 {{- else if isExecutable "/usr/local/bin/brew" }}

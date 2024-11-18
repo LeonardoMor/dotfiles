@@ -2,7 +2,16 @@
 
 set -e
 
-brew --version >/dev/null 2>&1 || curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+if chezmoi --version >/dev/null 2>&1; then
+	chezmoi=chezmoi
+else
+	chezmoi=~/bin/chezmoi
+fi
+
+brew --version >/dev/null 2>&1 || {
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	$chezmoi init
+}
 
 if /opt/homebrew/bin/brew --version >/dev/null 2>&1; then
 	homebrew='/opt/homebrew/bin/brew'
@@ -18,4 +27,4 @@ brew-file set_local
 
 {
 	gpg --version >/dev/null 2>&1 || "$homebrew" install gnupg
-} && "$(chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"
+} && "$($chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"

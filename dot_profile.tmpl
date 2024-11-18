@@ -10,6 +10,9 @@ fi
 if ! echo ":${PATH}:" | grep -q ":${HOME}/.local/bin:"; then
 	export PATH="${HOME}/.local/bin:${PATH}"
 fi
+if ! echo ":${PATH}:" | grep -q ":${HOME}/bin:"; then
+	export PATH="${HOME}/bin:${PATH}"
+fi
 
 # XDG Base Dir spec https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 # https://wiki.archlinux.org/title/XDG_Base_Directory
