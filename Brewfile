@@ -4,6 +4,7 @@
 tap homebrew/core
 brew ca-certificates
 brew gettext
+brew gh
 brew gmp
 brew gnupg
 brew gnutls
@@ -26,6 +27,7 @@ brew readline
 brew unbound
 
 tap homebrew/cask
+cask alacritty
 
 tap rcmdnk/file
 brew brew-file
