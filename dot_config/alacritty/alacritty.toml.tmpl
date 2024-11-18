@@ -22,7 +22,7 @@ import = [
 save_to_clipboard = true
 
 {{- if eq .chezmoi.os "darwin" }}
-[shell]
+[shell.terminal]
 program = "{{ .brew_prefix }}/bin/bash"
 args = ["--login"]
 {{ end }}
