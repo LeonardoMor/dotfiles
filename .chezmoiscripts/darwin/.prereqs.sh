@@ -2,9 +2,7 @@
 
 set -e
 
-brew --version >/dev/null 2>&1 || {
-	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
-}
+brew --version >/dev/null 2>&1 || curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
 
 if /opt/homebrew/bin/brew --version >/dev/null 2>&1; then
 	homebrew='/opt/homebrew/bin/brew'
@@ -16,6 +14,7 @@ fi
 
 # Will manage brew packages with Homebrew-file
 brew-file --version >/dev/null 2>&1 || "$homebrew" install rcmdnk/file/brew-file
+brew-file set_local
 
 {
 	gpg --version >/dev/null 2>&1 || "$homebrew" install gnupg
