@@ -1,0 +1,8 @@
+#
+# ~/.bash_profile
+#
+{{- if eq .chezmoi.os "darwin" }}
+[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+{{- end }}
+[[ -f ~/.profile ]] && source ~/.profile
+[[ -f ~/.bashrc ]] && source ~/.bashrc
