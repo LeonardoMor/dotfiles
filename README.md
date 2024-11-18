@@ -60,59 +60,40 @@ soon. So here is my way to do it. Very likely there are better ways.
 
 ### Installing packages
 
-I have 3 lists of packages defined inside `.chezmoidata`. It looks like this:
+`run_onchange` scripts are executed to install (and uninstall on macOS) packages
+when a change is detected in the package file. The file is different on macOS
+and Linux.
 
-```output
-.chezmoidata
-├── common_packages.toml
-├── personal_packages.toml
-└── work_packages.toml
+#### Linux
 
-1 directory, 3 files
-```
+For Linux, I do it in exactly the way it's
+[described in the user guide](https://www.chezmoi.io/user-guide/advanced/install-packages-declaratively/).
 
-Each of those is just an array belonging to the `packages` key.
+Theres an `install_cmd` that is defined in `chezmoi.toml` depending on the
+version of Linux that's detected.
 
-The template `.chezmoiscripts/run_onchange_install-packages.sh.tmpl` produces a
-script that will run after executing `chezmoi apply` whenever there was a change
-on some package lists.
+The `run_onchange` script tracks changes on the file
+`.chezmoidata/packages.toml`. When there's a change, the list of packages is
+formed from the toml list `packages.linux` and passed to the `install_cmd`.
 
-That script is a function of the packages lists, the hostname and the OS. So the
-correct packages are installed correctly.
+Packages removed from the list are not uninstalled. To keep the list faithful to
+the actual packages I use, uninstalled packages have to be manually removed from
+the list.
 
-So to install a package (while keeping track of it), I simply add it to the
-correct list.
+It is worth noting, this packages file cannot be a template.
 
-Notice however that deleting a package from the list will trigger a run of the
-installation script, but that will not uninstall the package.
+#### macOS
 
-### Uninstalling packages
+To tell the full story, on both Linux and macOS, some things have to be
+installed before reading the source state. Arch Linux needs `paru` and macOS
+needs Homebrew, both to install packages. And any OS needs `gnupg` to decrypt
+secrets.
 
-Since `chezmoi diff` only reports diffs on managed files, we'll have to rely on
-git to detect packages that have been removed from any of the lists.
+I can install and uninstall packages somewhat declaritively on macOS thanks to
+[Brew-file](https://github.com/rcmdnk/homebrew-file/).
 
-To do so, this is my chezmoi configuration for git:
-
-```toml
-[git]
-    autoPush = true
-    commitMessageTemplate = "{{ promptString \"Commit message\" }}"
-```
-
-<!-- prettier-ignore -->
-> [!WARNING]
-> If any secrets are to be managed, add them with `chezmoi add --encrypt`.
-
-chezmoi has hooks that we can use. For this usecase, I'm simply using the
-`apply.post` hook to run a command. Specifically:
-
-```toml
-[hooks.apply.post]
-    command = "{{.chezmoi.homeDir}}/bin/uninstall-removed.sh"
-```
-
-The `uninstall-removed.sh` comes from a template that will use the correct
-command to uninstall the packages that were removed from the relevant lists.
+Brew-file is installed after the other pre-requisites. Then there's a wrap setup
+on the `.bashrc`, along with auto-completion.
 
 ## Encrypt secrets
 

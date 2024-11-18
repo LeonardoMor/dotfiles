@@ -36,7 +36,7 @@ fi
 
 # Load alias file if it exists
 if [[ -f ~/.bash_aliases ]]; then
-	. ~/.bash_aliases
+	source ~/.bash_aliases
 fi
 
 # PATH settings
@@ -74,13 +74,18 @@ source "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/fzf/tokyonight_night.s
 if ! shopt -oq posix; then
 	if [[ -f ${XDG_CONFIG_HOME}/bash-completion/bash_completion ]]; then
 		export BASH_COMPLETION_USER_FILE="${XDG_CONFIG_HOME}/bash-completion/bash_completion"
-		. "$BASH_COMPLETION_USER_FILE"
+		source "$BASH_COMPLETION_USER_FILE"
 	elif [[ -f /etc/bash_completion ]]; then
-		. /etc/bash_completion
+		source /etc/bash_completion
 	fi
 fi
 
 {{- if eq .chezmoi.os "darwin" }}
+# Homebrew shell completions
+if [[ -f "$(brew --prefix)/etc/bash_completion" ]]; then
+	source "$(brew --prefix)/etc/bash_completion"
+fi
+
 # Set Homebrew-file
 if [[ -f $(brew --prefix)/etc/brew-wrap ]]; then
 	source $(brew --prefix)/etc/brew-wrap
