@@ -2,6 +2,7 @@
 # tap repositories and their packages
 
 tap homebrew/core
+brew bash
 brew ca-certificates
 brew gettext
 brew gh
