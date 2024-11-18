@@ -37,7 +37,8 @@ if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
 
 		_post_brewfile_update() {
 			chezmoi git add .
-			read -rp 'Commit message? '
+			echo 'Commit message? '
+			read -r
 			chezmoi git -- commit -m "$REPLY"
 			chezmoi git push origin master
 		}
