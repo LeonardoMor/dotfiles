@@ -19,13 +19,22 @@ brew libnghttp2
 brew libtasn1
 brew libunistring
 brew libusb
+brew libuv
+brew libvterm
+brew lpeg
+brew luajit
+brew luv
+brew msgpack
+brew neovim
 brew nettle
 brew npth
 brew openssl@3
 brew p11-kit
 brew pinentry
 brew readline
+brew tree-sitter
 brew unbound
+brew unibilium
 
 tap homebrew/cask
 cask alacritty
