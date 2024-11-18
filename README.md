@@ -89,11 +89,58 @@ installed before reading the source state. Arch Linux needs `paru` and macOS
 needs Homebrew, both to install packages. And any OS needs `gnupg` to decrypt
 secrets.
 
-I can install and uninstall packages somewhat declaritively on macOS thanks to
+I can install and uninstall packages somewhat declaratively on macOS thanks to
 [Brew-file](https://github.com/rcmdnk/homebrew-file/).
 
 Brew-file is installed after the other pre-requisites. Then there's a wrap setup
-on the `.bashrc`, along with auto-completion.
+on the `.profile`, along with auto-completion on `.bashrc`.
+
+This wrap makes it so that `brew install` and `brew uninstall` update the
+brewfile accordingly. And thanks to the following few lines in `.bashrc`, these
+changes will be pushed to the dotfiles repo:
+
+```sh
+if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
+	# Reference: https://stackoverflow.com/a/65980738/7830232
+	eval {{ printf "$(%s/bin/brew shellenv)" .brew_prefix | quote }}
+
+	# Set Homebrew-file
+	if [ -f {{ printf "%s/etc/brew-wrap" .brew_prefix }} ]; then
+		. {{ printf "%s/etc/brew-wrap" .brew_prefix }}
+
+		_post_brewfile_update() {
+			chezmoi git add .
+			read -rp 'Commit message? '
+			chezmoi git -- commit -m "$REPLY"
+			chezmoi git push origin master
+		}
+	fi
+fi
+```
+
+But the brewfile can also be edited manually. So for example, editing it with
+the command:
+
+```bash
+chezmoi edit --apply "${XDG_CONFIG_HOME}/brewfile/Brewfile"
+```
+
+Will:
+
+- Update and apply the updates to the home dir
+- Commit and push the changes
+- Will trigger the `.chezmoiscripts/darwin/run_onchange_install_packages.sh`
+
+This script is very simply:
+
+```bash
+#!/bin/bash
+
+brew file install
+brew file clean
+```
+
+All thanks to Brew-file.
 
 ## Encrypt secrets
 
