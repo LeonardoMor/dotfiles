@@ -30,6 +30,8 @@ brew unbound
 tap homebrew/cask
 cask alacritty
 cask google-chrome
+cask slack
+cask zoom
 
 tap rcmdnk/file
 brew brew-file
