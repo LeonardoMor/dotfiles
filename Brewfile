@@ -38,6 +38,7 @@ brew unibilium
 
 tap homebrew/cask
 cask alacritty
+cask font-jetbrains-mono-nerd-font
 cask google-chrome
 cask slack
 cask zoom
