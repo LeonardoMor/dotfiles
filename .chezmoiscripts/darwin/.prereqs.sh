@@ -12,9 +12,6 @@ brew --version >/dev/null 2>&1 || {
 	elif /home/linuxbrew/.linuxbrew/bin/brew --version >/dev/null 2>&1; then
 		homebrew='/home/linuxbrew/.linuxbrew/bin/brew'
 	fi
-
-	# Reference: https://stackoverflow.com/a/76720643/7830232
-	echo "eval \$($homebrew shellenv)" >>~/.profile
 }
 
 # Will manage brew packages with Homebrew-file

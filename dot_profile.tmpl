@@ -1,0 +1,42 @@
+#
+# ~/.profile
+#
+# Keep it POSIX-compliant
+
+# Set PATH
+if ! echo ":${PATH}:" | grep -q ":${HOME}/.bin:"; then
+	export PATH="${HOME}/.bin:${PATH}"
+fi
+if ! echo ":${PATH}:" | grep -q ":${HOME}/.local/bin:"; then
+	export PATH="${HOME}/.local/bin:${PATH}"
+fi
+
+# XDG Base Dir spec https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+# https://wiki.archlinux.org/title/XDG_Base_Directory
+export XDG_CONFIG_HOME={{ printf "${XDG_CONFIG_HOME:-%s}" .XDG_CONFIG_HOME | quote }}
+export XDG_CACHE_HOME={{ printf "${XDG_CACHE_HOME:-%s}" .XDG_CACHE_HOME | quote }}
+export XDG_DATA_HOME={{ printf "${XDG_DATA_HOME:-%s}" .XDG_DATA_HOME | quote }}
+export XDG_STATE_HOME={{ printf "${XDG_STATE_HOME:-%s}" .XDG_STATE_HOME | quote }}
+export XDG_DATA_DIRS={{ printf "${XDG_DATA_DIRS:-%s}" .XDG_DATA_DIRS | quote }}
+export XDG_CONFIG_DIRS={{ printf "${XDG_CONFIG_DIRS:-%s}" .XDG_CONFIG_DIRS | quote }}
+for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"; do
+	mkdir -p "$d"
+done
+
+# Set brew
+if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
+	# Reference: https://stackoverflow.com/a/65980738/7830232
+	eval {{ printf "$(%s/bin/brew shellenv)" .brew_prefix | quote }}
+
+	# Set Homebrew-file
+	if [ -f {{ printf "%s/etc/brew-wrap" .brew_prefix }} ]; then
+		. {{ printf "%s/etc/brew-wrap" .brew_prefix }}
+
+		_post_brewfile_update() {
+			chezmoi git add .
+			read -rp 'Commit message? '
+			chezmoi git -- commit -m "$REPLY"
+			chezmoi git push origin master
+		}
+	fi
+fi

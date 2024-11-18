@@ -36,6 +36,8 @@ encryption = "gpg"
     brew_prefix = "/usr/local"
 {{- else if isExecutable "/home/linuxbrew/.linuxbrew/bin/brew" }}
     brew_prefix = "/home/linuxbrew/.linuxbrew"
+{{- else }}
+    brew_prefix = ""
 {{- end -}}
 {{/*- XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
