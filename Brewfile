@@ -3,6 +3,7 @@
 
 tap homebrew/core
 brew bash
+brew bash-completion
 brew ca-certificates
 brew gettext
 brew gh
