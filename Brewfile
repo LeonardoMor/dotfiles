@@ -33,8 +33,10 @@ brew nettle
 brew npth
 brew openssl@3
 brew p11-kit
+brew pcre2
 brew pinentry
 brew readline
+brew ripgrep
 brew tmux
 brew tree
 brew tree-sitter
