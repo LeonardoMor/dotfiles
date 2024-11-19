@@ -4,18 +4,20 @@ TERM = "xterm-256color"
 [window]
 padding.x = 10
 padding.y = 10
+opacity = 0.9
+blur = false
 {{- if eq .chezmoi.os "linux" }}
 decorations = "none"
+startup_mode = "Fullscreen"
 {{- end }}
 {{- if eq .chezmoi.os "darwin" }}
 decorations = "Transparent"
-{{- end }}
-opacity = 0.9
-blur = false
 startup_mode = "Maximized"
+{{- end }}
 
 [font]
 normal.family = "JetBrainsMono Nerd Font"
+size = 13
 
 [general]
 # import = ["~/.config/alacritty/themes/themes/tokyonight_night.toml"]
