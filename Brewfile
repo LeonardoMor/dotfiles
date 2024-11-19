@@ -33,6 +33,7 @@ brew openssl@3
 brew p11-kit
 brew pinentry
 brew readline
+brew tree
 brew tree-sitter
 brew unbound
 brew unibilium
