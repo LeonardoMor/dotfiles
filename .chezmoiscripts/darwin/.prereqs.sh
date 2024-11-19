@@ -22,8 +22,10 @@ elif /home/linuxbrew/.linuxbrew/bin/brew --version >/dev/null 2>&1; then
 fi
 
 # Will manage brew packages with Homebrew-file
-brew-file --version >/dev/null 2>&1 || "$homebrew" install rcmdnk/file/brew-file
-brew-file set_local
+brew-file --version >/dev/null 2>&1 || {
+	"$homebrew" install rcmdnk/file/brew-file
+	brew-file set_local
+}
 
 {
 	gpg --version >/dev/null 2>&1 || "$homebrew" install gnupg
