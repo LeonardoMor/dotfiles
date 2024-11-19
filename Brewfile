@@ -26,6 +26,7 @@ brew lpeg
 brew luajit
 brew luv
 brew msgpack
+brew ncurses
 brew neovim
 brew nettle
 brew npth
@@ -33,10 +34,12 @@ brew openssl@3
 brew p11-kit
 brew pinentry
 brew readline
+brew tmux
 brew tree
 brew tree-sitter
 brew unbound
 brew unibilium
+brew utf8proc
 
 tap homebrew/cask
 cask alacritty
