@@ -5,7 +5,6 @@ tap homebrew/core
 brew bash
 brew bash-completion
 brew ca-certificates
-brew fzf
 brew gettext
 brew gh
 brew gmp
@@ -36,7 +35,6 @@ brew p11-kit
 brew pcre2
 brew pinentry
 brew readline
-brew ripgrep
 brew tmux
 brew tree
 brew tree-sitter
