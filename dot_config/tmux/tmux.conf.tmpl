@@ -3,9 +3,15 @@ set-option -as terminal-overrides ",xterm*:Tc"
 set -g mouse on
 
 # Set prefix
+{{- .if eq .chezmoi.os "darwin" }}
+unbind C-b
+set -g prefix C-a
+bind C-a send-prefix
+{{- else }}
 unbind C-b
 set -g prefix C-Space
 bind C-Space send-prefix
+{{- end }}
 
 # Shift Alt vim keys to switch windows
 bind -n M-H previous-window
