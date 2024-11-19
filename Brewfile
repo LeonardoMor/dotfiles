@@ -31,6 +31,7 @@ brew ncurses
 brew neovim
 brew nettle
 brew npth
+brew nvm
 brew openssl@3
 brew p11-kit
 brew pcre2
