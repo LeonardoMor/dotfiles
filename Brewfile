@@ -13,6 +13,7 @@ brew gh
 brew gmp
 brew gnupg
 brew gnutls
+brew go
 brew keychain
 brew libassuan
 brew libevent
