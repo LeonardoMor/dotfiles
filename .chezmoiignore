@@ -9,5 +9,5 @@ Brewfile
 {{- end }}
 {{- if eq .chezmoi.hostname .work_host }}
 .config/nvim/lua/plugins/neocodeium.lua
-dot_config/nvim/exact_lua/plugins/cord.nvim.lua
+.config/nvim/lua/plugins/cord.nvim.lua
 {{- end }}
