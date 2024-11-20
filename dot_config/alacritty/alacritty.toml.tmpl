@@ -30,7 +30,9 @@ import = [
 [selection]
 save_to_clipboard = true
 
-{{- if eq .chezmoi.os "darwin" }}
 [terminal]
+{{- if eq .chezmoi.os "darwin" }}
 shell = { program = "{{ .brew_prefix }}/bin/bash", args = ["--login"] }
+{{- else }}
+shell = { program = "bash", args = ["--login"] }
 {{ end }}
