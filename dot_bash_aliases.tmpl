@@ -6,5 +6,5 @@ alias clip=
 {{- if eq .chezmoi.hostname "cassini" -}}
 'wl-copy --trim-newline'
 {{- else if eq .chezmoi.os "darwin" -}}
-xargs printf '%s' | pbcopy
+"xargs printf '%s' | pbcopy"
 {{ end }}
