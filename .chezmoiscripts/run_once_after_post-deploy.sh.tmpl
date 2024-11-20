@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+{{- if eq .chezmoi.os "darwin" }}
+
+# Install ble.sh
+ble --version >/dev/null 2>&1 || {
+	git clone --recursive https://github.com/akinomyoga/ble.sh.git ~/ble.sh
+	(
+		cd ~/ble.sh
+		make install
+	)
+}
+{{- end }}
+
+if gh --version >/dev/null 2>&1 && ! gh auth status >/dev/null 2>&1; then
+	gh auth login
+fi
