@@ -24,7 +24,7 @@ bash "${BLESH_PATH}/ble.sh" --version >/dev/null 2>&1 || {
 {{- end }}
 
 # Install node
-nvm install node
+node --version >/dev/null 2>&1 || nvm install node
 
 # Authenticate to github.com
 if gh --version >/dev/null 2>&1 && ! gh auth status >/dev/null 2>&1; then
