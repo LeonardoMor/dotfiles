@@ -7,7 +7,7 @@
 [[ $- != *i* ]] && return
 {{- if eq .chezmoi.os "darwin" }}
 export BLESH_PATH=~/.local/share/blesh
-{{- else if eq .chezmoi.osRelease.id "arch" -}}
+{{- else if eq .chezmoi.osRelease.id "arch" }}
 export BLESH_PATH=/usr/share/blesh
 {{- end }}
 source "${BLESH_PATH}/ble.sh" --noattach
