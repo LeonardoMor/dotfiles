@@ -5,6 +5,7 @@ tap homebrew/core
 brew bash
 brew bash-completion
 brew ca-certificates
+brew chezmoi
 brew fzf
 brew gawk
 brew gettext
