@@ -77,10 +77,12 @@ eval "$(keychain --quiet --nogui --eval id_ed25519)"
 eval "$(starship init bash)"
 
 # nvm
-[[ -z $NVM_DIR ]] && export NVM_DIR=/usr/share/nvm
-source "${NVM_DIR}/nvm.sh"
+{{- if eq .chezmoi.os "darwin" }}
+[ -s "{{ .brew_prefix }}/opt/nvm/etc/bash_completion.d/nvm" ] && source "{{ .brew_prefix }}/opt/nvm/etc/bash_completion.d/nvm"
+{{- else if eq .chezmoi.osRelease.id "arch" }}
 source "${NVM_DIR}/bash_completion"
 source "${NVM_DIR}/install-nvm-exec"
+{{- end }}
 
 # ble.sh: this has to be the last line
 [[ ${BLE_VERSION-} ]] && ble-attach

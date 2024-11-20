@@ -44,3 +44,12 @@ if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
 		}
 	fi
 fi
+
+# Set nvm
+{{- if eq .chezmoi.os "darwin" }}
+[ -z "$NVM_DIR" ] && export NVM_DIR="${HOME}/.nvm"
+[ -s "{{ .brew_prefix }}/opt/nvm/nvm.sh" ] && . "{{ .brew_prefix }}/opt/nvm/nvm.sh"
+{{- else if eq .chezmoi.osRelease.id "arch" }}
+[ -z "$NVM_DIR" ] && export NVM_DIR=/usr/share/nvm
+source "${NVM_DIR}/nvm.sh"
+{{ end }}
