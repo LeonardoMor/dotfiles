@@ -22,14 +22,18 @@ brew libgpg-error
 brew libidn2
 brew libksba
 brew libnghttp2
+brew libsodium
 brew libtasn1
 brew libunistring
 brew libusb
 brew libuv
 brew libvterm
+brew libyaml
 brew lpeg
+brew lua
 brew luajit
 brew luv
+brew mpdecimal
 brew mpfr
 brew msgpack
 brew ncurses
@@ -41,8 +45,11 @@ brew openssl@3
 brew p11-kit
 brew pcre2
 brew pinentry
+brew python@3.13
 brew readline
 brew ripgrep
+brew ruby
+brew sqlite
 brew starship
 brew tmux
 brew tree
@@ -50,6 +57,8 @@ brew tree-sitter
 brew unbound
 brew unibilium
 brew utf8proc
+brew vim
+brew xz
 
 tap homebrew/cask
 cask alacritty
