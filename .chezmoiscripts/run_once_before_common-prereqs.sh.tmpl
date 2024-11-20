@@ -5,3 +5,15 @@ XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 # Install Tmux Plugin Manager
 # You still need to open tmux and do prefix + I
 [[ -f "${XDG_CONFIG_HOME}/tmux/plugins/tpm/tpm" ]] || git clone https://github.com/tmux-plugins/tpm "${XDG_CONFIG_HOME}/tmux/plugins/tpm"
+
+{{- if eq .chezmoi.os "darwin" }}
+
+# Install ble.sh
+ble --version >/dev/null 2>&1 || {
+	git clone --recursive https://github.com/akinomyoga/ble.sh.git ~/ble.sh
+	(
+		cd ~/ble.sh
+		make install	
+	)
+}
+{{- end }}
