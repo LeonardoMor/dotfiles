@@ -6,6 +6,7 @@ brew bash
 brew bash-completion
 brew ca-certificates
 brew fzf
+brew gawk
 brew gettext
 brew gh
 brew gmp
@@ -27,6 +28,7 @@ brew libvterm
 brew lpeg
 brew luajit
 brew luv
+brew mpfr
 brew msgpack
 brew ncurses
 brew neovim
