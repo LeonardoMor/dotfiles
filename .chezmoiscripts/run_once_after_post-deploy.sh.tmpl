@@ -1,17 +1,32 @@
 #!/usr/bin/env bash
 
+source ~/.profile
+
+# Install Tmux Plugin Manager
+# You still need to open tmux and do prefix + I
+[[ -f "${XDG_CONFIG_HOME}/tmux/plugins/tpm/tpm" ]] || git clone https://github.com/tmux-plugins/tpm "${XDG_CONFIG_HOME}/tmux/plugins/tpm"
+
 {{- if eq .chezmoi.os "darwin" }}
 
+export BLESH_PATH=~/.local/share/blesh
+
 # Install ble.sh
-ble --version >/dev/null 2>&1 || {
+bash "${BLESH_PATH}/ble.sh" --version >/dev/null 2>&1 || {
 	git clone --recursive https://github.com/akinomyoga/ble.sh.git ~/ble.sh
 	(
 		cd ~/ble.sh
 		make install
 	)
 }
+
+# Keep the chezmoi from brew
+[[ -f ~/bin/chezmoi ]] && rm -f ~/bin/chezmoi
 {{- end }}
 
+# Install node
+nvm install node
+
+# Authenticate to github.com
 if gh --version >/dev/null 2>&1 && ! gh auth status >/dev/null 2>&1; then
 	gh auth login
 fi
