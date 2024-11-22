@@ -11,5 +11,4 @@ Brewfile
 .config/nvim/lua/plugins/neocodeium.lua
 .config/nvim/lua/plugins/cord.nvim.lua
 bin/toggle_laptop_screen.sh
-bin/update
 {{- end }}
