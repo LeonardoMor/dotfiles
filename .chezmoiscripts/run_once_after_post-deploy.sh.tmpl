@@ -26,6 +26,9 @@ bash "${BLESH_PATH}/ble.sh" --version >/dev/null 2>&1 || {
 # Install node
 node --version >/dev/null 2>&1 || nvm install node
 
+# Build bat theme
+bat --version >/dev/null 2>&1 && bat cache --build
+
 # Install prettier and it's awk formatter globally
 npm install --global prettier@^2 prettier-plugin-awk
 
