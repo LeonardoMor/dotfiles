@@ -5,11 +5,6 @@
 {{- if eq .chezmoi.osRelease.id "arch" }}
 paru -Syu
 {{ end -}}
-{{ end -}}
-
-# Update global npm modules
-sleep 1
-npm update -g
 
 # Update snaps
 sleep 1
@@ -18,3 +13,8 @@ sudo snap refresh
 # Update flatpaks
 sleep 1
 flatpak update -y
+{{ end -}}
+
+# Update global npm modules
+sleep 1
+npm update -g
