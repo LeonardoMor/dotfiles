@@ -4,6 +4,7 @@
 tap homebrew/core
 brew bash
 brew bash-completion
+brew bat
 brew ca-certificates
 brew chezmoi
 brew fzf
@@ -18,11 +19,13 @@ brew keychain
 brew libassuan
 brew libevent
 brew libgcrypt
+brew libgit2
 brew libgpg-error
 brew libidn2
 brew libksba
 brew libnghttp2
 brew libsodium
+brew libssh2
 brew libtasn1
 brew libunistring
 brew libusb
@@ -41,6 +44,7 @@ brew neovim
 brew nettle
 brew npth
 brew nvm
+brew oniguruma
 brew openssl@3
 brew p11-kit
 brew pcre2
