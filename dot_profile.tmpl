@@ -42,6 +42,7 @@ if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
 			chezmoi git -- commit -m "$REPLY"
 			chezmoi git push origin master
 		}
+		export HOMEBREW_CASK_OPTS="--no-quarantine"
 	fi
 fi
 
