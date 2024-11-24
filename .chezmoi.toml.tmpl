@@ -1,9 +1,11 @@
 {{- if findExecutable "bat" (list "/opt/homebrew/bin/") | isExecutable }}
 pager = "bat -pp --language diff"
-{{- end }}
+
+{{ end -}}
 encryption = "gpg"
 [gpg]
     recipient = "leomc145@gmail.com"
+    args = ["--quiet"]
 
 [hooks.read-source-state.pre]
     command = "{{ .chezmoi.sourceDir }}/.chezmoiscripts/{{ .chezmoi.os }}/.prereqs.sh"
