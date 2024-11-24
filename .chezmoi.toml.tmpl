@@ -1,4 +1,4 @@
-{{- if findExecutable "bat" (list "/opt/homebrew/bin/") | isExecutable }}
+{{- if findExecutable "bat" (list "/opt/homebrew/bin/") | isExecutable -}}
 pager = "bat -pp --language diff"
 
 {{ end -}}
