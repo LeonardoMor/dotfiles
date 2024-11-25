@@ -4,10 +4,6 @@ set -g mouse on
 
 # Set prefix
 {{- if eq .chezmoi.os "darwin" }}
-unbind C-b
-set -g prefix C-a
-bind C-a send-prefix
-
 set-option -g default-shell {{.brew_prefix}}/bin/bash
 {{- else }}
 unbind C-b
