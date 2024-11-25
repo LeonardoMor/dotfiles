@@ -31,9 +31,10 @@ import = [
 [selection]
 save_to_clipboard = true
 
-[terminal]
+[terminal.shell]
 {{- if eq .chezmoi.os "darwin" }}
-shell = { program = "{{ .brew_prefix }}/bin/bash", args = ["--login"] }
+program = "{{ .brew_prefix }}/bin/bash"
 {{- else }}
-shell = { program = "bash", args = ["--login"] }
+program = "bash"
 {{ end }}
+args = ["--login", "-c", "tmux attach || tmux"]
