@@ -1,11 +1,7 @@
 return {
   'epwalsh/obsidian.nvim',
-  version = '*', -- recommended, use latest release instead of latest commit
+  version = '*',
   lazy = true,
-  event = {
-    'BufReadPre ' .. os.getenv 'HOME' .. '/source/repos/Codice/**',
-    'BufNewFile ' .. os.getenv 'HOME' .. '/source/repos/Codice/**',
-  },
   dependencies = {
     'nvim-lua/plenary.nvim',
   },
@@ -13,7 +9,7 @@ return {
     workspaces = {
       {
         name = 'Codice',
-        path = '~/source/repos/Codice',
+        path = os.getenv 'HOME' .. '/source/repos/Codice',
       },
     },
     completion = {
@@ -21,6 +17,21 @@ return {
       min_chars = 2,
     },
     ui = { enable = false },
+    event = function()
+      local events = {}
+      vim.list_extend(
+        events,
+        vim.tbl_map(function(workspace)
+          return 'BufNewFile' .. workspace.path .. '/**'
+        end, opts.workspaces)
+      )
+      vim.list_extend(
+        events,
+        vim.tbl_map(function(workspace)
+          return 'BufReadPre ' .. workspace.path .. '/**'
+        end, opts.workspaces)
+      )
+    end,
   },
   -- config = function()
   --   vim.api.nvim_create_autocmd('FileType', {
