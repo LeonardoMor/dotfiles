@@ -23,12 +23,12 @@ encryption = "gpg"
 
 [data]
     name = "Leonardo Mora Castro"
-{{- if eq .chezmoi.hostname "worklaptop"}}
+    work_host = "LMORACAS-M-D6L6"
+{{- if eq .chezmoi.hostname .work_host }}
     email = "lmoracas@cisco.com"
 {{- else}}
     email = "leomc145@gmail.com"
 {{- end}}
-    work_host = "LMORACAS-M-D6L6"
 {{- if eq .chezmoi.os "linux" }}
 {{- if eq .chezmoi.osRelease.id "arch" }}
     install_cmd = "paru --noconfirm --sync --needed"
