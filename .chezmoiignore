@@ -7,6 +7,8 @@ Brewfile
 .obsidian
 {{- if eq .chezmoi.hostname "cassini" }}
 .config/brewfile
+Documents/Meta\ Work/.obsidian
+Documents/Splunk\ Cloud\ Support/.obsidian
 {{- end }}
 {{- if eq .chezmoi.hostname .work_host }}
 .config/nvim/lua/plugins/neocodeium.lua
