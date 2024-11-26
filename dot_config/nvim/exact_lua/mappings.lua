@@ -146,3 +146,6 @@ vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous search result and center th
 vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { desc = 'Copy to clipboard' })
 vim.keymap.set({ 'n', 'v' }, '<leader>Y', '"+Y', { desc = 'Copy line to clipboard' })
 vim.keymap.set({ 'i', 'n', 'v' }, '<S-Insert>', '"+p', { desc = 'Paste from clipboard' })
+
+-- Chezmoi
+vim.keymap.set('n', '<leader>cx', '<cmd>vnew | r ! chezmoi execute-template <#<cr>', { desc = 'Execute chezmoi template for preview' })
