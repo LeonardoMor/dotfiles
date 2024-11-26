@@ -2,6 +2,7 @@
 #!/bin/bash
 
 # Track the Brewfile: {{ include "Brewfile" | sha256sum }}
+brew file update
 brew file install
 brew file clean
 {{ end -}}
