@@ -26,3 +26,12 @@ vim.api.nvim_create_autocmd('BufReadPost', {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPre' }, {
+  desc = 'Set correct type for chezmoi templates',
+  group = vim.api.nvim_create_augroup('chezmoi-tmpl', { clear = true }),
+  pattern = '{{ .chezmoi.sourceDir }}/**.tmpl',
+  callback = function()
+    vim.opt_local.filetype = 'gotmpl'
+  end,
+})
