@@ -6,10 +6,21 @@ return {
   },
   opts = {
     workspaces = {
+{{- if eq .chezmoi.hostname "cassini" }}
       {
         name = 'Codice',
         path = os.getenv 'HOME' .. '/source/repos/Codice',
       },
+{{- else if eq .chezmoi.hostname .work_host }}
+      {
+        name = 'Meta Work',
+        path = os.getenv 'HOME' .. '/Documents/Meta Work',
+      },
+      {
+        name = 'Splunk Cloud Support',
+        path = os.getenv 'HOME' .. '/Documents/Splunk Cloud Support',
+      },
+{{- end }}
     },
     completion = {
       nvim_cmp = true,
