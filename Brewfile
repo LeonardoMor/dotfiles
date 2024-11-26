@@ -69,6 +69,7 @@ cask alacritty
 cask font-jetbrains-mono-nerd-font
 cask google-chrome
 cask obsidian
+cask rectangle
 cask slack
 cask zoom
 
