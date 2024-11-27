@@ -7,6 +7,8 @@ brew bash-completion
 brew bat
 brew ca-certificates
 brew chezmoi
+brew fontconfig
+brew freetype
 brew fzf
 brew gawk
 brew gettext
@@ -24,6 +26,7 @@ brew libgpg-error
 brew libidn2
 brew libksba
 brew libnghttp2
+brew libpng
 brew libsodium
 brew libssh2
 brew libtasn1
