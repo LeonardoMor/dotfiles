@@ -74,6 +74,7 @@ cask google-chrome
 cask obsidian
 cask rectangle
 cask slack
+cask whatsapp
 cask zoom
 
 tap rcmdnk/file
