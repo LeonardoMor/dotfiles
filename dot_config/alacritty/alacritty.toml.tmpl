@@ -38,3 +38,8 @@ program = "{{ .brew_prefix }}/bin/bash"
 program = "bash"
 {{ end }}
 args = ["--login", "-c", "tmux attach 2>/dev/null || tmux"]
+
+[keyboard]
+bindings = [
+	{ key = "Back", mods = "Control", chars = "\u0017" }
+]
