@@ -11,10 +11,14 @@
             "id": "c6cde4371ca768d0",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "Projects/Intro to Splunk.md",
+                "mode": "preview",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "Intro to Splunk"
             }
           }
         ]
@@ -158,7 +162,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "d04acef9173d39e1",
+  "active": "c6cde4371ca768d0",
   "lastOpenFiles": [
     "Projects",
     "Areas",
