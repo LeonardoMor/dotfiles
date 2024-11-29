@@ -4,6 +4,7 @@
 .ssh/known_hosts*
 README.md
 Brewfile
+Documents/*/.obsidian/workspace.json
 {{- if eq .chezmoi.hostname "cassini" }}
 .config/brewfile
 Documents/Meta\ Work/.obsidian
