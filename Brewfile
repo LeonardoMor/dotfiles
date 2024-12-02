@@ -25,6 +25,7 @@ brew libgit2
 brew libgpg-error
 brew libidn2
 brew libksba
+brew liblinear
 brew libnghttp2
 brew libpng
 brew libsodium
@@ -45,6 +46,7 @@ brew msgpack
 brew ncurses
 brew neovim
 brew nettle
+brew nmap
 brew npth
 brew nvm
 brew oniguruma
