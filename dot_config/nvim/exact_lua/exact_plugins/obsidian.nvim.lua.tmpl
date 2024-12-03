@@ -5,6 +5,7 @@ return {
     'nvim-lua/plenary.nvim',
   },
   opts = {
+    wiki_link_func = "use_alias_only",
     workspaces = {
 {{- if eq .chezmoi.hostname "cassini" }}
       {
