@@ -1,5 +1,7 @@
 [packages]
 linux = [
+	"1password",
+	"1password-cli",
 	"alacritty",
 	"asciinema",
 	"bash-completion",
