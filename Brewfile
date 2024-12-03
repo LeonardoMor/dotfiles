@@ -70,6 +70,8 @@ brew vim
 brew xz
 
 tap homebrew/cask
+cask 1password
+cask 1password-cli
 cask alacritty
 cask font-jetbrains-mono-nerd-font
 cask google-chrome
