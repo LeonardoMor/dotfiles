@@ -9,14 +9,8 @@
 	autocrlf = false
 	editor = nvim
 [credential "https://github.com"]
-{{- if eq .chezmoi.os "linux" }}
+	helper = 
 	helper = !/usr/bin/gh auth git-credential
-{{- else if eq .chezmoi.os "darwin" }}
-	helper = !/opt/homebrew/bin/gh auth git-credential
-{{ end -}}
 [credential "https://gist.github.com"]
-{{- if eq .chezmoi.os "linux" }}
+	helper = 
 	helper = !/usr/bin/gh auth git-credential
-{{- else if eq .chezmoi.os "darwin" }}
-	helper = !/opt/homebrew/bin/gh auth git-credential
-{{ end -}}
