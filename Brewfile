@@ -17,6 +17,7 @@ brew gmp
 brew gnupg
 brew gnutls
 brew go
+brew kanata
 brew keychain
 brew libassuan
 brew libevent
