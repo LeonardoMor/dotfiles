@@ -1,0 +1,33 @@
+(defcfg
+  process-unmapped-keys yes
+)
+
+;; kanata doesn't take care of the function keys
+(defsrc
+  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10   f11   f12
+  caps s d f j k l
+)
+
+(defvar
+  tap-time 150
+  hold-time 200
+)
+
+(defalias
+  s (tap-hold $tap-time $hold-time s lalt)
+  d (tap-hold $tap-time $hold-time d lmet)
+  f (tap-hold $tap-time $hold-time f lctl)
+  j (tap-hold $tap-time $hold-time j lctl)
+  k (tap-hold $tap-time $hold-time k lmet)
+  l (tap-hold $tap-time $hold-time l lalt)
+)
+
+(deflayer base
+  brdn  brup  _    _    _    _   prev  pp  next  mute  vold  volu
+  esc @s @d @f @j @k @l
+)
+
+(deflayer fn
+  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10   f11   f12
+  esc _ _ _ _ _ _
+)

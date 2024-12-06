@@ -6,6 +6,9 @@ README.md
 Brewfile
 Documents/*/.obsidian/workspace.json
 Documents/*/.obsidian/graph.json
+{{- if not (eq .chezmoi.os "darwin") }}
+Library
+{{- end }}
 {{- if eq .chezmoi.hostname "cassini" }}
 .config/brewfile
 Documents/Meta\ Work/.obsidian

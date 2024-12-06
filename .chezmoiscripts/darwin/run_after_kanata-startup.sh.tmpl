@@ -1,0 +1,42 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/usr/bin/env bash
+
+service_name='com.jtroo.kanata'
+
+[[ -f /Library/LaunchDaemons/${service_name}.plist ]] || {
+  cat >"/tmp/${service_name}.plist" <<HERE
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>$service_name</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>{{ .brew_prefix }}/bin/kanata</string>
+      <string>--cfg</string>
+      <string>{{ .chezmoi.sourceDir }}/.kanata.kbd</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Library/Logs/Kanata/kanata.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Library/Logs/Kanata/kanata.err.log</string>
+  </dict>
+</plist>
+HERE
+
+  sudo chown root:wheel "/tmp/${service_name}.plist"
+  sudo chmod 644 "/tmp/${service_name}.plist"
+  sudo cp "/tmp/${service_name}.plist" /Library/LaunchDaemons
+  sudo rm -f "/tmp/${service_name}.plist"
+}
+
+sudo launchctl print "system/$service_name" >/dev/null 2>&1 || {
+  sudo launchctl bootstrap system /Library/LaunchDaemons/${service_name}.plist
+  sudo launchctl enable "system/$service_name"
+}
+{{ end -}}
