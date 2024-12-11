@@ -7,6 +7,7 @@ brew bash-completion
 brew bat
 brew ca-certificates
 brew chezmoi
+brew fastfetch
 brew fontconfig
 brew freetype
 brew fzf
