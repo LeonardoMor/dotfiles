@@ -80,6 +80,7 @@ cask google-chrome
 cask obsidian
 cask rectangle
 cask slack
+cask steam
 cask whatsapp
 cask zoom
 
