@@ -6,6 +6,7 @@ return { -- Useful plugin to show you pending keybinds.
 
     -- Document existing key chains
     require('which-key').add {
+      { '<leader>b', group = '[B]uffer' },
       { '<leader>c', group = '[C]ode' },
       { '<leader>d', group = '[D]ocument' },
       { '<leader>r', group = '[R]ename' },
@@ -14,6 +15,7 @@ return { -- Useful plugin to show you pending keybinds.
       { '<leader><tab>', group = '[Tab]' },
       { '<leader>t', group = '[T]oggle' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+      { '<leader>w', group = '[W]indow' },
     }
   end,
 }

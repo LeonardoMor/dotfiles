@@ -21,26 +21,27 @@ vim.keymap.set('n', '<leader><tab>[', '<cmd>tabprevious<cr>', { desc = 'Previous
 
 -- Windows bindings
 -- Resize window using arrow keys
-vim.keymap.set('n', '<C-Up>', '<cmd>resize +2<cr>', { desc = 'Increase Window Height' })
-vim.keymap.set('n', '<C-Down>', '<cmd>resize -2<cr>', { desc = 'Decrease Window Height' })
-vim.keymap.set('n', '<C-Left>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Window Width' })
-vim.keymap.set('n', '<C-Right>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
+vim.keymap.set('n', '<C-Up>', '<cmd>resize +2<cr>', { desc = 'Increase [W]indow Height' })
+vim.keymap.set('n', '<C-Down>', '<cmd>resize -2<cr>', { desc = 'Decrease [W]indow Height' })
+vim.keymap.set('n', '<C-Left>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease [W]indow Width' })
+vim.keymap.set('n', '<C-Right>', '<cmd>vertical resize +2<cr>', { desc = 'Increase [W]indow Width' })
 
 -- Manipulate windows
+-- NOTE: `remap = true` will allow you to use existing mappings in the right hand side of the definition
 vim.keymap.set('n', '<leader>ww', '<C-W>p', { desc = 'Other [W]indow', remap = true })
-vim.keymap.set('n', '<leader>wd', '<C-W>c', { desc = 'Delete [W]indow', remap = true })
+vim.keymap.set('n', '<leader>wd', '<C-W>c', { desc = '[D]elete [W]indow', remap = true })
 vim.keymap.set('n', '<leader>w-', '<C-W>s', { desc = 'Split [W]indow Below', remap = true })
 vim.keymap.set('n', '<leader>w|', '<C-W>v', { desc = 'Split [W]indow Right', remap = true })
 vim.keymap.set('n', '<leader>-', '<C-W>s', { desc = 'Split [W]indow Below', remap = true })
 vim.keymap.set('n', '<leader>|', '<C-W>v', { desc = 'Split [W]indow Right', remap = true })
 vim.keymap.set('n', '<leader>wm', function()
   require('maximize').toggle()
-end)
+end, { desc = 'Toggle [M]aximize [W]indow' })
 
 -- Buffer bindings
-vim.keymap.set('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })
-vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next Buffer' })
-vim.keymap.set('n', '<leader>bb', '<cmd>e #<cr>', { desc = 'Switch to Other Buffer' })
+vim.keymap.set('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev [B]uffer' })
+vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next [B]uffer' })
+vim.keymap.set('n', '<leader>bb', '<cmd>e #<cr>', { desc = 'Switch to Other [B]uffer' })
 
 local function bufremove(buf)
   buf = buf or 0
@@ -84,7 +85,7 @@ local function bufremove(buf)
   end
 end
 
-vim.keymap.set('n', '<leader>bd', bufremove, { desc = 'Delete Buffer' })
+vim.keymap.set('n', '<leader>bd', bufremove, { desc = '[D]elete [B]uffer' })
 
 -- Move lines
 vim.keymap.set('n', '<A-j>', '<cmd>m .+1<cr>==', { desc = 'Move Line Down' })
