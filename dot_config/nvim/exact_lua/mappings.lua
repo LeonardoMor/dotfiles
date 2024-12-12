@@ -108,8 +108,9 @@ vim.keymap.set('v', '>', '>gv')
 vim.keymap.set('n', 'gco', 'o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>', { desc = 'Add Comment Below' })
 vim.keymap.set('n', 'gcO', 'O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>', { desc = 'Add Comment Above' })
 
--- New file
+-- File mappings
 vim.keymap.set('n', '<leader>fn', '<cmd>enew<cr>', { desc = 'New File' })
+vim.keymap.set('n', '<leader>fs', '<cmd>up<cr>', { desc = '[S]ave [F]ile if changed' })
 
 -- Diagnostics
 local diagnostic_goto = function(next, severity)
