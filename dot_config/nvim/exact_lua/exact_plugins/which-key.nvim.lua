@@ -9,7 +9,7 @@ return { -- Useful plugin to show you pending keybinds.
       { '<leader>b', group = '[B]uffer' },
       { '<leader>c', group = '[C]ode' },
       { '<leader>d', group = '[D]ocument' },
-      { '<leader>f', group = '[F]ile' },
+      { '<leader>f', group = '[F]ile and [F]ormat' },
       { '<leader>r', group = '[R]ename' },
       { '<leader>s', group = '[S]earch' },
       { '<leader>w', group = '[W]orkspace' },
