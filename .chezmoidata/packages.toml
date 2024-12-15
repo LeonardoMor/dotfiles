@@ -24,6 +24,7 @@ linux = [
 	"lftp",
 	"lib32-gamemode",
 	"libreoffice-still",
+	"lutris",
 	"man-db",
 	"neovim",
 	"noto-fonts-cjk",
