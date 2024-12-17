@@ -50,3 +50,6 @@ vim.g.markdown_code_fenced_languages = { 'yaml', 'vim', 'bash=sh', 'awk', 'pytho
 -- Don't keep search highlight, but highlight as you type
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
+
+-- Mark the 80th column
+vim.opt.colorcolumn = '80'
