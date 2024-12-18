@@ -90,6 +90,9 @@ return { -- Autocompletion
         --  completions whenever it has completion options available.
         ['<C-Space>'] = cmp.mapping.complete {},
 
+        -- Abort current completion menu if it is being displayed
+        ['<C-q>'] = cmp.mapping.abort(),
+
         -- Think of <c-l> as moving to the right of your snippet expansion.
         --  So if you have a snippet that's like:
         --  function $name($args)

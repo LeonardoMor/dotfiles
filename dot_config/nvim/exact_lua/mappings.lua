@@ -137,6 +137,9 @@ end, { desc = 'Toggles Diagnostics', expr = true })
 -- Quit
 vim.keymap.set('n', '<leader>qq', '<cmd>qa<cr>', { desc = 'Quit all' })
 
+-- Chezmoi
+vim.keymap.set('n', '<leader>cx', '<cmd>vnew | r ! chezmoi execute-template <#<cr>', { desc = 'Execute chezmoi template for preview' })
+
 -- Miscellaneous
 vim.keymap.set('n', '<leader>ds', "<cmd>lua require('neogen').generate()<CR>", { desc = 'Generate docstring' })
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Scroll down half page and center the cursor vertically' })
@@ -148,6 +151,4 @@ vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous search result and center th
 vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { desc = 'Copy to clipboard' })
 vim.keymap.set({ 'n', 'v' }, '<leader>Y', '"+Y', { desc = 'Copy line to clipboard' })
 vim.keymap.set({ 'i', 'n', 'v' }, '<S-Insert>', '"+p', { desc = 'Paste from clipboard' })
-
--- Chezmoi
-vim.keymap.set('n', '<leader>cx', '<cmd>vnew | r ! chezmoi execute-template <#<cr>', { desc = 'Execute chezmoi template for preview' })
+vim.keymap.set('i', '<C-e>', '<esc>A', { desc = 'Put the cursor at the end of the line' })
