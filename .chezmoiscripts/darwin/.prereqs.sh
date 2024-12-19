@@ -30,3 +30,8 @@ brew-file --version >/dev/null 2>&1 || {
 {
 	gpg --version >/dev/null 2>&1 || "$homebrew" install gnupg
 } && "$($chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"
+
+[[ -d /Applications/Alt-C.app ]] || {
+	curl --location --output ~/Downloads/alt-c.pkg https://altcopy.net/setup.pkg
+	sudo installer -pkg ~/Downloads/alt-c.pkg -target /
+}
