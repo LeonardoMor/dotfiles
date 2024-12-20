@@ -7,10 +7,13 @@ encryption = "gpg"
 [gpg]
     recipient = "leomc145@gmail.com"
     args = ["--quiet"]
+{{- else }}
+[cd]
+    command = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
 {{ end -}}
 
 [hooks.read-source-state.pre]
-    command = "{{ .chezmoi.sourceDir }}/.chezmoiscripts/{{ .chezmoi.os }}/.prereqs.sh"
+    command = "{{ .chezmoi.sourceDir }}/.chezmoiscripts/{{ .chezmoi.os }}/.prereqs.{{ if eq .chezmoi.os "windows" }}ps1{{ else }}sh{{ end }}"
 
 [edit]
     command = "nvim"
@@ -26,7 +29,7 @@ encryption = "gpg"
 [data]
     name = "Leonardo Mora Castro"
     work_host = "LMORACAS-M-D6L6"
-{{- if eq .chezmoi.hostname .work_host }}
+{{- if eq .chezmoi.hostname "LMORACAS-M-D6L6" }}
     email = "lmoracas@cisco.com"
 {{- else}}
     email = "leomc145@gmail.com"
