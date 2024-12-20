@@ -9,13 +9,31 @@ Documents/*/.obsidian/graph.json
 {{- if not (eq .chezmoi.os "darwin") }}
 Library
 {{- end }}
-{{- if eq .chezmoi.hostname "cassini" }}
+{{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "infinity") }}
 .config/brewfile
-Documents/Meta\ Work/.obsidian
-Documents/Splunk\ Cloud\ Support/.obsidian
 {{- end }}
 {{- if eq .chezmoi.hostname .work_host }}
 .config/nvim/lua/plugins/neocodeium.lua
 .config/nvim/lua/plugins/cord.nvim.lua
+{{- else }}
+Documents/Meta\ Work/.obsidian
+Documents/Splunk\ Cloud\ Support/.obsidian
+{{- end }}
+{{- if not (eq .chezmoi.hostname "cassini") }}
 bin/toggle_laptop_screen.sh
+{{- end }}
+{{- if not (eq .chezmoi.os "windows") }}
+AppData
+{{- else }}
+bin
+Documents
+.bash*
+.config/alacritty
+.config/blesh
+.config/brewfile
+.config/nvim
+.config/tmux
+.config/vim
+*profile*
+.shh
 {{- end }}

@@ -1,3 +1,4 @@
+{{ if not (eq .chezmoi.os "windows") -}}
 #!/usr/bin/env bash
 
 source ~/.profile
@@ -36,3 +37,4 @@ bat --version >/dev/null 2>&1 && bat cache --build
 if gh --version >/dev/null 2>&1 && ! gh auth status >/dev/null 2>&1; then
 	gh auth login
 fi
+{{ end -}}

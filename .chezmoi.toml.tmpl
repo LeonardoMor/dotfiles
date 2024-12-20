@@ -2,10 +2,12 @@
 pager = "bat -pp --language diff"
 
 {{ end -}}
+{{- if not (eq .chezmoi.os "windows") }}
 encryption = "gpg"
 [gpg]
     recipient = "leomc145@gmail.com"
     args = ["--quiet"]
+{{ end -}}
 
 [hooks.read-source-state.pre]
     command = "{{ .chezmoi.sourceDir }}/.chezmoiscripts/{{ .chezmoi.os }}/.prereqs.sh"
@@ -36,14 +38,8 @@ encryption = "gpg"
     install_cmd = "sudo apt-get -y install"
 {{ end }}
 {{- end}}
-{{- if isExecutable "/opt/homebrew/bin/brew" }}
+{{- if eq .chezmoi.os "darwin" }}
     brew_prefix = "/opt/homebrew"
-{{- else if isExecutable "/usr/local/bin/brew" }}
-    brew_prefix = "/usr/local"
-{{- else if isExecutable "/home/linuxbrew/.linuxbrew/bin/brew" }}
-    brew_prefix = "/home/linuxbrew/.linuxbrew"
-{{- else }}
-    brew_prefix = ""
 {{- end -}}
 {{/*- XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
