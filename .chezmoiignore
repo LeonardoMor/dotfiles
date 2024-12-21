@@ -24,6 +24,7 @@ bin/toggle_laptop_screen.sh
 {{- end }}
 {{- if not (eq .chezmoi.os "windows") }}
 AppData
+OneDrive
 {{- else }}
 bin
 Documents
