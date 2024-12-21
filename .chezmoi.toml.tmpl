@@ -1,6 +1,5 @@
 {{- if and (eq .chezmoi.hostname "LMORACAS-M-D6L6") (findExecutable "bat" (list "/opt/homebrew/bin/") | isExecutable) -}}
 pager = "bat -pp --language diff"
-
 {{ end -}}
 {{- if not (eq .chezmoi.os "windows") }}
 encryption = "gpg"
@@ -13,8 +12,7 @@ encryption = "gpg"
 {{- else -}}
 [cd]
     command = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
-
-{{ end -}}
+{{- end }}
 
 [edit]
     command = "nvim"
