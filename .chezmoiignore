@@ -29,11 +29,12 @@ bin
 Documents
 .bash*
 .config/alacritty
+.config/bat
 .config/blesh
 .config/brewfile
 .config/nvim
 .config/tmux
 .config/vim
 *profile*
-.shh
+.ssh
 {{- end }}

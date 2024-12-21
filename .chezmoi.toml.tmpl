@@ -1,4 +1,4 @@
-{{- if findExecutable "bat" (list "/opt/homebrew/bin/") | isExecutable -}}
+{{- if and (eq .chezmoi.hostname "LMORACAS-M-D6L6") (findExecutable "bat" (list "/opt/homebrew/bin/") | isExecutable) -}}
 pager = "bat -pp --language diff"
 
 {{ end -}}
@@ -7,13 +7,14 @@ encryption = "gpg"
 [gpg]
     recipient = "leomc145@gmail.com"
     args = ["--quiet"]
-{{- else }}
-[cd]
-    command = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
-{{ end -}}
 
 [hooks.read-source-state.pre]
-    command = "{{ .chezmoi.sourceDir }}/.chezmoiscripts/{{ .chezmoi.os }}/.prereqs.{{ if eq .chezmoi.os "windows" }}ps1{{ else }}sh{{ end }}"
+    command = "{{ .chezmoi.sourceDir }}/.chezmoiscripts/{{ .chezmoi.os }}/.prereqs.sh"
+{{- else -}}
+[cd]
+    command = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+
+{{ end -}}
 
 [edit]
     command = "nvim"
