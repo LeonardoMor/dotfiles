@@ -3,11 +3,11 @@
 [user]
 	name = {{ .name | quote }}
 	email = {{ .email | quote }}
-[safe]
-        directory = /home/leo/dotfiles
 [core]
 	autocrlf = false
 	editor = nvim
+{{- if not (eq .chezmoi.os "windows") }}
+
 [credential "https://github.com"]
 	helper =
 {{- if eq .chezmoi.os "linux" }}
@@ -21,4 +21,5 @@
 	helper = !/usr/bin/gh auth git-credential
 {{- else if eq .chezmoi.os "darwin" }}
 	helper = !/opt/homebrew/bin/gh auth git-credential
+{{ end }}
 {{ end }}
