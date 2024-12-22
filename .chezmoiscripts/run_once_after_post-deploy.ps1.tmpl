@@ -1,0 +1,15 @@
+{{ if eq .chezmoi.os "windows" }}
+try {
+    bat cache --build
+} catch {
+    Write-Host "Error: $_"
+}
+
+try {
+    if (-not (gh auth status -ErrorAction SilentlyContinue)) {
+        gh auth login
+    }
+} catch {
+    Write-Host "Error: $_"
+}
+{{ end }}
