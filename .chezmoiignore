@@ -25,6 +25,7 @@ bin/toggle_laptop_screen.sh
 {{- if not (eq .chezmoi.os "windows") }}
 AppData
 OneDrive
+_vimrc
 {{- else }}
 bin
 Documents
