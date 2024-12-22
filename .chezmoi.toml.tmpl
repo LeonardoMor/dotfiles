@@ -1,4 +1,4 @@
-{{- if and (eq .chezmoi.hostname "LMORACAS-M-D6L6") (findExecutable "bat" (list "/opt/homebrew/bin/") | isExecutable) -}}
+{{- if (findExecutable "bat" (splitList .chezmoi.pathListSeparator (expandenv "$PATH"))) -}}
 pager = "bat -pp --language diff"
 {{ end -}}
 {{- if not (eq .chezmoi.os "windows") }}
@@ -9,6 +9,14 @@ encryption = "gpg"
 
 [hooks.read-source-state.pre]
     command = "{{ .chezmoi.sourceDir }}/.chezmoiscripts/{{ .chezmoi.os }}/.prereqs.sh"
+
+{{/*- XDG spec variables */}}
+    XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
+    XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
+    XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
+    XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
+    XDG_DATA_DIRS = "/usr/local/share:/usr/share"
+    XDG_CONFIG_DIRS = "/etc/xdg"
 {{- else -}}
 [cd]
     command = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
@@ -43,10 +51,3 @@ encryption = "gpg"
 {{- if eq .chezmoi.os "darwin" }}
     brew_prefix = "/opt/homebrew"
 {{- end -}}
-{{/*- XDG spec variables */}}
-    XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
-    XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
-    XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
-    XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
-    XDG_DATA_DIRS = "/usr/local/share:/usr/share"
-    XDG_CONFIG_DIRS = "/etc/xdg"
