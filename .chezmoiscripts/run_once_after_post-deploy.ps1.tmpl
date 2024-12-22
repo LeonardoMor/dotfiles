@@ -6,7 +6,7 @@ try {
 }
 
 try {
-    if (-not (gh auth status -ErrorAction SilentlyContinue)) {
+    if (-not (gh auth status)) {
         gh auth login
     }
 } catch {
