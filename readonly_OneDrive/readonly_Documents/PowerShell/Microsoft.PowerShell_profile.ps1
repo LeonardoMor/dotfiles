@@ -5,4 +5,5 @@ Set-PSReadLineKeyHandler -Chord "Alt+l" -Function ForwardWord
 Set-PSReadLineKeyHandler -Chord "Alt+h" -Function ForwardChar
 
 # Command completions
-. C:\Users\leomc\AppData\Local\starship\starship_completions.ps1
+chezmoi completion powershell | Out-String | Invoke-Expression
+starship completions powershell | Out-String | Invoke-Expression
