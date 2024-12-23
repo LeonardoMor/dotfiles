@@ -1,4 +1,4 @@
-{{- if (findExecutable "bat" (splitList .chezmoi.pathListSeparator (expandenv "$PATH"))) -}}
+{{- if lookPath "bat" -}}
 pager = "bat -pp --language diff"
 {{ end -}}
 {{ $prereqs := (.chezmoi.os | replaceAllRegex "linux|darwin" ".prereqs.sh" | replaceAllRegex "windows" ".prereqs.ps1") }}
