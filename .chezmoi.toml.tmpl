@@ -1,14 +1,12 @@
 {{- if (findExecutable "bat" (splitList .chezmoi.pathListSeparator (expandenv "$PATH"))) -}}
 pager = "bat -pp --language diff"
 {{ end -}}
+{{ $prereqs := (.chezmoi.os | replaceAllRegex "linux|darwin" ".prereqs.sh" | replaceAllRegex "windows" ".prereqs.ps1") }}
 {{- if not (eq .chezmoi.os "windows") }}
 encryption = "gpg"
 [gpg]
     recipient = "leomc145@gmail.com"
     args = ["--quiet"]
-
-[hooks.read-source-state.pre]
-    command = "{{ .chezmoi.sourceDir }}/.chezmoiscripts/{{ .chezmoi.os }}/.prereqs.sh"
 
 {{/*- XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
@@ -22,6 +20,10 @@ encryption = "gpg"
     command = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
 {{- end }}
 
+[hooks.read-source-state.pre]
+    command = "powershell"
+    args = ["-NoLogo", "-NoProfile", "-File", {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os $prereqs | quote }}]
+
 [edit]
     command = "nvim"
 
@@ -34,8 +36,8 @@ encryption = "gpg"
     commitMessageTemplate = {{ print "{{ promptString \"Commit message\" }}" | quote }}
 
 [data]
-    name = "Leonardo Mora Castro"
     work_host = "LMORACAS-M-D6L6"
+    name = "Leonardo Mora Castro"
 {{- if eq .chezmoi.hostname "LMORACAS-M-D6L6" }}
     email = "lmoracas@cisco.com"
 {{- else}}
