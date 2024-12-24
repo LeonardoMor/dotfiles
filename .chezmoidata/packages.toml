@@ -19,6 +19,7 @@ linux = [
 	"go",
 	"gomatrix-git",
 	"google-chrome",
+	"kanata",
 	"keychain",
 	"less",
 	"lftp",
