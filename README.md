@@ -33,7 +33,7 @@ for your personal computer and your work email for your work computer.
 
 Now it might be desirable to have a machine-specific `chezmoi.toml` files, so
 you'd want to template it. You can add a file `.chezmoi.toml.tmpl` to the source
-dir that will produce a `chezmoi.toml` on `chezmoi init`.
+dir that will produce a local `chezmoi.toml` once `chezmoi init` is run.
 
 But some things on `chezmoi.toml` need to be variable. So you need some way to
 indicate those instead of having them substituted by constants on
