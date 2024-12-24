@@ -1,6 +1,6 @@
 {{- if lookPath "bat" -}}
 pager = "bat -pp --language diff"
-{{- end }}
+{{ end }}
 
 {{- if not (eq .chezmoi.os "windows") }}
 encryption = "gpg"
