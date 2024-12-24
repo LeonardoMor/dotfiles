@@ -1,35 +1,34 @@
 {{- if lookPath "bat" -}}
 pager = "bat -pp --language diff"
-{{ end -}}
-{{ $prereqs := (.chezmoi.os | replaceAllRegex "linux|darwin" ".prereqs.sh" | replaceAllRegex "windows" ".prereqs.ps1") }}
+{{- end }}
+
 {{- if not (eq .chezmoi.os "windows") }}
 encryption = "gpg"
 [gpg]
     recipient = "leomc145@gmail.com"
     args = ["--quiet"]
 
-{{/*- XDG spec variables */}}
-    XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
-    XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
-    XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
-    XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
-    XDG_DATA_DIRS = "/usr/local/share:/usr/share"
-    XDG_CONFIG_DIRS = "/etc/xdg"
-{{- else -}}
-[cd]
-    command = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
-{{- end }}
-
+[hooks.read-source-state.pre]
+    command = {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.sh" | quote }}
+{{- else }}
 [hooks.read-source-state.pre]
     command = "powershell"
-    args = ["-NoLogo", "-NoProfile", "-File", {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os $prereqs | quote }}]
+    args = ["-NoLogo", "-NoProfile", "-File", {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.ps1" | quote }}]
+
+[cd]
+    command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
+{{- end }}
 
 [edit]
     command = "nvim"
 
 [merge]
     command = "nvim"
-    args = ["-d", {{ print "{{.Destination}}" | quote }}, {{ print "{{.Source}}" | quote }}, {{ print "{{.Target}}" | quote }}]
+    args = [
+        {{ print "{{.Destination}}" | quote }},
+        {{ print "{{.Source}}" | quote }},
+        {{ print "{{.Target}}" | quote }}
+    ]
 
 [git]
     autoPush = true
@@ -40,16 +39,24 @@ encryption = "gpg"
     name = "Leonardo Mora Castro"
 {{- if eq .chezmoi.hostname "LMORACAS-M-D6L6" }}
     email = "lmoracas@cisco.com"
-{{- else}}
+{{- else }}
     email = "leomc145@gmail.com"
-{{- end}}
-{{- if eq .chezmoi.os "linux" }}
-{{- if eq .chezmoi.osRelease.id "arch" }}
+{{- end }}
+    
+{{- if not (eq .chezmoi.os "windows") }}
+{{/* XDG spec variables */}}
+    XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
+    XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
+    XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
+    XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
+    XDG_DATA_DIRS = "/usr/local/share:/usr/share"
+    XDG_CONFIG_DIRS = "/etc/xdg"
+
+{{- if eq .chezmoi.os "darwin" }}
+    brew_prefix = "/opt/homebrew"
+{{- else if eq .chezmoi.osRelease.id "arch" }}
     install_cmd = "paru --noconfirm --sync --needed"
 {{- else if eq .chezmoi.osRelease.id "ubuntu" }}
     install_cmd = "sudo apt-get -y install"
-{{ end }}
-{{- end}}
-{{- if eq .chezmoi.os "darwin" }}
-    brew_prefix = "/opt/homebrew"
-{{- end -}}
+{{- end }}
+{{- end }}
