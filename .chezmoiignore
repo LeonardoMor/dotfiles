@@ -40,3 +40,6 @@ Documents
 *profile*
 .ssh
 {{- end }}
+{{- if not (eq .chezmoi.os "linux") }}
+.config/systemd/user/kanata.service
+{{- end }}
