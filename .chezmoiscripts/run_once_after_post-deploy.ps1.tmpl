@@ -1,4 +1,4 @@
-{{ if eq .chezmoi.os "windows" }}
+{{- if eq .chezmoi.os "windows" -}}
 try {
     bat cache --build
 } catch {
@@ -12,4 +12,4 @@ try {
 } catch {
     Write-Host "Error: $_"
 }
-{{ end }}
+{{ end -}}
