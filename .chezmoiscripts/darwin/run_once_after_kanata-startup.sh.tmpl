@@ -8,7 +8,7 @@ service_name='com.jtroo.kanata'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict>
+<dict>
     <key>Label</key>
     <string>$service_name</string>
     <key>ProgramArguments</key>
@@ -17,15 +17,19 @@ service_name='com.jtroo.kanata'
       <string>--cfg</string>
       <string>{{ .chezmoi.sourceDir }}/.kanata.kbd</string>
     </array>
+
     <key>RunAtLoad</key>
     <true/>
+
     <key>KeepAlive</key>
     <true/>
+
     <key>StandardOutPath</key>
     <string>/Library/Logs/Kanata/kanata.out.log</string>
+
     <key>StandardErrorPath</key>
     <string>/Library/Logs/Kanata/kanata.err.log</string>
-  </dict>
+</dict>
 </plist>
 HERE
 
