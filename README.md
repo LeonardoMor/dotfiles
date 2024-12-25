@@ -242,4 +242,4 @@ is based on
 
 I still have to do this. Although very unlikely, I might game on Windows with
 the laptop keyboard. Because of that, I'll need two layers, one with the mods
-and the other without.
+and the other without
