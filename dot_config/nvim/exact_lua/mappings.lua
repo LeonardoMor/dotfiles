@@ -58,28 +58,22 @@ local function bufremove(buf)
   end
 
   for _, win in ipairs(vim.fn.win_findbuf(buf)) do
-    vim.api.nvim_win_call(win, function()
-      if not vim.api.nvim_win_is_valid(win) or vim.api.nvim_win_get_buf(win) ~= buf then
-        return
-      end
-      -- Try using alternate buffer
+    -- Check if this window is the only one showing this buffer
+    if #vim.fn.win_findbuf(buf) == 1 then
+      -- Close the window if it's the last one showing this buffer
+      vim.api.nvim_win_close(win, false)
+    else
+      -- If there are other windows showing this buffer, just switch to another buffer
       local alt = vim.fn.bufnr '#'
       if alt ~= buf and vim.fn.buflisted(alt) == 1 then
         vim.api.nvim_win_set_buf(win, alt)
-        return
+      else
+        vim.cmd.bprevious { args = { win }, bang = true }
       end
-
-      -- Try using previous buffer
-      local has_previous = pcall(vim.cmd, 'bprevious')
-      if has_previous and buf ~= vim.api.nvim_win_get_buf(win) then
-        return
-      end
-
-      -- Create new listed buffer
-      local new_buf = vim.api.nvim_create_buf(true, false)
-      vim.api.nvim_win_set_buf(win, new_buf)
-    end)
+    end
   end
+
+  -- Delete the buffer if it's still valid after handling the windows
   if vim.api.nvim_buf_is_valid(buf) then
     pcall(vim.cmd, 'bdelete! ' .. buf)
   end
