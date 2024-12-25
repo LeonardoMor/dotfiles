@@ -142,12 +142,7 @@ Will:
 
 This script is very simply:
 
-```bash
-#!/bin/bash
-
-brew file install
-brew file clean
-```
+https://github.com/LeonardoMor/dotfiles/blob/master/.chezmoiscripts/darwin/run_onchange_install-packages.sh.tmpl
 
 All thanks to Brew-file.
 
