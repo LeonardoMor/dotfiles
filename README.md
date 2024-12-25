@@ -45,18 +45,18 @@ All the functions (and syntax) from
 available in `chezmoi`. So, one way to do this is to use the `print` function.
 For example, this is the configuration for the merge tool on the template:
 
-```toml
-[merge]
-    command = "nvim"
-    args = ["-d", {{ print "{{.Destination}}" | quote }}, {{ print "{{.Source}}" | quote }}, {{ print "{{.Target}}" | quote }}]
-```
+https://github.com/LeonardoMor/dotfiles/blob/5370288c865493450a077726d3971d92ca0467cd/.chezmoi.toml.tmpl#L25C1-L31C6
 
 Which produces:
 
 ```toml
 [merge]
     command = "nvim"
-    args = ["-d", "{{.Destination}}", "{{.Source}}", "{{.Target}}"]
+    args = [
+        "{{.Destination}}",
+        "{{.Source}}",
+        "{{.Target}}"
+    ]
 ```
 
 on the actual config file. Alternatively, you can use a lot of `"{{"` and
