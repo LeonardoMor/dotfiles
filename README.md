@@ -140,9 +140,8 @@ Will:
 - Commit and push the changes
 - Will trigger the `.chezmoiscripts/darwin/run_onchange_install_packages.sh`
 
-This script is very simply:
-
-https://github.com/LeonardoMor/dotfiles/blob/master/.chezmoiscripts/darwin/run_onchange_install-packages.sh.tmpl#L1-L6
+This script is very
+[simple](https://raw.githubusercontent.com/LeonardoMor/dotfiles/refs/heads/master/.chezmoiscripts/darwin/run_onchange_install-packages.sh.tmpl)
 
 All thanks to Brew-file.
 
