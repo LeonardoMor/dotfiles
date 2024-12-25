@@ -33,6 +33,8 @@ return {
       vim.fn.jobstart({"open", url})
 {{- else if eq .chezmoi.os "linux" }}
       vim.fn.jobstart({"xdg-open", url})
+{{- else if eq .chezmoi.os "windows" }}
+      vim.fn.jobstart({"start", url})
 {{- end }}
     end,
   },
