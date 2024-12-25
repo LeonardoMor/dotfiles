@@ -1,0 +1,12 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+# Based on https://github.com/qmk/qmk_firmware/blob/master/docs/faq_build.md#linux-udev-rules-linux-udev-rules
+
+QMK_RULES_URL="https://raw.githubusercontent.com/qmk/qmk_firmware/master/util/udev/50-qmk.rules"
+QMK_RULES=/etc/udev/rules.d/50-qmk.rules
+[[ -f $QMK_RULES ]] || sudo curl --location --output "$QMK_RULES" "$QMK_RULES_URL"
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+{{- end -}}
