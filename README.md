@@ -159,3 +159,87 @@ encryption = "gpg"
 [gpg]
     recipient = "leomc145@gmail.com"
 ```
+
+### Homerow mods
+
+The location of modifier keys varies widely across keyboards. The keys on the
+home row however are consistent. I only use QWERTY keyboards, so it makes a lot
+of sense to use homerow mods. It allows me to get typing productively on any
+computer right away.
+
+My personal keyboard can be configured with the
+[Keychron Launcher](https://launcher.keychron.com/), which is, at least, based
+on QMK.
+
+But there are times when I'm stuck with a laptop keyboard and so to get the same
+mods and a consistent experience, [kanata](https://github.com/jtroo/kanata) is
+my chosen tool.
+
+#### Configuration
+
+The
+[config](https://github.com/LeonardoMor/dotfiles/blob/master/dot_config/kanata/kanata.kbd.tmpl)
+is simply a template made in a Lisp-like syntax. Notice that the config is
+positional, each key on the source is mapped to whatever is on the same position
+on the _target_.
+
+##### macOS
+
+In general, you want kanata to run as a service and to start with the OS.
+
+For macOS, we have to rely on `launchctl`, for which there's not a lot of config
+examples online, and so we have only its man.
+
+There's a service file that has to be created. This is a template, mostly
+because it depends on `brew --prefix`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>$service_name</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>{{ .brew_prefix }}/bin/kanata</string>
+      <string>--cfg</string>
+      <string>{{ joinPath .XDG_CONFIG_HOME "kanata" "kanata.kbd" }}</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Library/Logs/Kanata/kanata.out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Library/Logs/Kanata/kanata.err.log</string>
+</dict>
+</plist>
+```
+
+All that has to be done with this file is done with
+[this script](https://github.com/LeonardoMor/dotfiles/blob/master/.chezmoiscripts/darwin/run_once_after_kanata-startup.sh.tmpl).
+
+##### Linux
+
+Similarly, for Linux there's a
+[service file](https://github.com/LeonardoMor/dotfiles/blob/master/dot_config/systemd/user/kanata.service)
+for `systemd` and thanks to that, it's one that we can track with chezmoi.
+
+The
+[setup script](https://github.com/LeonardoMor/dotfiles/blob/master/.chezmoiscripts/linux/run_once_after_kanata-setup.sh.tmpl)
+is based on
+[these instructions](https://github.com/jtroo/kanata/blob/main/docs/setup-linux.md)
+
+##### Windows
+
+- [] Configure kanata on Windows
+
+I still have to do this. Although very unlikely, I might game on Windows with
+the laptop keyboard. Because of that, I'll need two layers, one with the mods
+and the other without.
