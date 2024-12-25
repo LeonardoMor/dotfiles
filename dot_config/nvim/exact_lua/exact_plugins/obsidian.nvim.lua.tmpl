@@ -7,12 +7,10 @@ return {
   opts = {
     wiki_link_func = "use_alias_only",
     workspaces = {
-{{- if eq .chezmoi.hostname "cassini" }}
       {
         name = 'Codice',
         path = {{ joinPath .chezmoi.homeDir "Documents" "Codice" | squote }},
       },
-{{- else if eq .chezmoi.hostname .work_host }}
       {
         name = 'Meta Work',
         path = {{ joinPath .chezmoi.homeDir "Documents" "Meta Work" | squote }},
@@ -21,7 +19,6 @@ return {
         name = 'Splunk Cloud Support',
         path = {{ joinPath .chezmoi.homeDir "Documents" "Splunk Cloud Support" | squote }},
       },
-{{- end }}
     },
     completion = {
       nvim_cmp = true,
