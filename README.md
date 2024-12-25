@@ -142,7 +142,7 @@ Will:
 
 This script is very simply:
 
-https://github.com/LeonardoMor/dotfiles/blob/master/.chezmoiscripts/darwin/run_onchange_install-packages.sh.tmpl
+https://github.com/LeonardoMor/dotfiles/blob/master/.chezmoiscripts/darwin/run_onchange_install-packages.sh.tmpl#L1-L6
 
 All thanks to Brew-file.
 
