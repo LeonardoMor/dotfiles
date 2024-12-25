@@ -39,9 +39,11 @@ But some things on `chezmoi.toml` need to be variable. So you need some way to
 indicate those instead of having them substituted by constants on
 `chezmoi init`.
 
-All the functions (and syntax) from Go templates are available (plus some more
-stuff). So, one way to do this is to use the `print` function. For example, this
-is the configuration for the merge tool on the template:
+All the functions (and syntax) from
+[text/template](https://pkg.go.dev/text/template), and the
+[text template functions from `sprig`](http://masterminds.github.io/sprig/) are
+available in `chezmoi`. So, one way to do this is to use the `print` function.
+For example, this is the configuration for the merge tool on the template:
 
 ```toml
 [merge]
@@ -57,7 +59,8 @@ Which produces:
     args = ["-d", "{{.Destination}}", "{{.Source}}", "{{.Target}}"]
 ```
 
-on the actual config file.
+on the actual config file. Alternatively, you can use a lot of `"{{"` and
+`"}}"`.
 
 ## Managing packages declaratively
 
