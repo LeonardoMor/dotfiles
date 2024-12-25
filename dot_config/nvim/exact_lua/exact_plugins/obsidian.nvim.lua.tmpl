@@ -10,16 +10,16 @@ return {
 {{- if eq .chezmoi.hostname "cassini" }}
       {
         name = 'Codice',
-        path = os.getenv 'HOME' .. '/source/repos/Codice',
+        path = {{ joinPath .chezmoi.homeDir "Documents" "Codice" | squote }},
       },
 {{- else if eq .chezmoi.hostname .work_host }}
       {
         name = 'Meta Work',
-        path = os.getenv 'HOME' .. '/Documents/Meta Work',
+        path = {{ joinPath .chezmoi.homeDir "Documents" "Meta Work" | squote }},
       },
       {
         name = 'Splunk Cloud Support',
-        path = os.getenv 'HOME' .. '/Documents/Splunk Cloud Support',
+        path = {{ joinPath .chezmoi.homeDir "Documents" "Splunk Cloud Support" | squote }},
       },
 {{- end }}
     },
