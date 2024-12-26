@@ -55,6 +55,9 @@ case "$OPERATING_SYSTEM" in
 		;;
 esac
 
-{
-	gpg --version >/dev/null 2>&1 || "$install_cmd" gnupg
-} && "$(chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"
+# {
+# 	gpg --version >/dev/null 2>&1 || "$install_cmd" gnupg
+# } && "$(chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"
+
+command -v 1password >/dev/null 2>&1 || "$install_cmd" 1password
+op --version >/dev/null 2>&1 || "$install_cmd" 1password-cli

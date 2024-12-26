@@ -13,13 +13,7 @@ brew --version >/dev/null 2>&1 || {
 	$chezmoi init
 }
 
-if /opt/homebrew/bin/brew --version >/dev/null 2>&1; then
-	homebrew='/opt/homebrew/bin/brew'
-elif /usr/local/bin/brew --version >/dev/null 2>&1; then
-	homebrew='/usr/local/bin/brew'
-elif /home/linuxbrew/.linuxbrew/bin/brew --version >/dev/null 2>&1; then
-	homebrew='/home/linuxbrew/.linuxbrew/bin/brew'
-fi
+homebrew='/opt/homebrew/bin/brew'
 
 # Will manage brew packages with Homebrew-file
 brew-file --version >/dev/null 2>&1 || {
@@ -27,9 +21,12 @@ brew-file --version >/dev/null 2>&1 || {
 	brew-file set_local
 }
 
-{
-	gpg --version >/dev/null 2>&1 || "$homebrew" install gnupg
-} && "$($chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"
+# {
+# 	gpg --version >/dev/null 2>&1 || "$homebrew" install gnupg
+# } && "$($chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"
+
+command -v 1password >/dev/null 2>&1 || "$homebrew" install 1password
+op --version >/dev/null 2>&1 || "$homebrew" install 1password-cli
 
 [[ -d /Applications/Alt-C.app ]] || {
 	curl --location --output ~/Downloads/alt-c.pkg https://altcopy.net/setup.pkg

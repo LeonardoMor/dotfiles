@@ -3,13 +3,12 @@ pager = "bat -pp --language diff"
 {{ end }}
 
 {{- if not (eq .chezmoi.os "windows") }}
-encryption = "gpg"
-[gpg]
-    recipient = "leomc145@gmail.com"
-    args = ["--quiet"]
-
 [hooks.read-source-state.pre]
     command = {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.sh" | quote }}
+
+[cd]
+    command = "bash"
+    args = ["--login"]
 {{- else }}
 [hooks.read-source-state.pre]
     command = "powershell"
@@ -17,6 +16,7 @@ encryption = "gpg"
 
 [cd]
     command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
+    args = ["-NoLogo", "-NoProfile"]
 {{- end }}
 
 [edit]
