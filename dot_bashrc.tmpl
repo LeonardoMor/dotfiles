@@ -74,9 +74,6 @@ if [[ -f "$(brew --prefix)/etc/bash_completion" ]]; then
 fi
 {{- end }}
 
-# This will take care of the ssh agent and keys
-eval "$(keychain --quiet --nogui --eval id_ed25519)"
-
 # Starship Prompt
 eval "$(starship init bash)"
 
