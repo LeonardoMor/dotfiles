@@ -3,6 +3,11 @@
 #
 # Keep it POSIX-compliant
 
+{{ if eq .chezmoi.os "darwin" -}}
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+{{- end }}
+
 # Set PATH
 if ! echo ":${PATH}:" | grep -q ":${HOME}/.bin:"; then
 	export PATH="${HOME}/.bin:${PATH}"
