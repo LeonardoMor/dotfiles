@@ -77,6 +77,7 @@ cask 1password-cli
 cask alacritty
 cask discord
 cask font-jetbrains-mono-nerd-font
+cask ghostty
 cask google-chrome
 cask obsidian
 cask rectangle
