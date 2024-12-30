@@ -1,3 +1,5 @@
+local utils = require('custom.utils')
+
 return {
   'epwalsh/obsidian.nvim',
   version = '*',
@@ -6,20 +8,7 @@ return {
   },
   opts = {
     wiki_link_func = "use_alias_only",
-    workspaces = {
-      {
-        name = 'Codice',
-        path = {{ joinPath .chezmoi.homeDir "Documents" "Codice" | squote }},
-      },
-      {
-        name = 'Meta Work',
-        path = {{ joinPath .chezmoi.homeDir "Documents" "Meta Work" | squote }},
-      },
-      {
-        name = 'Splunk Cloud Support',
-        path = {{ joinPath .chezmoi.homeDir "Documents" "Splunk Cloud Support" | squote }},
-      },
-    },
+    workspaces = utils.vaults,
     completion = {
       nvim_cmp = true,
       min_chars = 2,

@@ -100,6 +100,7 @@ brew pango
 brew pcre2
 brew pinentry
 brew pixman
+brew pkgconf
 brew python-packaging
 brew python@3.13
 brew readline

@@ -104,5 +104,9 @@ bind C-j send-keys 'C-j'
 # tmux-sessionx options
 set -g @sessionx-custom-paths "${HOME}/source/repos"
 
+# Required for images in the terminal
+set -gq allow-passthrough on
+set -g visual-activity off
+
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run "$XDG_CONFIG_HOME/tmux/plugins/tpm/tpm"

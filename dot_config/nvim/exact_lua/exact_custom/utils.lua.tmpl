@@ -1,0 +1,16 @@
+return {
+  vaults = {
+      {
+        name = 'Codice',
+        path = {{ joinPath .chezmoi.homeDir "Documents" "Codice" | squote }},
+      },
+      {
+        name = 'Meta Work',
+        path = {{ joinPath .chezmoi.homeDir "Documents" "Meta_Work" | squote }},
+      },
+      {
+        name = 'Splunk Cloud Support',
+        path = {{ joinPath .chezmoi.homeDir "Documents" "Splunk_Cloud_Support" | squote }},
+      },
+    }
+}

@@ -58,4 +58,9 @@ fi
 {{- else if eq .chezmoi.osRelease.id "arch" }}
 [ -z "$NVM_DIR" ] && export NVM_DIR=/usr/share/nvm
 . "${NVM_DIR}/nvm.sh"
-{{ end }}
+{{- end }}
+
+{{ if eq .chezmoi.os "darwin" -}}
+# Set imagemagick
+export DYLD_FALLBACK_LIBRARY_PATH="$(brew --prefix)/lib:$DYLD_FALLBACK_LIBRARY_PATH"
+{{- end }}
