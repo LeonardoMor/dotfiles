@@ -23,6 +23,10 @@ return {
       vim.fn.jobstart({"start", url})
 {{- end }}
     end,
+    daily_notes = {
+      folder = "Inbox/Journal",
+      date_format = "%Y-%m-%d",
+    },
   },
   event = function(self)
     return vim
@@ -38,6 +42,7 @@ return {
   dependencies = {
     'nvim-lua/plenary.nvim',
   },
+  cmd = "ObsidianToday"
   -- config = function()
   --   vim.api.nvim_create_autocmd('FileType', {
   --     desc = 'Markdown Conceal for Obsidian vault files',
