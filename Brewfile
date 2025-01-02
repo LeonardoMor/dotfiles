@@ -128,6 +128,7 @@ cask 1password
 cask 1password-cli
 cask alacritty
 cask discord
+cask firefox
 cask font-jetbrains-mono-nerd-font
 cask ghostty
 cask google-chrome
