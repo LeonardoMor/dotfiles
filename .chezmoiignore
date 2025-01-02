@@ -28,15 +28,16 @@ _vimrc
 {{- else }}
 bin
 Documents
+*profile*
 .bash*
 .config/alacritty
 .config/bat
 .config/blesh
 .config/brewfile
+.config/ghostty
 .config/nvim
 .config/tmux
 .config/vim
-*profile*
 {{- end }}
 {{- if not (eq .chezmoi.os "linux") }}
 .config/systemd/user/kanata.service
