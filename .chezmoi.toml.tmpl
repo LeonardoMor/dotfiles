@@ -42,7 +42,11 @@ pager = "bat -pp --language diff"
 {{- else }}
     email = "leomc145@gmail.com"
 {{- end }}
-    
+{{- if eq .chezmoi.os "windows" }}
+    DocumentsDir = {{ joinPath .chezmoi.homeDir "OneDrive" "Documents" | quote }}
+{{- else }}
+    DocumentsDir = {{ joinPath .chezmoi.homeDir "Documents" | quote }}
+{{- end }}
 {{- if not (eq .chezmoi.os "windows") }}
 {{/* XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
