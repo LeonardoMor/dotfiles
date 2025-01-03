@@ -12,4 +12,12 @@ try {
 } catch {
     Write-Host "Error: $_"
 }
+
+try {
+    node --version
+} catch {
+    nvm install latest
+    nvm use latest
+}
+{{ end -}}
 {{ end -}}
