@@ -2,7 +2,7 @@
 pager = "bat -pp --language diff"
 {{ end }}
 
-{{- if not (eq .chezmoi.os "windows") }}
+{{- if ne .chezmoi.os "windows" }}
 [hooks.read-source-state.pre]
     command = {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.sh" | quote }}
 
@@ -46,8 +46,6 @@ pager = "bat -pp --language diff"
     DocumentsDir = {{ joinPath .chezmoi.homeDir "OneDrive" "Documents" | quote }}
 {{- else }}
     DocumentsDir = {{ joinPath .chezmoi.homeDir "Documents" | quote }}
-{{- end }}
-{{- if not (eq .chezmoi.os "windows") }}
 {{/* XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
     XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
