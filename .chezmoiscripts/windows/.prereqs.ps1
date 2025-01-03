@@ -18,5 +18,5 @@ $currentVersion = winget --version
 
 if (Compare-Version $currentVersion $targetVersion -lt 0) {
     Write-Host "Upgrading winget to the latest version..."
-    winget upgrade --id Microsoft.DesktopAppInstaller --silent
+    winget install -e --accept-source-agreements --accept-package-agreements Microsoft.AppInstaller
 }
