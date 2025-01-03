@@ -18,10 +18,10 @@ Library
 .config/nvim/lua/plugins/cord.nvim.lua
 {{- end }}
 
-{{- if not (eq .chezmoi.hostname "cassini") }}
+{{- if ne .chezmoi.hostname "cassini" }}
 bin/toggle_laptop_screen.sh
 {{- end }}
-{{- if not (eq .chezmoi.os "windows") }}
+{{- if ne .chezmoi.os "windows" }}
 AppData
 OneDrive
 _vimrc
@@ -39,6 +39,6 @@ Documents
 .config/tmux
 .config/vim
 {{- end }}
-{{- if not (eq .chezmoi.os "linux") }}
+{{- if ne .chezmoi.os "linux" }}
 .config/systemd/user/kanata.service
 {{- end }}
