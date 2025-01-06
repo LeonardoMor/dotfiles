@@ -1,0 +1,5 @@
+set number
+set relativenumber
+{{ if eq .chezmoi.hostname "infinity" -}}
+language messages en_US
+{{- end }}
