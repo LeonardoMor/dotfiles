@@ -4,8 +4,6 @@
 .ssh/known_hosts*
 README.md
 Brewfile
-Documents/*/.obsidian/workspace.json
-Documents/*/.obsidian/graph.json
 {{- if not (eq .chezmoi.os "darwin") }}
 Library
 {{- end }}
@@ -22,12 +20,12 @@ Library
 bin/toggle_laptop_screen.sh
 {{- end }}
 {{- if ne .chezmoi.os "windows" }}
-AppData
-OneDrive
 _vimrc
+AppData
+Documents/*/.obsidian/graph.json
+Documents/*/.obsidian/workspace.json
+OneDrive
 {{- else }}
-bin
-Documents
 *profile*
 .bash*
 .config/alacritty
@@ -38,6 +36,10 @@ Documents
 .config/nvim
 .config/tmux
 .config/vim
+{{ joinPath "OneDrive" "Documents/*/.obsidian/graph.json" }}
+{{ joinPath "OneDrive" "Documents/*/.obsidian/workspace.json" }}
+bin
+Documents
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 .config/systemd/user/kanata.service
