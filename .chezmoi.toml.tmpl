@@ -1,5 +1,5 @@
 {{- if ne .chezmoi.os "windows" -}}
-{{ if lookPath "bat" -}}
+{{- if lookPath "bat" -}}
 pager = "bat -pp"
 {{- end }}
 
