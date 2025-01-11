@@ -1,6 +1,6 @@
 {{- if ne .chezmoi.os "windows" -}}
 {{ if lookPath "bat" -}}
-pager = "bat -pp --language diff"
+pager = "bat -pp"
 {{- end }}
 
 [hooks.read-source-state.pre]
