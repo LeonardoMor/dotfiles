@@ -13,6 +13,9 @@ sudo snap refresh
 # Update flatpaks
 sleep 1
 flatpak update -y
+{{- else }}
+brew upgrade
+brew upgrade --cask --greedy
 {{- end }}
 
 # Update global npm modules
