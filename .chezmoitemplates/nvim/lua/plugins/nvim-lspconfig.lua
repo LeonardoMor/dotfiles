@@ -138,8 +138,8 @@ return {
       },
       marksman = {},
       html = {},
-{{- if ne .chezmoi.os "windows" }}
       typos_lsp = {},
+{{- if ne .chezmoi.os "windows" }}
       vimls = {},
       awk_ls = {},
       bashls = {},
@@ -160,6 +160,8 @@ return {
       jqls = {},
       taplo = {},
       lemminx = {},
+{{- else }}
+      powershell_es = {},
 {{- end }}
     }
 
