@@ -39,9 +39,6 @@ return {
       :flatten()
       :totable()
   end,
-  dependencies = {
-    'nvim-lua/plenary.nvim',
-  },
   cmd = { "ObsidianToday", "ObsidianYesterday"  }
   -- config = function()
   --   vim.api.nvim_create_autocmd('FileType', {

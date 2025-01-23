@@ -2,17 +2,17 @@ return {
   vaults = {
       {
         name = 'Codice',
-        path = {{ joinPath .DocumentsDir "Codice" | squote }},
+        path = ([[{{ joinPath .DocumentsDir "Codice" }}]]):gsub('\\', '/'),
       },
 {{- if eq .chezmoi.hostname .work_host }}
       {
         name = 'Meta Work',
-        path = {{ joinPath .DocumentsDir "Meta_Work" | squote }},
+        path = ([[{{ joinPath .DocumentsDir "Meta_Work" }}]]):gsub('\\', '/'),
       },
 {{- end }}
       {
         name = 'Splunk Cloud Support',
-        path = {{ joinPath .DocumentsDir "Splunk_Cloud_Support" | squote }},
+        path = ([[{{ joinPath .DocumentsDir "Splunk_Cloud_Support" }}]]):gsub('\\', '/'),
       },
     }
 }
