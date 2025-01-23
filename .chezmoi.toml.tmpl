@@ -1,5 +1,5 @@
 {{- if ne .chezmoi.os "windows" -}}
-{{ if lookPath "bat" -}}
+{{- if lookPath "bat" -}}
 pager = "bat -pp"
 {{- end }}
 
@@ -18,6 +18,9 @@ pager = "bat -pp"
 [cd]
     command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
     args = ["-NoLogo"]
+
+[diff]
+    pager = "bat -pp --language=diff"
 {{- end }}
 
 [edit]
