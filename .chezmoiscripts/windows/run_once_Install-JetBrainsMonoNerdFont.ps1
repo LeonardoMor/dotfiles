@@ -49,10 +49,36 @@ function Test-FontInstalled
     }
 }
 
+function Restart-AsAdmin
+{
+    param (
+        [string]$ScriptPath
+    )
+
+    Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$ScriptPath`"" -Verb RunAs
+}
+
+# Check if running as administrator
+function Test-IsAdmin
+{
+    $currentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object System.Security.Principal.WindowsPrincipal($currentUser)
+    return $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
 $FontToCheck = "JetBrainsMonoNerdFontMono-Regular"
+
 if (Test-FontInstalled -FontName $FontToCheck)
 {
     Write-Output "JetBrains Mono Nerd Font is already installed. Exiting."
+    exit
+}
+
+# If not installed and not running as admin, restart with elevation
+if (-not (Test-IsAdmin))
+{
+    Write-Output "This script requires administrator privileges to install fonts. Requesting elevation..."
+    Restart-AsAdmin -ScriptPath $MyInvocation.MyCommand.Path
     exit
 }
 
