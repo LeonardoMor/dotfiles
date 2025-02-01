@@ -28,10 +28,10 @@ function Invoke-AsAdmin
 $targetVersion = "1.9.25200"
 $currentVersion = winget --version
 
-if (Compare-Version $currentVersion $targetVersion -lt 0)
+if ((Compare-Version $currentVersion $targetVersion) -lt 0)
 {
     Write-Host "Upgrading winget to the latest version..."
-    winget install -e --accept-source-agreements --accept-package-agreements Microsoft.AppInstaller
+    winget install --id Microsoft.DesktopAppInstaller -e --accept-source-agreements --accept-package-agreements
 }
 
 # Install JetBrains Nerd Font

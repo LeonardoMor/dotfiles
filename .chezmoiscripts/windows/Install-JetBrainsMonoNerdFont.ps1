@@ -38,11 +38,18 @@ function Test-FontInstalled
     param (
         [string]$FontName
     )
-    $InstalledFonts = Get-ItemProperty -Path $RegistryPath
-    return $InstalledFonts.PSObject.Properties.Name -contains "$FontName (TrueType)"
+
+    try
+    {
+        $InstalledFonts = Get-ItemProperty -Path $RegistryPath -ErrorAction Stop
+        return $InstalledFonts.PSObject.Properties.Name -contains "$FontName (TrueType)"
+    } catch
+    {
+        return $false
+    }
 }
 
-$FontToCheck = "JetBrainsMonoNerdFontMono-Regular"  # Adjust the name as per the font file
+$FontToCheck = "JetBrainsMonoNerdFontMono-Regular"
 if (Test-FontInstalled -FontName $FontToCheck)
 {
     Write-Output "JetBrains Mono Nerd Font is already installed. Exiting."
