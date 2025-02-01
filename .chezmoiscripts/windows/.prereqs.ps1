@@ -35,4 +35,4 @@ if ((Compare-Version $currentVersion $targetVersion) -lt 0)
 }
 
 # Install JetBrains Nerd Font
-Invoke-AsAdmin "Install-JetBrainsMonoNerdFont.ps1"
+Invoke-AsAdmin ".Install-JetBrainsMonoNerdFont.ps1"
