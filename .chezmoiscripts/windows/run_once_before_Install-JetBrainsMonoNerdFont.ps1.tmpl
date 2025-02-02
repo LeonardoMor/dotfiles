@@ -1,3 +1,4 @@
+{{- if eq .chezmoi.os "windows" -}}
 $FontUrl = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/JetBrainsMono.zip"
 $TempFolder = [System.IO.Path]::GetTempPath()
 $FontZip = Join-Path -Path $TempFolder -ChildPath "JetBrainsMono.zip"
@@ -70,7 +71,7 @@ $FontToCheck = "JetBrainsMonoNerdFontMono-Regular"
 
 if (Test-FontInstalled -FontName $FontToCheck)
 {
-    Write-Output "JetBrains Mono Nerd Font is already installed. Exiting."
+    Write-Output "JetBrains Mono Nerd Font is already installed."
     exit
 }
 
@@ -117,3 +118,4 @@ Remove-Item -Path $ExtractFolder -Recurse -Force
 Write-Output "Temporary files removed."
 
 Write-Output "JetBrains Mono Nerd Font installation complete!"
+{{ end -}}
