@@ -1,16 +1,1 @@
-return {
-  vaults = {
-      {
-        name = 'Codice',
-        path = {{ joinPath .DocumentsDir "Codice" | squote }},
-      },
-      {
-        name = 'Meta Work',
-        path = {{ joinPath .DocumentsDir "Meta_Work" | squote }},
-      },
-      {
-        name = 'Splunk Cloud Support',
-        path = {{ joinPath .DocumentsDir "Splunk_Cloud_Support" | squote }},
-      },
-    }
-}
+{{ template "nvim/lua/custom/utils.lua" . }}
