@@ -1,4 +1,11 @@
 {{- if eq .chezmoi.os "windows" -}}
+function Refresh-Env {
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
+    $env:PATH += ";" + [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
+}
+
+Refresh-Env
+
 try {
     bat cache --build
 } catch {
