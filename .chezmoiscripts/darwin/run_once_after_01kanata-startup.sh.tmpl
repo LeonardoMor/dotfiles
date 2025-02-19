@@ -3,6 +3,8 @@
 
 service_name='com.jtroo.kanata'
 
+read -rp "$(printf '%s\n' "Follow the steps. When done, press Enter to continue: https://github.com/jtroo/kanata/releases")"
+
 [[ -f /Library/LaunchDaemons/${service_name}.plist ]] || {
   cat >"/tmp/${service_name}.plist" <<HERE
 <?xml version="1.0" encoding="UTF-8"?>
