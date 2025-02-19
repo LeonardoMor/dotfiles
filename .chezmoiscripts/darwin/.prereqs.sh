@@ -25,7 +25,7 @@ brew-file --version >/dev/null 2>&1 || {
 # 	gpg --version >/dev/null 2>&1 || "$homebrew" install gnupg
 # } && "$($chezmoi source-path)/.chezmoiscripts/.import-gnupg-keys.sh"
 
-brew list 1password >/dev/null 2>&1 || "$homebrew" install 1password
+"$homebrew" list 1password >/dev/null 2>&1 || "$homebrew" install 1password
 op --version >/dev/null 2>&1 || "$homebrew" install 1password-cli
 
 [[ -d /Applications/Alt-C.app ]] || {
