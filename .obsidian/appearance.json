@@ -1,7 +1,3 @@
 {
-  "theme": "obsidian",
-  "cssTheme": "Tokyo Night",
-  "enabledCssSnippets": [
-    "center-images"
-  ]
+  "cssTheme": "Tokyo Night"
 }
