@@ -119,6 +119,7 @@ brew utf8proc
 brew vim
 brew webp
 brew x265
+brew xcodegen
 brew xorgproto
 brew xz
 brew zstd
