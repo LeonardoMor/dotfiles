@@ -1,12 +1,55 @@
 {{ if eq .chezmoi.os "darwin" -}}
 #!/usr/bin/env bash
 
-service_name='com.jtroo.kanata'
-
 read -rp "$(printf '%s\n' "Follow the steps. When done, press Enter to continue: https://github.com/jtroo/kanata/releases")"
 
-[[ -f /Library/LaunchDaemons/${service_name}.plist ]] || {
-  cat >"/tmp/${service_name}.plist" <<HERE
+service_name='com.jtroo.kanata'
+driver_daemon='org.pqrs.service.daemon.Karabiner-VirtualHIDDevice-Daemon'
+driver_manager='org.pqrs.service.daemon.Karabiner-VirtualHIDDevice-Manager'
+
+declare -A service_configs
+service_configs=(
+	["$driver_manager"]="$(
+		cat <<HERE
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>$driver_manager</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager</string>
+        <string>activate</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>
+HERE
+	)"
+	["$driver_daemon"]="$(
+		cat <<HERE
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>$driver_daemon</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+  </dict>
+</plist>
+HERE
+	)"
+	["$service_name"]="$(
+		cat <<HERE
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -34,15 +77,21 @@ read -rp "$(printf '%s\n' "Follow the steps. When done, press Enter to continue:
 </dict>
 </plist>
 HERE
+	)"
+)
 
-  sudo chown root:wheel "/tmp/${service_name}.plist"
-  sudo chmod 644 "/tmp/${service_name}.plist"
-  sudo cp "/tmp/${service_name}.plist" /Library/LaunchDaemons
-  sudo rm -f "/tmp/${service_name}.plist"
-}
+for s in "${!service_configs[@]}"; do
+	[[ -f /Library/LaunchDaemons/${s}.plist ]] || {
+		echo "${service_configs[$s]}" >"/tmp/${s}.plist"
+		sudo chown root:wheel "/tmp/${s}.plist"
+		sudo chmod 644 "/tmp/${s}.plist"
+		sudo cp "/tmp/${s}.plist" /Library/LaunchDaemons
+		sudo rm -f "/tmp/${s}.plist"
+	}
 
-sudo launchctl print "system/$service_name" >/dev/null 2>&1 || {
-  sudo launchctl bootstrap system /Library/LaunchDaemons/${service_name}.plist
-  sudo launchctl enable "system/$service_name"
-}
+	sudo launchctl print "system/$s" >/dev/null 2>&1 || {
+		sudo launchctl enable "system/$s"
+		sudo launchctl bootstrap system /Library/LaunchDaemons/${s}.plist
+	}
+done
 {{ end -}}
