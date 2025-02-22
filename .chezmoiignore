@@ -4,6 +4,7 @@
 .ssh/known_hosts*
 README.md
 Brewfile
+biome.json
 {{- if not (eq .chezmoi.os "darwin") }}
 Library
 {{- end }}
