@@ -60,10 +60,6 @@ pager = "bat -pp"
 
     brew_prefix = "/opt/homebrew"
 {{- if eq .chezmoi.os "linux" }}
-{{- if eq .chezmoi.osRelease.id "arch" }}
     install_cmd = "paru --noconfirm --sync --needed"
-{{- else if eq .chezmoi.osRelease.id "ubuntu" }}
-    install_cmd = "sudo apt-get -y install"
-{{- end }}
 {{- end }}
 {{- end }}
