@@ -17,7 +17,7 @@ pager = "bat -pp"
 
 [cd]
     command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
-    args = ["-NoLogo"]
+    args = ["-NoLogo", "-NoProfile"]
 
 [diff]
     pager = "bat -pp --language=diff"
