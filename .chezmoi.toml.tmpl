@@ -11,6 +11,10 @@ pager = "bat -pp"
     args = ["--login"]
 
 {{- else -}}
+[interpreters.ps1]
+    command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
+    args = ["-NoLogo", "-NoProfile"]
+
 [hooks.read-source-state.pre]
     command = "powershell"
     args = ["-NoLogo", "-NoProfile", "-File", {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.ps1" | quote }}]
