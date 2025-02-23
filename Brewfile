@@ -127,6 +127,7 @@ brew zstd
 tap homebrew/cask
 cask 1password
 cask 1password-cli
+cask adobe-acrobat-reader
 cask alacritty
 cask discord
 cask firefox
