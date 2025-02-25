@@ -12,8 +12,8 @@ pager = "bat -pp"
 
 {{- else -}}
 [interpreters]
-    ps1 = {
-        command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
+    ps1 = { 
+        command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }},
         args = ["-NoLogo", "-NoProfile"]
     }
 
@@ -48,10 +48,21 @@ pager = "bat -pp"
 {{- else }}
     email = "leomc145@gmail.com"
 {{- end }}
+
 {{- if eq .chezmoi.os "windows" }}
     VaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
 {{- else }}
     VaultsDir = {{ joinPath .chezmoi.homeDir "Documents" | quote }}
+{{- end }}
+
+{{- if eq .chezmoi.os "darwin" }}
+    brew_prefix = "/opt/homebrew"
+{{- end }}
+
+{{- if eq .chezmoi.os "linux" }}
+    install_cmd = "paru --noconfirm --sync --needed"
+{{- end }}
+
 {{/* XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
     XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
@@ -59,9 +70,3 @@ pager = "bat -pp"
     XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
     XDG_DATA_DIRS = "/usr/local/share:/usr/share"
     XDG_CONFIG_DIRS = "/etc/xdg"
-
-    brew_prefix = "/opt/homebrew"
-{{- if eq .chezmoi.os "linux" }}
-    install_cmd = "paru --noconfirm --sync --needed"
-{{- end }}
-{{- end }}
