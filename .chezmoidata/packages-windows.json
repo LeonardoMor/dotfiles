@@ -1,6 +1,6 @@
 {
 	"$schema": "https://aka.ms/winget-packages.schema.2.0.json",
-	"CreationDate": "2025-02-01T18:28:03.004-00:00",
+	"CreationDate": "2025-02-16T11:43:05.399-00:00",
 	"Sources": [
 		{
 			"Packages": [
@@ -23,7 +23,7 @@
 					"PackageIdentifier": "VideoLAN.VLC"
 				},
 				{
-					"PackageIdentifier": "vim.vim"
+					"PackageIdentifier": "vim.vim.nightly"
 				},
 				{
 					"PackageIdentifier": "Microsoft.VCRedist.2010.x64"
@@ -38,13 +38,13 @@
 					"PackageIdentifier": "Flydigi.FlydigiSpaceStation"
 				},
 				{
+					"PackageIdentifier": "GoLang.Go"
+				},
+				{
 					"PackageIdentifier": "RevoUninstaller.RevoUninstaller"
 				},
 				{
 					"PackageIdentifier": "Adobe.Acrobat.Reader.64-bit"
-				},
-				{
-					"PackageIdentifier": "GitHub.cli"
 				},
 				{
 					"PackageIdentifier": "Nvidia.PhysX"
@@ -53,13 +53,16 @@
 					"PackageIdentifier": "RealVNC.VNCViewer"
 				},
 				{
-					"PackageIdentifier": "Microsoft.PowerShell"
-				},
-				{
 					"PackageIdentifier": "Neovim.Neovim"
 				},
 				{
-					"PackageIdentifier": "GoLang.Go"
+					"PackageIdentifier": "Microsoft.PowerShell"
+				},
+				{
+					"PackageIdentifier": "GitHub.cli"
+				},
+				{
+					"PackageIdentifier": "TeamViewer.TeamViewer"
 				},
 				{
 					"PackageIdentifier": "Starship.Starship"
@@ -89,13 +92,13 @@
 					"PackageIdentifier": "Microsoft.VCRedist.2010.x86"
 				},
 				{
-					"PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.8"
-				},
-				{
 					"PackageIdentifier": "Microsoft.VCRedist.2012.x64"
 				},
 				{
 					"PackageIdentifier": "Microsoft.VCRedist.2015+.x86"
+				},
+				{
+					"PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.8"
 				},
 				{
 					"PackageIdentifier": "AgileBits.1Password"
@@ -111,6 +114,9 @@
 				},
 				{
 					"PackageIdentifier": "Fastfetch-cli.Fastfetch"
+				},
+				{
+					"PackageIdentifier": "Gyan.FFmpeg"
 				},
 				{
 					"PackageIdentifier": "Rustlang.Rustup"

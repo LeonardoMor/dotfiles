@@ -22,9 +22,6 @@ pager = "bat -pp"
 [cd]
     command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
     args = ["-NoLogo", "-NoProfile"]
-
-[diff]
-    pager = "bat -pp --language=diff"
 {{- end }}
 
 [edit]
@@ -51,9 +48,9 @@ pager = "bat -pp"
     email = "leomc145@gmail.com"
 {{- end }}
 {{- if eq .chezmoi.os "windows" }}
-    DocumentsDir = {{ joinPath .chezmoi.homeDir "OneDrive" "Documents" | quote }}
+    VaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
 {{- else }}
-    DocumentsDir = {{ joinPath .chezmoi.homeDir "Documents" | quote }}
+    VaultsDir = {{ joinPath .chezmoi.homeDir "Documents" | quote }}
 {{/* XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
     XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
