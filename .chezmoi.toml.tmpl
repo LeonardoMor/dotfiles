@@ -4,20 +4,21 @@ pager = "bat -pp"
 {{- end }}
 
 [hooks.read-source-state.pre]
-    command = {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.sh" | quote }}
+    script = {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.sh" | quote }}
 
 [cd]
     command = "bash"
     args = ["--login"]
 
 {{- else -}}
-[interpreters.ps1]
-    command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
-    args = ["-NoLogo", "-NoProfile"]
+[interpreters]
+    ps1 = {
+        command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
+        args = ["-NoLogo", "-NoProfile"]
+    }
 
 [hooks.read-source-state.pre]
-    command = "powershell"
-    args = ["-NoLogo", "-NoProfile", "-File", {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.ps1" | quote }}]
+    script = {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.ps1" | quote }}
 
 [cd]
     command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
