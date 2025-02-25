@@ -53,20 +53,20 @@ pager = "bat -pp"
     VaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
 {{- else }}
     VaultsDir = {{ joinPath .chezmoi.homeDir "Documents" | quote }}
-{{- end }}
 
-{{- if eq .chezmoi.os "darwin" }}
+    {{- if eq .chezmoi.os "darwin" }}
     brew_prefix = "/opt/homebrew"
-{{- end }}
+    {{- end }}
 
-{{- if eq .chezmoi.os "linux" }}
+    {{- if eq .chezmoi.os "linux" }}
     install_cmd = "paru --noconfirm --sync --needed"
-{{- end }}
+    {{- end }}
 
-{{/* XDG spec variables */}}
+    {{/* XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
     XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
     XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
     XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
     XDG_DATA_DIRS = "/usr/local/share:/usr/share"
     XDG_CONFIG_DIRS = "/etc/xdg"
+{{- end }}
