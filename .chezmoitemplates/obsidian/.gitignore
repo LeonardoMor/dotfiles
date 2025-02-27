@@ -1,0 +1,6 @@
+.prettierrc.json
+.trash/
+.DS_Store
+.obsidian/
+!.obsidian/workspace.json
+!.obsidian/graph.json
