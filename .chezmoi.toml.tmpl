@@ -19,7 +19,7 @@ pager = "bat -pp"
 
 [cd]
     command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
-    args = ["-NoLogo", "-NoProfile"]
+    args = ["-NoLogo"]
 {{- end }}
 
 [edit]
