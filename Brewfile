@@ -138,6 +138,7 @@ cask obsidian
 cask rectangle
 cask slack
 cask whatsapp
+cask zen-browser
 cask zoom
 
 tap rcmdnk/file
