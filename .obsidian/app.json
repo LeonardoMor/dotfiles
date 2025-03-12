@@ -1,6 +1,9 @@
 {
-  "livePreview": false,
-  "vimMode": true,
-  "showLineNumber": true,
-  "alwaysUpdateLinks": true
+    "livePreview": false,
+    "vimMode": true,
+    "showLineNumber": true,
+    "alwaysUpdateLinks": true,
+    "newFileLocation": "folder",
+    "newFileFolderPath": "Inbox"
 }
+
