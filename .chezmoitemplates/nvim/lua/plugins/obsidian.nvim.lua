@@ -26,6 +26,7 @@ return {
     daily_notes = {
       folder = "Inbox/Journal",
       date_format = "%F",
+      default_tags = {}
     },
   },
   event = function(self)
