@@ -102,7 +102,7 @@ return {
           prepend_args = { '--profile', 'black' },
         },
         shfmt = {
-          prepend_args = { '--case-indent', '--indent', '0' },
+          prepend_args = { '--case-indent', '--indent', '4' },
         },
 {{- end }}
         injected = {
