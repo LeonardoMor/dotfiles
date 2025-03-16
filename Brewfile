@@ -102,6 +102,7 @@ brew pinentry
 brew pixman
 brew pkgconf
 brew python-packaging
+brew python-setuptools
 brew python@3.13
 brew readline
 brew ripgrep
