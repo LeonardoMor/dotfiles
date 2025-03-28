@@ -14,7 +14,6 @@ Library
 
 {{- if eq .chezmoi.hostname .work_host }}
 .config/nvim/lua/plugins/neocodeium.lua
-.config/nvim/lua/plugins/cord.nvim.lua
 {{- end }}
 
 {{- if ne .chezmoi.hostname "cassini" }}
