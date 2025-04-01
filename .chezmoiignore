@@ -20,11 +20,12 @@ Library
 bin/toggle_laptop_screen.sh
 {{- end }}
 {{- if ne .chezmoi.os "windows" }}
-_vimrc
 AppData
 Documents/*/.obsidian/graph.json
 Documents/*/.obsidian/workspace.json
 OneDrive
+_vimrc
+{{ joinPath "source" "repos" "Codice" }}
 {{- else }}
 *profile*
 .bash*
