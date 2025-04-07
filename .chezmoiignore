@@ -5,6 +5,8 @@
 Brewfile
 README.md
 biome.json
+{{ joinPath .VaultsDir "*" ".obsidian" "graph.json" }}
+{{ joinPath .VaultsDir "*" ".obsidian" "workspace.json" }}
 
 {{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "infinity") }}
 .config/brewfile
@@ -16,8 +18,6 @@ biome.json
 
 {{- if ne .chezmoi.os "windows" }}
 AppData
-Documents/*/.obsidian/graph.json
-Documents/*/.obsidian/workspace.json
 OneDrive
 _vimrc
 {{ joinPath "source" "repos" "Codice" }}
@@ -34,8 +34,6 @@ _vimrc
 .config/vim
 Documents
 bin
-{{ joinPath "OneDrive" "Documents/*/.obsidian/graph.json" }}
-{{ joinPath "OneDrive" "Documents/*/.obsidian/workspace.json" }}
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 .config/systemd
