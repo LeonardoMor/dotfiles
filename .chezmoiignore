@@ -1,13 +1,11 @@
-.config/nvim/LICENSE
 .config/nvim/*lock.json
+.config/nvim/LICENSE
 .config/tmux/plugins
 .ssh/known_hosts*
-README.md
 Brewfile
+README.md
 biome.json
-{{- if ne .chezmoi.os "darwin" }}
-Library
-{{- end }}
+
 {{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "infinity") }}
 .config/brewfile
 {{- end }}

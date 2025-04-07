@@ -10,6 +10,7 @@ brew brotli
 brew ca-certificates
 brew cairo
 brew chezmoi
+brew dos2unix
 brew fastfetch
 brew fontconfig
 brew freetype
@@ -29,6 +30,7 @@ brew graphite2
 brew harfbuzz
 brew highway
 brew icu4c@76
+brew icu4c@77
 brew imagemagick
 brew imath
 brew jasper
