@@ -32,10 +32,10 @@ _vimrc
 .config/nvim
 .config/tmux
 .config/vim
+Documents
+bin
 {{ joinPath "OneDrive" "Documents/*/.obsidian/graph.json" }}
 {{ joinPath "OneDrive" "Documents/*/.obsidian/workspace.json" }}
-bin
-Documents
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 .config/systemd
