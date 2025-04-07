@@ -5,7 +5,7 @@
 README.md
 Brewfile
 biome.json
-{{- if not (eq .chezmoi.os "darwin") }}
+{{- if ne .chezmoi.os "darwin" }}
 Library
 {{- end }}
 {{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "infinity") }}
