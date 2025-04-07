@@ -14,9 +14,6 @@ biome.json
 .config/nvim/lua/plugins/neocodeium.lua
 {{- end }}
 
-{{- if ne .chezmoi.hostname "cassini" }}
-bin/toggle_laptop_screen.sh
-{{- end }}
 {{- if ne .chezmoi.os "windows" }}
 AppData
 Documents/*/.obsidian/graph.json
