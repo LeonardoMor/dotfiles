@@ -43,5 +43,5 @@ bin
 Documents
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
-.config/systemd/user/kanata.service
+.config/systemd
 {{- end }}
