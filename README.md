@@ -1,28 +1,29 @@
-# My working environment
-
-This will get most of what I need installed and configure some of it. Some stuff
-will still require some manual interventions like
-[setting up Nvidia drivers on Arch](https://github.com/korvahannu/arch-nvidia-drivers-installation-guide).
-
-I'll automate and improve things as I go along.
-
-To deploy the dotfiles on a new machine, run:
-
-```sh
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --verbose --apply LeonardoMor
-```
-
-## How it works
+## Generalities
 
 `chezmoi` [documentation](https://www.chezmoi.io/user-guide/) is pretty
 excellent, I'll just put here some stuff that I find useful to keep in mind.
 
 There is a source directory, `$(chezmoi source-path)` and a target directory,
-which is the one that you want to manage and typically your `$HOME`.
+which is the directory that you want to manage and typically your `$HOME`.
 
-`chezmoi` will produce a desired, target state based mainly on two things:
+At any given moment, `chezmoi` is considering 3 possible states:
+
+- Source state: which is the state of the `$(chezmoi source-path)` dir
+- Target state: which is desired state of your home dir once everything is
+  resolved and applied
+- Current state: which is the present state of your home dir
+
+`chezmoi` produces the desired target state in function of two things:
 
 - The source files and directories located at the source dir
+- The `${XDG_CONFIG_HOME}/chezmoi/chezmoi.toml` file
+
+There are a few ways in which you can excert control over the target state:
+
+- File and directory names
+- File extensions
+- Scripts
+- Templates
 - The `${XDG_CONFIG_HOME}/chezmoi/chezmoi.toml` file
 
 ## `chezmoi.toml`, template of templates
