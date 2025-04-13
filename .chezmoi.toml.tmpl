@@ -28,9 +28,12 @@ pager = "bat -pp"
 [merge]
     command = "nvim"
     args = [
+        "-O3",
         {{ print "{{.Destination}}" | quote }},
         {{ print "{{.Source}}" | quote }},
-        {{ print "{{.Target}}" | quote }}
+        {{ print "{{.Target}}" | quote }},
+        "-c",
+        "windo diffthis"
     ]
 
 [git]

@@ -1,11 +1,18 @@
 [init]
 	defaultBranch = master
 [user]
-	name = {{ .name | quote }}
-	email = {{ .email | quote }}
+	name = "Leonardo Mora Castro"
+	email = "lmoracas@cisco.com"
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF3d2XiD4XL7mtRkWgxsw4Q6niff2p4h6C+i5r0AMjSO
 [core]
 	autocrlf = false
 	editor = nvim
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+[commit]
+	gpgsign = true
 {{- if ne .chezmoi.os "windows" }}
 [credential "https://github.com"]
 	helper =
