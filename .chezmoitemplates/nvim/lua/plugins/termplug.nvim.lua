@@ -1,6 +1,12 @@
 return {
   'Ernest1338/termplug.nvim',
+{{- if eq .chezmoi.os "windows" }}
+  opts = {
+    shell = 'pwsh.exe -NoLogo'
+  },
+{{- else }}
   opts = {},
+{{- end }}
   cmd = 'Term',
   keys = {
     {
