@@ -55,6 +55,7 @@ bootstrap_linux() {
 bootstrap_darwin() {
     # Assume Apple silicon
     local brew_prefix='/opt/homebrew'
+    local Brewfile="${XDG_CONFIG_HOME:-~/.config}/brewfile/Brewfile"
 
     # Install brew
     brew --version >/dev/null 2>&1 || {
@@ -65,8 +66,12 @@ bootstrap_darwin() {
     # Will manage brew packages with Homebrew-file
     brew-file --version >/dev/null 2>&1 || {
         $INSTALL rcmdnk/file/brew-file
-        "${brew_prefix}/bin/brew-file" set_local
     }
+    if [[ -L $Brewfile ]] && [[ ! -e $Brewfile ]]; then
+        rm -f "$Brewfile"
+        touch "$Brewfile"
+    fi
+    "${brew_prefix}/bin/brew-file" set_local
     INSTALL="${brew_prefix}/bin/brew-file install"
 }
 
@@ -88,4 +93,4 @@ eval "$(op signin)"
 
 # chezmoi
 $INSTALL chezmoi
-chezmoi init --verbose --apply LeonardoMor
+chezmoi init --apply LeonardoMor
