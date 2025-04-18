@@ -1,11 +1,4 @@
 {{- if ne .chezmoi.os "windows" -}}
-{{- if lookPath "bat" -}}
-pager = "bat -pp"
-{{- end }}
-
-[hooks.read-source-state.pre]
-    script = {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.sh" | quote }}
-
 [cd]
     command = "bash"
     args = ["--login"]

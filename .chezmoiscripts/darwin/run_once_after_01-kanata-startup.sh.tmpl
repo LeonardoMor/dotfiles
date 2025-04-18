@@ -94,4 +94,7 @@ for s in "${!service_configs[@]}"; do
 		sudo launchctl bootstrap system /Library/LaunchDaemons/${s}.plist
 	}
 done
+
+echo 'Services for kanata are ready'
+echo 'You may need to do the remaining steps from https://github.com/jtroo/kanata/discussions/1537'
 {{ end -}}

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# TODO: first check if nwg-shell is already setup. For now, just ask
+
+until [[ $REPLY =~ y|n ]]; do
+    read -rp 'Set up nwg-shell? [y|n] '
+    case "$REPLY" in
+        n) ;;
+        y) nwg-shell-installer -a -hypr ;;
+        *) echo 'ERROR: incorrect answer. Must be y or n' ;;
+    esac
+done
+
+# Configure greetd
+# TODO: Find a way to edit toml files from a script. Other than using sed. This is what needs to be changed:
+# [default_session]
+# command = "Hyprland -c /etc/nwg-hello/hyprland.conf"
+# On the file: /etc/greetd/config.toml
+hyprcmd="Hyprland -c /etc/nwg-hello/hyprland.conf"
+currentcmd="$(sudo dasel --file /etc/greetd/config.toml --plain 'default_session.command')"
+[[ $currentcmd == "$hyprcmd" ]] || sudo dasel --file /etc/greetd/config.toml --type string --value "$hyprcmd" \
+    'default_session.command'

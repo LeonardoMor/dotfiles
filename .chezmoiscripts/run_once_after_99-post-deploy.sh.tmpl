@@ -1,4 +1,4 @@
-{{ if not (eq .chezmoi.os "windows") -}}
+{{ if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
 source ~/.profile
@@ -19,9 +19,6 @@ bash "${BLESH_PATH}/ble.sh" --version >/dev/null 2>&1 || {
 		make install
 	)
 }
-
-# Keep the chezmoi from brew
-[[ -f ~/bin/chezmoi ]] && rm -f ~/bin/chezmoi
 {{- end }}
 
 # Install node
@@ -29,6 +26,9 @@ node --version >/dev/null 2>&1 || nvm install Iron
 
 # Install prettier and it's awk formatter globally
 npm install --global prettier@^2 prettier-plugin-awk
+
+# Open nvim from the first time
+nvim
 
 # Build bat theme
 bat --version >/dev/null 2>&1 && bat cache --build

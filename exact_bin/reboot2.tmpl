@@ -1,0 +1,79 @@
+{{ if ne .chezmoi.hostname "cachyos-inf" -}}
+#!/usr/bin/env bash
+
+# Select what to boot to on next boot.
+# Must be run with sudo
+
+help() {
+    cat <<HERE
+reboot2 [options]
+
+Select what the system will boot to and reboot to it.
+If called with no arguments, will restart to the present OS.
+Must be run as root.
+
+options:
+    -h  Print this help message and exit.
+    -c  Choose. Pick what you want to restart to next.
+HERE
+}
+
+# Check if fzf is installed
+type fzf >/dev/null 2>&1 || {
+    echo "ERROR: fzf is not installed"
+    exit 1
+}
+
+# Check for root
+if ! grep -q '-h' <<<"$*" && [[ $(id -u) -ne 0 ]]; then
+    echo "ERROR: Not root"
+    exit 1
+fi
+
+PRESENT_OS="$(awk -F'=' '/^NAME/{ print $2 }' /etc/*-release | xargs)"
+CHOSEN="$PRESENT_OS"
+
+restart2uefi() {
+    systemctl reboot --firmware-setup || {
+        echo "ERROR: Failed to reboot to UEFI"
+        exit 1
+    }
+}
+
+restartto() {
+    local nextboot="$1"
+    grep -Eiq 'UEFI|Firmware' <<<"$nextboot" && restart2uefi
+    grub-reboot "$nextboot" || {
+        echo "ERROR: grub-reboot failed"
+        exit 1
+    }
+    systemctl reboot || {
+        echo "ERROR: reboot failed"
+        exit 1
+    }
+}
+
+if [[ $# -gt 0 ]]; then
+    while getopts hc option; do
+        case "$option" in
+            h)
+                help
+                exit 0
+                ;;
+            c)
+                CHOSEN="$(awk -F"'" '/menuentry /{ print $2 }' /boot/grub/grub.cfg | fzf)"
+                [[ -z "$CHOSEN" ]] && {
+                    echo "ERROR: No boot entry selected"
+                    exit 1
+                }
+                ;;
+            ?)
+                help
+                exit 1
+                ;;
+        esac
+    done
+fi
+
+restartto "$CHOSEN"
+{{- end }}

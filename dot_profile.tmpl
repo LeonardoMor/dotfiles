@@ -3,11 +3,6 @@
 #
 # Keep it POSIX-compliant
 
-{{ if eq .chezmoi.os "darwin" -}}
-export LANG="en_US.UTF-8"
-export LC_ALL="en_US.UTF-8"
-{{- end }}
-
 # Set PATH
 if ! echo ":${PATH}:" | grep -q ":${HOME}/.bin:"; then
 	export PATH="${HOME}/.bin:${PATH}"
@@ -51,16 +46,18 @@ if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
 	fi
 fi
 
+{{ if eq .chezmoi.os "darwin" -}}
 # Set nvm
-{{- if eq .chezmoi.os "darwin" }}
 [ -z "$NVM_DIR" ] && export NVM_DIR="${HOME}/.nvm"
 [ -s "{{ .brew_prefix }}/opt/nvm/nvm.sh" ] && . "{{ .brew_prefix }}/opt/nvm/nvm.sh"
-{{- else if eq .chezmoi.osRelease.id "arch" }}
-[ -z "$NVM_DIR" ] && export NVM_DIR=/usr/share/nvm
-. "${NVM_DIR}/nvm.sh"
-{{- end }}
 
-{{ if eq .chezmoi.os "darwin" -}}
 # Set imagemagick
 export DYLD_FALLBACK_LIBRARY_PATH="$(brew --prefix)/lib:$DYLD_FALLBACK_LIBRARY_PATH"
+
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+{{- else if eq .chezmoi.osRelease.id "arch" }}
+# Set nvm
+[ -z "$NVM_DIR" ] && export NVM_DIR=/usr/share/nvm
+. "${NVM_DIR}/nvm.sh"
 {{- end }}
