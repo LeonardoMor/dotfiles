@@ -1,3 +1,11 @@
+# dotfiles
+
+TLDR: to deploy on macOS or Linux (only Arch children for now supported), run
+
+```bash
+curl -fsSL https://github.com/LeonardoMor/dotfiles/raw/refs/heads/master/.bootstrap/bootstrap.sh | bash
+```
+
 ## Generalities
 
 `chezmoi` [documentation][chezmoi reference] is pretty excellent, I'll just put
@@ -49,16 +57,16 @@ case that is:
 ```
 
 Now, it might be desirable to have a machine-specific `chezmoi.toml` files, so
-you'd want to template it. You can create a file `.chezmoi.toml.tmpl` to the
-source dir that will produce a local `chezmoi.toml` once `chezmoi init` is run.
+you'd want to template it. You can create a file `.chezmoi.toml.tmpl` the source
+dir that will produce a local `chezmoi.toml` once `chezmoi init` is run.
 
 But some things on `chezmoi.toml` need to be variable. So you need some way to
 indicate those instead of having them substituted by constants when running
 `chezmoi init`.
 
-All the functions (and syntax) from [text/template][text/template], and the
-[text template functions from `sprig`][sprig] are available in `chezmoi`. So,
-one way to do this is to use the `print` function. For example, this is the
+All the functions (and syntax) from [text/template][template], and the [text
+template functions from `sprig`][sprig] are available in `chezmoi`. So, one way
+to do this is to use the `print` function. For example, this is the
 configuration for the merge tool on the template:
 
 ```
@@ -106,7 +114,7 @@ support for 1Password so things very much just work.
 
 Given this, there are only two pre-requisites to deploy these dotfiles:
 
-- a packaga manager
+- a package manager
 - 1Password.
 
 So I've created bootstrap scripts that would:
@@ -135,6 +143,7 @@ Here is the `brew` and `brew-file` setup function:
 bootstrap_darwin() {
     # Assume Apple silicon
     local brew_prefix='/opt/homebrew'
+    local Brewfile="${XDG_CONFIG_HOME:-~/.config}/brewfile/Brewfile"
 
     # Install brew
     brew --version >/dev/null 2>&1 || {
@@ -145,8 +154,12 @@ bootstrap_darwin() {
     # Will manage brew packages with Homebrew-file
     brew-file --version >/dev/null 2>&1 || {
         $INSTALL rcmdnk/file/brew-file
-        "${brew_prefix}/bin/brew-file" set_local
     }
+    if [[ -L $Brewfile ]] && [[ ! -e $Brewfile ]]; then
+        rm -f "$Brewfile"
+        touch "$Brewfile"
+    fi
+    "${brew_prefix}/bin/brew-file" set_local
     INSTALL="${brew_prefix}/bin/brew-file install"
 }
 ```
@@ -183,8 +196,8 @@ total 0
 lrwxr-xr-x  1 501  20  45 Nov 18 13:47 Brewfile -> /Users/lmoracas/.local/share/chezmoi/Brewfile
 ```
 
-So now whenever `${XDG_CONFIG_HOME}/brewfile` is modified, the correct file
-would be modified on the `chezmoi` source dir.
+So now whenever `${XDG_CONFIG_HOME}/brewfile/Brewfile` is modified, the correct
+file would be modified on the `chezmoi` source dir.
 
 <!-- prettier-ignore -->
 > [!NOTE]
@@ -198,30 +211,56 @@ would be modified on the `chezmoi` source dir.
 function for post actions, which I take advantage of to integrate with
 `chezmoi`.
 
-This is how. On the `chezmoi` source dir is a file `dot_profile.tmpl`, which
-will produce the `.profile` file on `$HOME`. The relevant contents are:
+This is how. On the `chezmoi` source dir there is a file `dot_profile.tmpl`,
+which will produce the `.profile` file on `$HOME`. The relevant contents are:
 
 ```
 # Set brew
 if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
-	# Reference: https://stackoverflow.com/a/65980738/7830232
-	eval {{ printf "$(%s/bin/brew shellenv)" .brew_prefix | quote }}
+    # Reference: https://stackoverflow.com/a/65980738/7830232
+    eval {{ printf "$(%s/bin/brew shellenv)" .brew_prefix | quote }}
 
-	# Set Homebrew-file
-	if [ -f {{ printf "%s/etc/brew-wrap" .brew_prefix }} ]; then
-		. {{ printf "%s/etc/brew-wrap" .brew_prefix }}
+    # Set Homebrew-file
+    if [ -f {{ printf "%s/etc/brew-wrap" .brew_prefix }} ]; then
+        . {{ printf "%s/etc/brew-wrap" .brew_prefix }}
 
-		_post_brewfile_update() {
-			chezmoi git add .
-			echo 'Commit message? '
-			read -r
-			chezmoi git -- commit -m "$REPLY"
-			chezmoi git push origin master
-		}
-		export HOMEBREW_CASK_OPTS="--no-quarantine"
-	fi
+        _post_brewfile_update() {
+            chezmoi git add .
+            echo 'Commit message? '
+            read -r
+            chezmoi git -- commit -m "$REPLY"
+            [[ $(chezmoi git -- branch --show-current) == master ]] && chezmoi git push origin master
+        }
+        export HOMEBREW_CASK_OPTS="--no-quarantine"
+    fi
 fi
 ```
+
+Which on the final `.profile` would look like:
+
+```sh
+# Set brew
+if /opt/homebrew/bin/brew --version >/dev/null 2>&1; then
+    # Reference: https://stackoverflow.com/a/65980738/7830232
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+
+    # Set Homebrew-file
+    if [ -f /opt/homebrew/etc/brew-wrap ]; then
+        . /opt/homebrew/etc/brew-wrap
+
+        _post_brewfile_update() {
+            chezmoi git add .
+            echo 'Commit message? '
+            read -r
+            chezmoi git -- commit -m "$REPLY"
+            [[ $(chezmoi git -- branch --show-current) == master ]] && chezmoi git push origin master
+        }
+        export HOMEBREW_CASK_OPTS="--no-quarantine"
+    fi
+fi
+```
+
+after running `chezmoi apply`.
 
 <!-- prettier-ignore -->
 > [!NOTE]
@@ -235,7 +274,7 @@ fi
       functionality.
 
 [chezmoi reference]: https://www.chezmoi.io/reference/
-[text/template]: htps://pkg.go.dev/text/template
+[template]: htps://pkg.go.dev/text/template
 [sprig]: http://masterminds.github.io/sprig/
 [1]: https://1password.com/
 [brew-file]: https://homebrew-file.readthedocs.io/en/latest/usage.html

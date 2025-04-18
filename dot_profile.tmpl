@@ -40,7 +40,7 @@ if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
             echo 'Commit message? '
             read -r
             chezmoi git -- commit -m "$REPLY"
-            [[ $(chezmoi git branch -- --show-current) == master ]] && chezmoi git push origin master
+            [[ $(chezmoi git -- branch --show-current) == master ]] && chezmoi git push origin master
         }
         export HOMEBREW_CASK_OPTS="--no-quarantine"
     fi
