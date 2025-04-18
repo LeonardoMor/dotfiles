@@ -1,40 +1,89 @@
 {{ if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
+set -o errexit
+
 source ~/.profile
 
-# Install Tmux Plugin Manager
-# You still need to open tmux and do prefix + I
-[[ -f "${XDG_CONFIG_HOME}/tmux/plugins/tpm/tpm" ]] || git clone https://github.com/tmux-plugins/tpm "${XDG_CONFIG_HOME}/tmux/plugins/tpm"
+emit() {
+    case "$1" in
+        i) printf 'INFO: %s\n' "$2" >&2 ;;
+        e) printf 'ERROR: %s\n' "$2" >&2 ;;
+        w) printf 'WARNING: %s\n' "$2" >&2 ;;
+        f) printf 'FATAL: %s\n' "$2" >&2 ;;
+        *) emit e "Invalid option or format" ;;
+    esac
+}
 
-{{- if eq .chezmoi.os "darwin" }}
+emit i 'Executing post deploy tasks...'
 
+# Install Tmux Plugin Manager and tmux plugins
+[[ -f "${XDG_CONFIG_HOME}/tmux/plugins/tpm/tpm" ]] || {
+    emit i 'Installing the Tmux Plugin Manager...'
+    if git clone https://github.com/tmux-plugins/tpm "${XDG_CONFIG_HOME}/tmux/plugins/tpm"; then
+        emit i 'Installing configured plugins...'
+        "${XDG_CONFIG_HOME}/tmux/plugins/tpm/bin/install_plugins" || emit e "Failed to install configured plugins"
+    else
+        emit e "Failed to install Tmux Plugin Manager"
+    fi
+}
+
+{{ if eq .chezmoi.os "darwin" -}}
 export BLESH_PATH=~/.local/share/blesh
 
 # Install ble.sh
 bash "${BLESH_PATH}/ble.sh" --version >/dev/null 2>&1 || {
-	git clone --recursive https://github.com/akinomyoga/ble.sh.git ~/ble.sh
-	(
-		cd ~/ble.sh
-		make install
-	)
+    emit i 'Installing ble.sh'
+    if git clone --recursive https://github.com/akinomyoga/ble.sh.git ~/ble.sh; then
+        (
+            cd ~/ble.sh || {
+                emit f "Failed to change dir to ~/ble.sh"
+                exit 1
+            }
+            make install || emit -e "Failed to make ble.sh"
+        )
+    else
+        emit e "Failed to clone ble.sh repo"
+    fi
 }
 {{- end }}
 
 # Install node
-node --version >/dev/null 2>&1 || nvm install Iron
+node --version >/dev/null 2>&1 || {
+    emit i 'Installing the latest node...'
+    if nvm install node; then
+        nvm use node || emit e "Failed using latest node"
+    else
+        emit -e "Failed to install latest node"
+    fi
+}
 
 # Install prettier and it's awk formatter globally
-npm install --global prettier@^2 prettier-plugin-awk
+npm list --global prettier >/dev/null 2>&1 || {
+    if npm install --global prettier@^2; then
+        npm install --global prettier-plugin-awk || emit e "Failed to install the prettier awk formatter"
+    else
+        emit e "Failed to install prettier"
+    fi
+}
 
-# Open nvim from the first time
-nvim
+emit i "Opening nvim for the first time..."
+sleep 2
+nvim || emit e "Failed to open Neovim"
 
-# Build bat theme
-bat --version >/dev/null 2>&1 && bat cache --build
+emit i "Building bat theme..."
+if bat --version >/dev/null 2>&1; then
+    bat cache --build
+else
+    emit i "bat is not installed"
+fi
 
-# Authenticate to github.com
-if gh --version >/dev/null 2>&1 && ! gh auth status >/dev/null 2>&1; then
-	gh auth login
+emit i "Authenticating to github.com..."
+if gh --version >/dev/null 2>&1; then
+    gh auth status >/dev/null 2>&1 && {
+        emit i "Already authenticated!"
+	exit
+    }
+    gh auth login || emit e "Failed to authenticate to github.com"
 fi
 {{ end -}}
