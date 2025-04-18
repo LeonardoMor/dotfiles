@@ -87,7 +87,6 @@ brew mpdecimal
 brew mpfr
 brew msgpack
 brew ncurses
-brew neovim
 brew nettle
 brew nmap
 brew npth
