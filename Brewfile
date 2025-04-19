@@ -23,6 +23,7 @@ brew ghostscript
 brew giflib
 brew glib
 brew gmp
+brew gnu-sed
 brew gnupg
 brew gnutls
 brew go
