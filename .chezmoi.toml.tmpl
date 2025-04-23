@@ -7,9 +7,6 @@
 [interpreters]
     ps1 = { command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}, args = ["-NoLogo", "-NoProfile"] }
 
-[hooks.read-source-state.pre]
-    script = {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" .chezmoi.os ".prereqs.ps1" | quote }}
-
 [cd]
     command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
     args = ["-NoLogo"]
