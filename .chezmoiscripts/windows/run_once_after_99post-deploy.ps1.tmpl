@@ -1,3 +1,4 @@
+{{/* TODO: bat and nvm will not run because the present shell has no access to the refreshed PATH. But, you can run the commands in a new shell. Learn some powershell, then use chezmoi syntax to set a variable with the path of pwsh. Then execute it. Maybe you can even pass an array of arguments */}}
 {{- if eq .chezmoi.os "windows" -}}
 function Refresh-Env {
     $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
