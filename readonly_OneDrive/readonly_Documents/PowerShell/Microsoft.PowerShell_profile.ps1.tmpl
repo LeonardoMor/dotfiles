@@ -7,7 +7,7 @@ Set-PSReadLineKeyHandler -Chord "Alt+h" -Function ForwardChar
 # Command completions
 chezmoi completion powershell | Out-String | Invoke-Expression
 starship completions powershell | Out-String | Invoke-Expression
-
+{{- if ne .chezmoi.os "windows" }}
 # Path to the exported package list
 $WingetExportPath = {{ joinPath .chezmoi.sourceDir ".chezmoidata" "packages-windows.json" | quote }}
 
@@ -69,3 +69,4 @@ function Uninstall-WingetPackage
         Write-Host "Failed to uninstall $PackageId." -ForegroundColor Red
     }
 }
+{{- end }}
