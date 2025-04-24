@@ -5,6 +5,9 @@
         {
             "Packages": [
                 {
+                    "PackageIdentifier": "waterlan.dos2unix"
+                },
+                {
                     "PackageIdentifier": "CoreyButler.NVMforWindows"
                 },
                 {
@@ -193,4 +196,3 @@
     ],
     "WinGetVersion": "1.10.340"
 }
-
