@@ -2,16 +2,25 @@
 	defaultBranch = master
 [user]
 	name = "Leonardo Mora Castro"
+{{- if eq .chezmoi.hostname .work_host }}
 	email = "lmoracas@cisco.com"
+{{- else }}
+	email = "leomc145@gmail.com"
+{{- end }}
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF3d2XiD4XL7mtRkWgxsw4Q6niff2p4h6C+i5r0AMjSO
 [core]
 	autocrlf = false
 	editor = nvim
+{{- if eq .chezmoi.os "windows" }}
+	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
+{{- end }}
 [gpg]
 	format = ssh
 [gpg "ssh"]
 {{- if eq .chezmoi.os "darwin" }}
 	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+{{- else if eq .chezmoi.os "windows" }}
+	program = "C:/Users/leomc/AppData/Local/1Password/app/8/op-ssh-sign.exe"
 {{- end }}
 [commit]
 	gpgsign = true
@@ -30,4 +39,9 @@
 {{- else if eq .chezmoi.os "darwin" }}
 	helper = !/opt/homebrew/bin/gh auth git-credential
 {{ end }}
+{{- else }}
+[credential]
+	helper = manager
+[credential "https://dev.azure.com"]
+	useHttpPath = true
 {{- end -}}
