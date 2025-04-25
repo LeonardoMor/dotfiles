@@ -50,11 +50,11 @@ bash "${BLESH_PATH}/ble.sh" --version >/dev/null 2>&1 || {
 
 # Install node
 node --version >/dev/null 2>&1 || {
-    emit i 'Installing the latest node...'
-    if nvm install node; then
-        nvm use node || emit e "Failed using latest node"
+    emit i 'Installing node Iron...'
+    if nvm install Iron; then
+        nvm use Iron || emit e "Failed using node Iron"
     else
-        emit -e "Failed to install latest node"
+        emit -e "Failed to install node Iron"
     fi
 }
 
