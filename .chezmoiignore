@@ -5,8 +5,8 @@
 Brewfile
 README.md
 biome.json
-{{ joinPath .VaultsDir "*" ".obsidian" "graph.json" }}
-{{ joinPath .VaultsDir "*" ".obsidian" "workspace.json" }}
+.obsidian/graph.json
+.obsidian/workspace.json
 
 {{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "infinity") }}
 .config/brewfile
