@@ -5,11 +5,10 @@ set -g mouse on
 # Set prefix
 {{- if eq .chezmoi.os "darwin" }}
 set-option -g default-shell {{.brew_prefix}}/bin/bash
-{{- else }}
+{{- end }}
 unbind C-b
 set -g prefix C-Space
 bind C-Space send-prefix
-{{- end }}
 
 # Shift Alt vim keys to switch windows
 bind -n C-M-h previous-window
