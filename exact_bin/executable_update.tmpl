@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# Complete system upgrade
 {{- if eq .chezmoi.os "linux" }}
 {{- if eq .chezmoi.osRelease.id "arch" }}
+# Complete system upgrade
 paru -Syu
 {{- end }}
 
@@ -16,6 +16,10 @@ flatpak update -y
 {{- else }}
 brew upgrade
 brew upgrade --cask --greedy
+
+# Update ble.sh in macOS
+BLESH_PATH=~/.local/share/blesh
+bash "${BLESH_PATH}/ble.sh" --update
 {{- end }}
 
 # Update global npm modules
