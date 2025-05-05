@@ -17,6 +17,8 @@ emit() {
 
 emit i 'Executing post deploy tasks...'
 
+export XDG_CONFIG_HOME={{ printf "${XDG_CONFIG_HOME:-%s}" .XDG_CONFIG_HOME | quote }}
+
 # Install Tmux Plugin Manager and tmux plugins
 [[ -f "${XDG_CONFIG_HOME}/tmux/plugins/tpm/tpm" ]] || {
     emit i 'Installing the Tmux Plugin Manager...'
