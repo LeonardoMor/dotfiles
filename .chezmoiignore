@@ -20,7 +20,7 @@ biome.json
 AppData
 OneDrive
 _vimrc
-{{ joinPath "source" "repos" "Codice" }}
+source/repos/Codice
 {{- else }}
 *profile*
 .bash*
