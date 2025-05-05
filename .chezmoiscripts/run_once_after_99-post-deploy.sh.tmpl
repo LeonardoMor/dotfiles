@@ -19,17 +19,6 @@ emit i 'Executing post deploy tasks...'
 
 export XDG_CONFIG_HOME={{ printf "${XDG_CONFIG_HOME:-%s}" .XDG_CONFIG_HOME | quote }}
 
-# Install Tmux Plugin Manager and tmux plugins
-[[ -f "${XDG_CONFIG_HOME}/tmux/plugins/tpm/tpm" ]] || {
-    emit i 'Installing the Tmux Plugin Manager...'
-    if git clone https://github.com/tmux-plugins/tpm "${XDG_CONFIG_HOME}/tmux/plugins/tpm"; then
-        emit i 'Installing configured plugins...'
-        "${XDG_CONFIG_HOME}/tmux/plugins/tpm/bin/install_plugins" || emit e "Failed to install configured plugins"
-    else
-        emit e "Failed to install Tmux Plugin Manager"
-    fi
-}
-
 {{ if eq .chezmoi.os "darwin" -}}
 export BLESH_PATH=~/.local/share/blesh
 
@@ -79,6 +68,16 @@ if bat --version >/dev/null 2>&1; then
 else
     emit i "bat is not installed"
 fi
+
+[[ -f "${XDG_CONFIG_HOME}/tmux/plugins/tpm/tpm" ]] || {
+    emit i 'Installing the Tmux Plugin Manager...'
+    if git clone https://github.com/tmux-plugins/tpm "${XDG_CONFIG_HOME}/tmux/plugins/tpm"; then
+        emit i 'Installing configured plugins...'
+        "${XDG_CONFIG_HOME}/tmux/plugins/tpm/bin/install_plugins" || emit e "Failed to install configured plugins"
+    else
+        emit e "Failed to install Tmux Plugin Manager"
+    fi
+}
 
 emit i "Authenticating to github.com..."
 if gh --version >/dev/null 2>&1; then
