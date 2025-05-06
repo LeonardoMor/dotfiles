@@ -1,7 +1,7 @@
 {{ if eq .chezmoi.os "windows" -}}
 {{- range .Sources }}
     {{- range .Packages }}
-winget install --id {{ .PackageIdentifier }} --silent --accept-source-agreements --accept-package-agreements
+winget install --exact --id {{ .PackageIdentifier }} --silent --accept-source-agreements --accept-package-agreements
     {{- end }}
 {{- end }}
 {{ end -}}
