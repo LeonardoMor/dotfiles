@@ -1,8 +1,8 @@
 {{ if eq .chezmoi.os "windows" -}}
 {{- range .Sources }}
-    {{- range .Packages }}
+{{-     range .Packages }}
 Write-Host "Installing or upgrading {{ .PackageIdentifier }}..."
 winget install --exact --id {{ .PackageIdentifier }} --silent --accept-source-agreements --accept-package-agreements
-    {{- end }}
+{{-     end }}
 {{- end }}
 {{ end -}}
