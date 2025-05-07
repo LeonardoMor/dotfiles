@@ -5,6 +5,9 @@
         {
             "Packages": [
                 {
+                    "PackageIdentifier": "7zip.7zip"
+                },
+                {
                     "PackageIdentifier": "waterlan.dos2unix"
                 },
                 {
