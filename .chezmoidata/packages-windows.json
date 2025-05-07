@@ -83,6 +83,9 @@
                     "PackageIdentifier": "GnuWin32.Tree"
                 },
                 {
+                    "PackageIdentifier": "GnuWin32.Tar"
+                },
+                {
                     "PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.6"
                 },
                 {
