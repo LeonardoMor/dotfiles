@@ -2,8 +2,8 @@ return {
   -- Main LSP Configuration
   'neovim/nvim-lspconfig',
   dependencies = {
-    { 'williamboman/mason.nvim', config = true },
-    'williamboman/mason-lspconfig.nvim',
+    { 'mason-org/mason.nvim', config = true, version = "1.11.0"},
+    { 'mason-org/mason-lspconfig.nvim', version = "1.32.0" },
     { 'j-hui/fidget.nvim', opts = {} },
     'hrsh7th/cmp-nvim-lsp',
   },
