@@ -1,8 +1,0 @@
-{{ if eq .chezmoi.os "windows" -}}
-{{- range .Sources }}
-    {{- range .Packages }}
-Write-Host "Installing {{ .PackageIdentifier }}..."
-winget install --id {{ .PackageIdentifier }} --silent --accept-source-agreements --accept-package-agreements
-    {{- end }}
-{{- end }}
-{{ end -}}
