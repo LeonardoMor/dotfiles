@@ -24,14 +24,10 @@ source/repos/Codice
 {{- else }}
 *profile*
 .bash*
-.config/alacritty
-.config/bat
-.config/blesh
-.config/brewfile
-.config/ghostty
-.config/nvim
-.config/tmux
-.config/vim
+.config
+!.config/git
+!.confgi/kanata
+!.config/starship.toml
 Documents
 bin
 {{- end }}
