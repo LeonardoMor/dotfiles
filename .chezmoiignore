@@ -5,8 +5,8 @@
 Brewfile
 README.md
 biome.json
-.obsidian/graph.json
-.obsidian/workspace.json
+source/repos/*/.obsidian/graph.json
+source/repos/*/.obsidian/workspace.json
 
 {{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "infinity") }}
 .config/brewfile
@@ -20,7 +20,6 @@ biome.json
 AppData
 OneDrive
 _vimrc
-source/repos/Codice
 {{- else }}
 *profile*
 .bash*
