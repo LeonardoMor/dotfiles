@@ -1,0 +1,18 @@
+{
+  "attachPath": {
+    "attachmentRoot": "attachments",
+    "saveAttE": "nextToNote",
+    "attachmentPath": "",
+    "attachFormat": "IMG_${date}",
+    "type": "GLOBAL"
+  },
+  "dateFormat": "YYYYMMDDHHmmssSSS",
+  "excludeExtensionPattern": "",
+  "autoRenameAttachment": true,
+  "excludedPaths": "",
+  "excludePathsArray": [],
+  "excludeSubpaths": false,
+  "originalNameStorage": [],
+  "overridePath": {},
+  "disableNotification": false
+}
