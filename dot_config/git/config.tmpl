@@ -5,10 +5,12 @@
 	email = {{ .email | quote }}
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF3d2XiD4XL7mtRkWgxsw4Q6niff2p4h6C+i5r0AMjSO
 [core]
-	autocrlf = false
 	editor = nvim
 {{- if eq .chezmoi.os "windows" }}
+	autocrlf = true
 	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
+{{- else }}
+	autocrlf = input
 {{- end }}
 [gpg]
 	format = ssh

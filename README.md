@@ -101,6 +101,19 @@ on the actual config file: `${XDG_CONFIG_HOME}/chezmoi/chezmoi.toml`
 Alternatively, you can use a lot of `"{{"` and `"}}"` to achieve the same
 result.
 
+## Changing template delimiters
+
+At times, you'll find that on a certain configuration file `{{` and `}}` are
+needed as they are and not delimiting an action. To change the delimiters on
+those files, you need to add some specific line. Here is an example of one such
+line for a `.json` file:
+
+```json
+// chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+```
+
+[Source](https://www.chezmoi.io/reference/templates/directives/#delimiters)
+
 ## Bootstrapping
 
 Ideally, this system would allow you to have your machine ready to go by just
