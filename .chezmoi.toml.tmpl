@@ -33,26 +33,20 @@
 [data]
     work_host = "LMORACAS-M-D6L6"
     name = "Leonardo Mora Castro"
+    VaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
 {{- if eq .chezmoi.hostname "LMORACAS-M-D6L6" }}
     email = "lmoracas@cisco.com"
 {{- else }}
     email = "leomc145@gmail.com"
 {{- end }}
-
-{{- if eq .chezmoi.os "windows" }}
-    VaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
-{{- else }}
-    VaultsDir = {{ joinPath .chezmoi.homeDir "Documents" | quote }}
-
-    {{- if eq .chezmoi.os "darwin" }}
+{{- if eq .chezmoi.os "darwin" }}
     brew_prefix = "/opt/homebrew"
-    {{- end }}
-
-    {{- if eq .chezmoi.os "linux" }}
+{{- end }}
+{{- if eq .chezmoi.os "linux" }}
     install_cmd = "paru --noconfirm --sync --needed"
-    {{- end }}
-
-    {{/* XDG spec variables */}}
+{{- end }}
+{{- if ne .chezmoi.os "windows" -}}
+{{/* XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
     XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
     XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
