@@ -28,6 +28,7 @@ try {
     nvm use Iron
 }
 
+# TODO: Ask if this should be done. Don't just do it.
 # Fix time discrepancy for dual booting
 reg add "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\TimeZoneInformation" /v RealTimeIsUniversal /d 1 /t REG_DWORD /f
 {{ end -}}
