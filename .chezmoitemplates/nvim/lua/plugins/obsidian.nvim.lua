@@ -1,11 +1,15 @@
 local utils = require('custom.utils')
 
 return {
-  'epwalsh/obsidian.nvim',
+  'obsidian-nvim/obsidian.nvim',
   version = '*',
+  lazy = true,
+  ft = "markdown",
   dependencies = {
     'nvim-lua/plenary.nvim',
   },
+  ---@module 'obsidian'
+  ---@type obsidian.config.ClientOpts
   opts = {
     wiki_link_func = "use_alias_only",
     workspaces = utils.vaults,
@@ -40,7 +44,7 @@ return {
       :flatten()
       :totable()
   end,
-  cmd = { "ObsidianToday", "ObsidianYesterday"  }
+  cmd = { "Obsidian" }
   -- config = function()
   --   vim.api.nvim_create_autocmd('FileType', {
   --     desc = 'Markdown Conceal for Obsidian vault files',
