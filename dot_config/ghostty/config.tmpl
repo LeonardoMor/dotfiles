@@ -4,8 +4,9 @@ background-opacity = 0.9
 {{- if eq .chezmoi.os "darwin" }}
 command = {{ joinPath .brew_prefix "bin" "bash" }} --login
 macos-option-as-alt = true
+keybind = alt+backspace=text:\x17
 {{- else }}
 command = bash --login
+keybind = ctrl+backspace=text:\x17
 {{- end }}
 window-save-state = always
-keybind = ctrl+backspace=text:\x17
