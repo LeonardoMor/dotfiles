@@ -1,6 +1,8 @@
 theme = tokyonight
 mouse-hide-while-typing = true
 background-opacity = 0.9
+shell-integration-features = sudo
+window-save-state = always
 {{- if eq .chezmoi.os "darwin" }}
 command = {{ joinPath .brew_prefix "bin" "bash" }} --login
 macos-option-as-alt = true
