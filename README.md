@@ -280,6 +280,12 @@ after running `chezmoi apply`.
 > `.brew_prefix` does not come with `chezmoi`. I defined it on my
 > `.chezmoi.toml.tmpl`.
 
+### Bash command completion
+
+Things are set up to use the Bash that comes from Homebrew. For completions to
+work, the `.bash_profile` has to be edited as explained
+[here](https://docs.brew.sh/Shell-Completion).
+
 # TODO
 
 - [ ] Add Linux and Windows sections with anything that's worth.

@@ -4,7 +4,7 @@
 tap homebrew/core
 brew aom
 brew bash
-brew bash-completion
+brew bash-completion@2
 brew bat
 brew brotli
 brew ca-certificates

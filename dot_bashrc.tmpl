@@ -58,21 +58,9 @@ source "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/fzf/tokyonight_night.s
 # Enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-	if [[ -f ${XDG_CONFIG_HOME}/bash-completion/bash_completion ]]; then
-		export BASH_COMPLETION_USER_FILE="${XDG_CONFIG_HOME}/bash-completion/bash_completion"
-		source "$BASH_COMPLETION_USER_FILE"
-	elif [[ -f /etc/bash_completion ]]; then
-		source /etc/bash_completion
-	fi
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    . /etc/bash_completion
 fi
-
-{{- if eq .chezmoi.os "darwin" }}
-# Homebrew shell completions
-if [[ -f "$(brew --prefix)/etc/bash_completion" ]]; then
-	source "$(brew --prefix)/etc/bash_completion"
-fi
-{{- end }}
 
 # Starship Prompt
 eval "$(starship init bash)"
