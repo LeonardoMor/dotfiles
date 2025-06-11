@@ -1,9 +1,15 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
+{{ .update_cmd }}
 xargs --no-run-if-empty {{ .install_cmd }} <<EOF
 {{ range .packages.linux -}}
-{{ . }}
+{{     .     }}
+{{ end -}}
+{{ if .chezmoi.osRelease "cachyos" -}}
+{{     range .packages.cachyos -}}
+{{         .         }}
+{{     end -}}
 {{ end -}}
 EOF
 {{ end -}}

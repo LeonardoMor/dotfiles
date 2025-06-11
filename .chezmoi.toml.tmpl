@@ -2,8 +2,7 @@
 [cd]
     command = "bash"
     args = ["--login"]
-
-{{- else -}}
+{{- else }}
 [interpreters]
     ps1 = { command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}, args = ["-NoLogo", "-NoProfile"] }
 
@@ -43,10 +42,13 @@
     brew_prefix = "/opt/homebrew"
 {{- end }}
 {{- if eq .chezmoi.os "linux" }}
+{{-     if eq .chezmoi.osRelease.idLike "arch" }}
+    update_cmd = "paru -Syu"
     install_cmd = "paru --noconfirm --sync --needed"
+{{-     end }}
 {{- end }}
 {{- if ne .chezmoi.os "windows" -}}
-{{/* XDG spec variables */}}
+{{/*     XDG spec variables */}}
     XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
     XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
     XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"

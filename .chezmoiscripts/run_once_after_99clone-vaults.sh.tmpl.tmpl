@@ -1,0 +1,31 @@
+{{ if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+git --version >/dev/null 2>&1 || {
+    echo 'WARNING: git is not yet installed. Clone vaults manually later' >&2
+    exit
+}
+
+vaults=(
+    Splunk_Cloud_Support
+    Codice
+    Meta_Work
+)
+
+vaults_dir={{ .VaultsDir }}
+
+[[ -d $vaults_dir ]] || mkdir -p "$vaults_dir"
+
+for vault in "${vaults[@]}"; do
+    [[ -d ${vaults_dir}/$vault ]] && rm -rf "${vaults_dir}/$vault"
+    (
+        cd "$vaults_dir" || {
+            echo "FATAL: failed to cd to $vaults_dir" >&2
+            exit 1
+        }
+        git clone "https://github.com/LeonardoMor/${vault}.git"
+    )
+done
+
+chezmoi apply
+{{ end -}}

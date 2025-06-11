@@ -34,22 +34,30 @@ change_dir() {
 }
 
 bootstrap_linux() {
-    # TODO: add logic to detect whether the distro is an Arch derivative.
-    # Detect other derivatives as you go along.
-    # DISTRO="$(awk -F'=' '/^NAME/{ print $2 }' /etc/*-release | xargs)"
-    # Assuming Arch derivative for now
+    # Determine Linux distro
+    local ID_LIKE
+    eval "$(grep -E '^ID_LIKE' /etc/os-release)"
 
-    # Install paru
-    paru --version >/dev/null 2>&1 || (
-        change_dir "$HOME"
-        sudo pacman --sync --sysupgrade
-        sudo pacman --sync --needed base-devel
-        git clone https://aur.archlinux.org/paru.git
-        sudo mv paru /opt
-        change_dir /opt/paru
-        makepkg -si
-    )
-    INSTALL='paru --noconfirm --sync --needed'
+    case "$ID_LIKE" in
+        arch)
+            # Install paru
+            paru --version >/dev/null 2>&1 || (
+                change_dir "$HOME"
+                sudo pacman --sync --sysupgrade
+                sudo pacman --sync --needed base-devel
+                git clone https://aur.archlinux.org/paru.git
+                sudo mv paru /opt
+                change_dir /opt/paru
+                makepkg -si
+            )
+            INSTALL='paru --noconfirm --sync --needed'
+            UPDATE='paru -Syu'
+            ;;
+        *)
+            die e "Unknown or not supported Linux derivative"
+            ;;
+    esac
+
 }
 
 bootstrap_darwin() {
@@ -78,7 +86,10 @@ bootstrap_darwin() {
 OS="$(uname)"
 
 case "${OS,}" in
-    linux) bootstrap_linux ;;
+    linux)
+        bootstrap_linux
+        $UPDATE
+        ;;
     darwin) bootstrap_darwin ;;
     *)
         die e "$OS platform is not supported at this time."
