@@ -1,5 +1,6 @@
 {{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 
+# Track the Brewfile: {{ include .Brewfile | sha256sum }}
 brew file update
 {{ end -}}

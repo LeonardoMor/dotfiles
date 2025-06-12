@@ -2,7 +2,6 @@
 .config/nvim/LICENSE
 .config/tmux/plugins
 .ssh/known_hosts*
-Brewfile
 README.md
 biome.json
 source/repos/*/.obsidian/graph.json
