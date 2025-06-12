@@ -136,6 +136,7 @@ cask discord
 cask font-jetbrains-mono-nerd-font
 cask ghostty
 cask google-chrome
+cask mouseless
 cask obsidian
 cask rectangle
 cask slack
