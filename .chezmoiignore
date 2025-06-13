@@ -32,3 +32,6 @@ bin
 {{- if ne .chezmoi.os "linux" }}
 .config/systemd
 {{- end }}
+{{- if ne .chezmoi.os "darwin" }}
+Library
+{{- end }}

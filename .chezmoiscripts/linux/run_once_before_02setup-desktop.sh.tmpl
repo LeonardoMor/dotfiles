@@ -17,7 +17,6 @@ done
 # command = "Hyprland -c /etc/nwg-hello/hyprland.conf"
 # On the file: /etc/greetd/config.toml
 hyprcmd="Hyprland -c /etc/nwg-hello/hyprland.conf"
-currentcmd="$(sudo dasel --file /etc/greetd/config.toml --plain 'default_session.command')"
-[[ $currentcmd == "$hyprcmd" ]] || sudo dasel --file /etc/greetd/config.toml --type string --value "$hyprcmd" \
-    'default_session.command'
+currentcmd="$(sudo dasel --read toml --file /etc/greetd/config.toml 'default_session.command' | xargs)"
+[[ $currentcmd == "$hyprcmd" ]] || sudo dasel put --write toml --file /etc/greetd/config.toml --type string --value "$hyprcmd" 'default_session.command'
 {{- end -}}

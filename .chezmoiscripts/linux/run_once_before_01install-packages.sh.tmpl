@@ -6,7 +6,7 @@ xargs --no-run-if-empty {{ .install_cmd }} <<EOF
 {{ range .packages.linux -}}
 {{     .     }}
 {{ end -}}
-{{ if .chezmoi.osRelease "cachyos" -}}
+{{ if eq .chezmoi.osRelease.id "cachyos" -}}
 {{     range .packages.cachyos -}}
 {{         .         }}
 {{     end -}}

@@ -26,6 +26,7 @@ for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"
     mkdir -p "$d"
 done
 
+{{ if eq .chezmoi.os "darwin" -}}
 # Set brew
 if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
     # Reference: https://stackoverflow.com/a/65980738/7830232
@@ -46,7 +47,6 @@ if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
     fi
 fi
 
-{{ if eq .chezmoi.os "darwin" -}}
 # Set nvm
 [ -z "$NVM_DIR" ] && export NVM_DIR="${HOME}/.nvm"
 [ -s "{{ .brew_prefix }}/opt/nvm/nvm.sh" ] && . "{{ .brew_prefix }}/opt/nvm/nvm.sh"

@@ -19,6 +19,8 @@
 	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
 {{- else if eq .chezmoi.os "windows" }}
 	program = "C:/Users/leomc/AppData/Local/1Password/app/8/op-ssh-sign.exe"
+{{- else if eq .chezmoi.os "linux" }}
+	program = "/opt/1Password/op-ssh-sign"
 {{- end }}
 [commit]
 	gpgsign = true

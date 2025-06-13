@@ -7,7 +7,7 @@ linux = [
 	"blesh-git",
 	"chezmoi",
 	"dasel",
-	"discord",
+	"discord_arch_electron",
 	"dos2unix",
 	"fastfetch",
 	"fzf",
@@ -31,4 +31,4 @@ linux = [
 	"vim",
 	"zen-browser"
 ]
-cachyos = ["cacyos-gaming-meta", "cachyos-gaming-applications"]
+cachyos = ["cachyos-gaming-meta", "cachyos-gaming-applications"]
