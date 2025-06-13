@@ -6,7 +6,9 @@ TLDR: to deploy on macOS or Linux (only Arch children for now supported), run
 curl -fsSL https://github.com/LeonardoMor/dotfiles/raw/refs/heads/master/.bootstrap/bootstrap.sh | bash
 ```
 
-> [!NOTE] Run `chezmoi apply` right after the command finishes.
+<!-- prettier-ignore -->
+> [!NOTE]
+> Run `chezmoi apply` right after the command finishes.
 
 ## Generalities
 
