@@ -1,7 +1,7 @@
 [packages]
 linux = [
-	"1password-cli",
 	"1password",
+	"1password-cli",
 	"bash-completion",
 	"bat",
 	"blesh-git",
@@ -23,6 +23,7 @@ linux = [
 	"nwg-shell",
 	"obsidian",
 	"ripgrep",
+	"spotify",
 	"starship",
 	"tmux",
 	"tokyonight-gtk-theme-git",
