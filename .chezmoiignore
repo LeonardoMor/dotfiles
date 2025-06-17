@@ -32,6 +32,7 @@ bin
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 .config/systemd
+.config/electron-flags.conf
 {{- end }}
 {{- if ne .chezmoi.os "darwin" }}
 Library
