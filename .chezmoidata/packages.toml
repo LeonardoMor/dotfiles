@@ -32,4 +32,4 @@ linux = [
 	"vim",
 	"zen-browser"
 ]
-cachyos = ["cachyos-gaming-meta", "cachyos-gaming-applications"]
+cachyos = ["cachyos-gaming-meta", "cachyos-gaming-applications", "grub-btrfs-support"]
