@@ -1,0 +1,20 @@
+{{ if eq .chezmoi.hostname .work_host -}}
+#!/usr/bin/env bash
+
+TMP_FILE="/tmp/case_note_$(date +%s).txt"
+
+cat <<HERE >"$TMP_FILE"
+------------------------------------------------------------------------
+Date/time: $(date "+%F %H:%M %Z") - Leonardo Mora
+Theory: 
+Error:
+Docs/refs:
+Changes made/recommended:
+------------------------------------------------------------------------
+HERE
+
+printf -v NVIM_COMMAND "/opt/homebrew/bin/nvim -c '%s' %s" 'call feedkeys("/Theory\<CR>A", "n")' "$TMP_FILE"
+
+open -Wna ghostty --args -e "$NVIM_COMMAND"
+pbcopy <"$TMP_FILE"
+{{- end }}
