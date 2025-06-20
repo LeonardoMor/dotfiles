@@ -22,6 +22,7 @@ linux = [
 	"nvm",
 	"nwg-shell",
 	"obsidian",
+	"protonup-qt",
 	"ripgrep",
 	"spotify",
 	"starship",
@@ -30,6 +31,6 @@ linux = [
 	"tree",
 	"ttf-jetbrains-mono-nerd",
 	"vim",
-	"zen-browser"
+	"zen-browser",
 ]
 cachyos = ["cachyos-gaming-meta", "cachyos-gaming-applications", "grub-btrfs-support"]
