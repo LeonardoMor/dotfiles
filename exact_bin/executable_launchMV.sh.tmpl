@@ -1,0 +1,11 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+systemctl --user stop kanata.service
+
+# Add dlss-swapper right before the argument when using proton-cachyos
+# PROTON_ENABLE_WAYLAND=1 to enable native Wayland
+PROTON_NO_WM_DECORATION=1 MANGOHUD=1 prime-run game-performance "$@"
+
+systemctl --user start kanata.service
+{{- end }}
