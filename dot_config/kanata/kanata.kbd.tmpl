@@ -1,6 +1,6 @@
 (defcfg
   process-unmapped-keys yes
-{{ if eq .chezmoi.os "darwin" -}}
+{{- if eq .chezmoi.os "darwin" }}
   macos-dev-names-exclude (
     "Keychron Q3 Pro"
   )
