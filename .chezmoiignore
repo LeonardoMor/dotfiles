@@ -1,12 +1,12 @@
+.config/alacritty
 .config/nvim/*lock.json
 .config/nvim/LICENSE
 .config/tmux/plugins
 .ssh/known_hosts*
-README.md
 biome.json
+README.md
 source/repos/*/.obsidian/graph.json
 source/repos/*/.obsidian/workspace.json
-.config/alacritty
 
 {{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "infinity") }}
 .config/brewfile
@@ -33,8 +33,10 @@ Documents
 bin
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
-.config/systemd
 .config/electron-flags.conf
+.config/rofi
+.config/spotify-flags.conf
+.config/systemd
 {{- end }}
 {{- if ne .chezmoi.os "darwin" }}
 Library
