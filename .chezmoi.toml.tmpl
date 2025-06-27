@@ -37,9 +37,9 @@
     Brewfile = {{ joinPath .chezmoi.sourceDir ".externally_modified" "brewfile" "Brewfile" | quote }}
     mouseless_darwin = {{ joinPath .chezmoi.sourceDir ".externally_modified" "mouseless" "darwin" "config.yaml" | quote }}
 {{- if eq .chezmoi.hostname "LMORACAS-M-D6L6" }}
-    email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/work email" | quote }}
+    email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/work email" "my.1password.com" | quote }}
 {{- else }}
-    email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/email" | quote }}
+    email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/email" "my.1password.com" | quote }}
 {{- end }}
 {{- if eq .chezmoi.os "darwin" }}
     brew_prefix = "/opt/homebrew"
