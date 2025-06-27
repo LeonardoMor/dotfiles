@@ -3,7 +3,7 @@
 [user]
 	name = {{ .name | quote }}
 	email = {{ .email | quote }}
-	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF3d2XiD4XL7mtRkWgxsw4Q6niff2p4h6C+i5r0AMjSO
+	signingkey = {{ onepasswordRead "op://Private/personal_id_ed25519/public key" "my.1password.com" }}
 [core]
 	editor = nvim
 {{- if eq .chezmoi.os "windows" }}
