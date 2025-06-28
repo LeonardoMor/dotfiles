@@ -2,7 +2,8 @@ local utils = require('custom.utils')
 
 return {
   'obsidian-nvim/obsidian.nvim',
-  version = '*',
+  -- version = '*',
+  commit = '62aaefccfe067f3e80c4929a9cef08d774603a1d',
   lazy = true,
   ft = "markdown",
   dependencies = {
@@ -14,7 +15,7 @@ return {
     wiki_link_func = "use_alias_only",
     workspaces = utils.vaults,
     completion = {
-      nvim_cmp = true,
+      blink = true,
       min_chars = 2,
     },
     ui = { enable = false },
