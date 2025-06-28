@@ -7,24 +7,17 @@ return {
     {
       '<leader>ff',
       function()
-        require('conform').format {
-          async = true,
-          lsp_fallback = true,
-        }
+        require('conform').format({ async = true }, function(err)
+          if not err then
+            local mode = vim.api.nvim_get_mode().mode
+            if vim.startswith(string.lower(mode), 'v') then
+              vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+            end
+          end
+        end)
       end,
       mode = '',
-      desc = '[F]ormat buffer',
-    },
-    {
-      '<leader>fi',
-      function()
-        require('conform').format {
-          formatters = { 'injected' },
-          timeout_ms = 3000,
-        }
-      end,
-      mode = '',
-      desc = '[F]ormat [I]njected languages',
+      desc = '[F]ormat buffer or range',
     },
     {
       '<leader>tf',
@@ -60,40 +53,55 @@ return {
       bang = true,
     })
 
+    ---@param bufnr integer
+    ---@param ... string
+    ---@return string
+    local function first(bufnr, ...)
+      local conform = require 'conform'
+      for i = 1, select('#', ...) do
+        local formatter = select(i, ...)
+        if conform.get_formatter_info(formatter, bufnr).available then
+          return formatter
+        end
+      end
+      return select(1, ...)
+    end
+
+    local default_format_opts = { timeout_ms = 500, lsp_format = 'fallback' }
+
     require('conform').setup {
+      default_format_opts = default_format_opts,
       notify_on_error = false,
       format_on_save = function(bufnr)
-        if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
-          return
-        end
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
-        return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-        }
+        if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat or disable_filetypes[vim.bo[bufnr].filetype] then
+          return
+        end
+        return default_format_opts
       end,
       formatters_by_ft = {
-        html = { 'prettierd', 'prettier', stop_after_first = true },
+        html = function(bufnr)
+          return { first(bufnr, 'prettierd', 'prettier'), 'injected' }
+        end,
         lua = { 'stylua' },
         json = { 'biome' },
-        markdown = { 'prettierd', 'prettier', stop_after_first = true },
+        markdown = function(bufnr)
+          return { first(bufnr, 'prettierd', 'prettier'), 'injected' }
+        end,
+        -- jq = { 'jqfmt' },
+        python = { 'isort', 'black' },
         ['*'] = { 'injected' },
         ['_'] = { 'injected' },
 {{- if ne .chezmoi.os "windows" }}
         awk = { 'prettier' },
-        go = { 'gofmt' },
-        -- jq = { 'jqfmt' },
-        python = { 'isort', 'black' },
-        rst = { 'prettier' },
         sh = { 'shfmt' },
         xml = { 'xmllint' },
 {{- end }}
       },
       formatters = {
-{{- if ne .chezmoi.os "windows" }}
         -- jqfmt = {
         --   command = os.getenv 'HOME' .. '/go/bin/jqfmt',
         --   args = { '-ob', '-ar', '-op', 'pipe' },
@@ -101,30 +109,35 @@ return {
         isort = {
           prepend_args = { '--profile', 'black' },
         },
+{{- if ne .chezmoi.os "windows" }}
         shfmt = {
           prepend_args = { '--case-indent', '--indent', '4' },
         },
 {{- end }}
         injected = {
           options = {
+            ignore_errors = false,
+            lang_to_ft = {
+              bash = 'sh',
+            },
             lang_to_ext = {
               json = 'json',
               markdown = 'md',
 {{- if ne .chezmoi.os "windows" }}
               awk = 'awk',
               bash = 'sh',
-              c_sharp = 'cs',
-              elixir = 'exs',
-              go = 'gofmt',
-              javascript = 'js',
-              julia = 'jl',
-              latex = 'tex',
+              -- c_sharp = 'cs',
+              -- elixir = 'exs',
+              -- go = 'gofmt',
+              -- javascript = 'js',
+              -- julia = 'jl',
+              -- latex = 'tex',
               python = 'py',
-              rst = 'rst',
-              ruby = 'rb',
-              rust = 'rs',
-              teal = 'tl',
-              typescript = 'ts',
+              -- rst = 'rst',
+              -- ruby = 'rb',
+              -- rust = 'rs',
+              -- teal = 'tl',
+              -- typescript = 'ts',
               xml = 'xml',
 {{- end }}
             },
@@ -140,5 +153,9 @@ return {
         },
       },
     }
+  end,
+  init = function()
+    -- If you want the formatexpr, here is the place to set it
+    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
   end,
 }

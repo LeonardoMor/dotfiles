@@ -1,0 +1,3 @@
+{{ if ne .chezmoi.hostname .work_host }}
+{{     template "nvim/lua/plugins/neocodeium.lua" .     }}
+{{ end }}

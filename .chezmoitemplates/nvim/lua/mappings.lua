@@ -43,56 +43,13 @@ vim.keymap.set('n', '[b', '<cmd>bprevious<cr>', { desc = 'Prev [B]uffer' })
 vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next [B]uffer' })
 vim.keymap.set('n', '<leader>bb', '<cmd>e #<cr>', { desc = 'Switch to Other [B]uffer' })
 
---[[
-TODO: This function is bad and produces errors on some situations.
-Eventually, implement a version of this:
-https://github.com/domeniczz/.dotfiles/blob/313c124d564feb023ea964a15ddffa68a112ad36/.config/nvim/lua/config/utils.lua#L153
-]]
-local function bufremove(buf)
-  buf = buf or 0
-  buf = buf == 0 and vim.api.nvim_get_current_buf() or buf
-
-  if vim.bo.modified then
-    local choice = vim.fn.confirm(('Save changes to %q?'):format(vim.fn.bufname()), '&Yes\n&No\n&Cancel')
-    if choice == 0 or choice == 3 then -- 0 for <Esc>/<C-c> and 3 for Cancel
-      return
-    end
-    if choice == 1 then -- Yes
-      vim.cmd.write()
-    end
-  end
-
-  for _, win in ipairs(vim.fn.win_findbuf(buf)) do
-    -- Check if this window is the only one showing this buffer
-    if #vim.fn.win_findbuf(buf) == 1 then
-      -- Close the window if it's the last one showing this buffer
-      vim.api.nvim_win_close(win, false)
-    else
-      -- If there are other windows showing this buffer, just switch to another buffer
-      local alt = vim.fn.bufnr '#'
-      if alt ~= buf and vim.fn.buflisted(alt) == 1 then
-        vim.api.nvim_win_set_buf(win, alt)
-      else
-        vim.cmd.bprevious { args = { win }, bang = true }
-      end
-    end
-  end
-
-  -- Delete the buffer if it's still valid after handling the windows
-  if vim.api.nvim_buf_is_valid(buf) then
-    pcall(vim.cmd, 'bdelete! ' .. buf)
-  end
-end
-
-vim.keymap.set('n', '<leader>bd', bufremove, { desc = '[D]elete [B]uffer' })
-
 -- Move lines
 vim.keymap.set('n', '<A-j>', '<cmd>m .+1<cr>==', { desc = 'Move Line Down' })
 vim.keymap.set('n', '<A-k>', '<cmd>m .-2<cr>==', { desc = 'Move Line Up' })
 vim.keymap.set('i', '<A-j>', '<esc><cmd>m .+1<cr>==gi', { desc = 'Move Line Down' })
 vim.keymap.set('i', '<A-k>', '<esc><cmd>m .-2<cr>==gi', { desc = 'Move Line Up' })
-vim.keymap.set('v', '<A-j>', ":m '>+1<cr>gv=gv", { desc = 'Move Line Down' })
-vim.keymap.set('v', '<A-k>', ":m '<-2<cr>gv=gv", { desc = 'Move Line Up' })
+vim.keymap.set('v', '<A-j>', "<cmd>m '>+1<cr>gv=gv", { desc = 'Move Line Down' })
+vim.keymap.set('v', '<A-k>', "<cmd>m '<-2<cr>gv=gv", { desc = 'Move Line Up' })
 
 -- Add undo break-points
 vim.keymap.set('i', ',', ',<c-g>u')
@@ -143,7 +100,7 @@ vim.keymap.set('n', '<leader>cx', '<cmd>vnew | r ! chezmoi execute-template <#<c
 vim.keymap.set('n', '<leader>ds', "<cmd>lua require('neogen').generate()<CR>", { desc = 'Generate docstring' })
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Scroll down half page and center the cursor vertically' })
 vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Scroll up half page and center the cursor vertically' })
-vim.keymap.set('n', '<leader>rw', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Replace word under cursor' })
+vim.keymap.set('n', '<leader>rw', [[<cmd>%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Replace word under cursor' })
 vim.keymap.set('n', 'J', 'mzJ`z', { desc = "Append the next line to the current but don't move the cursor" })
 vim.keymap.set('n', 'n', 'nzzzv', { desc = 'Next search result and center the cursor vertically' })
 vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous search result and center the cursor vertically' })
