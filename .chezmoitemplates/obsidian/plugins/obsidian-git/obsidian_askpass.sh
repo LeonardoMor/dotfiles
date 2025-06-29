@@ -21,3 +21,4 @@ done
 RESPONSE=$(cat "$TEMP_FILE.response")
 
 echo "$RESPONSE"
+
