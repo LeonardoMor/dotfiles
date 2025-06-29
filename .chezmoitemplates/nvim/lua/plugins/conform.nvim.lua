@@ -1,6 +1,6 @@
 return {
   'stevearc/conform.nvim',
-  -- dependencies = 'zapling/mason-conform.nvim',
+  dependencies = 'zapling/mason-conform.nvim',
   event = { 'BufWritePre' },
   cmd = { 'ConformInfo' },
   keys = {
@@ -76,7 +76,7 @@ return {
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = { c = true, cpp = true, gitcommit = true }
         if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat or disable_filetypes[vim.bo[bufnr].filetype] then
           return
         end
