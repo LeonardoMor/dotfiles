@@ -8,7 +8,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-echo "$PROMPT" > "$TEMP_FILE"
+echo "$PROMPT" >"$TEMP_FILE"
 
 while [ ! -e "$TEMP_FILE.response" ]; do
     if [ ! -e "$TEMP_FILE" ]; then
@@ -21,4 +21,3 @@ done
 RESPONSE=$(cat "$TEMP_FILE.response")
 
 echo "$RESPONSE"
-
