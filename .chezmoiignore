@@ -31,11 +31,23 @@ Documents
 bin
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
+.config/azote/azoterc
+.config/btop/btop.conf
 .config/electron-flags.conf
+.config/gtk*
+.config/hypr
+.config/MangoHud/MangoHud.conf
+.config/nwg*
+.config/pavucontrol.ini
 .config/rofi
 .config/spotify-flags.conf
 .config/systemd
+gtkrc-2.0.mine
 {{- end }}
 {{- if ne .chezmoi.os "darwin" }}
 Library
-{{- end }}
+{{- end -}}
+
+{{/*
+vim: filetype=gotmpl
+*/}}

@@ -68,7 +68,7 @@ eval "$(starship init bash)"
 # nvm
 {{- if eq .chezmoi.os "darwin" }}
 [ -s "{{ .brew_prefix }}/opt/nvm/etc/bash_completion.d/nvm" ] && source "{{ .brew_prefix }}/opt/nvm/etc/bash_completion.d/nvm"
-{{- else if eq .chezmoi.osRelease.id "arch" }}
+{{- else if eq .chezmoi.osRelease.idLike "arch" }}
 source "${NVM_DIR}/bash_completion"
 source "${NVM_DIR}/install-nvm-exec"
 {{- end }}

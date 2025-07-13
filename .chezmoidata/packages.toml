@@ -23,6 +23,7 @@ linux = [
 	"nvm",
 	"nwg-shell",
 	"obsidian",
+	"protonplus",
 	"protonup-qt",
 	"ripgrep",
 	"rofi-wayland",

@@ -56,7 +56,7 @@ export DYLD_FALLBACK_LIBRARY_PATH="$(brew --prefix)/lib:$DYLD_FALLBACK_LIBRARY_P
 
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
-{{- else if eq .chezmoi.osRelease.id "arch" }}
+{{- else if eq .chezmoi.osRelease.idLike "arch" }}
 # Set nvm
 [ -z "$NVM_DIR" ] && export NVM_DIR=/usr/share/nvm
 . "${NVM_DIR}/nvm.sh"
