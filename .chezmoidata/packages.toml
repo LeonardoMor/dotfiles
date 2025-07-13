@@ -1,6 +1,7 @@
 [packages]
 linux = [
 	"1password",
+	"protonutils",
 	"1password-cli",
 	"bash-completion",
 	"bat",
