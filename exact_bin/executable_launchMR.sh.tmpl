@@ -3,9 +3,18 @@
 
 systemctl --user stop kanata.service
 
-# Add dlss-swapper right before the argument when using proton-cachyos
-# PROTON_ENABLE_WAYLAND=1 to enable native Wayland
-PROTON_NO_WM_DECORATION=1 MANGOHUD=1 prime-run game-performance "$@"
+export PROTON_NO_WM_DECORATION=1
+export MANGOHUD=1
+
+cmd=(prime-run game-performance)
+
+if protonutils version >/dev/null 2>&1 && protonutils list --json | jq -e '.["proton-cachyos"].games["Marvel Rivals"].isInstalled == true' >/dev/null; then
+    cmd+=(dlss-swapper)
+fi
+
+cmd+=("$@")
+
+"${cmd[@]}"
 
 systemctl --user start kanata.service
 {{- end }}
