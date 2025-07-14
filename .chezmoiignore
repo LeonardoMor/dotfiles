@@ -32,12 +32,12 @@ bin
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 bin/launchMR.sh
-.config/azote/azoterc
-.config/btop/btop.conf
+.config/azote
+.config/btop
 .config/electron-flags.conf
 .config/gtk*
 .config/hypr
-.config/MangoHud/MangoHud.conf
+.config/MangoHud
 .config/nwg*
 .config/pavucontrol.ini
 .config/rofi
