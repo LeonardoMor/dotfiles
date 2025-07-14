@@ -15,4 +15,8 @@ printf -v NVIM_COMMAND "/opt/homebrew/bin/nvim -c '%s' %s" 'call feedkeys("/Theo
 
 open -Wna ghostty --args -e "$NVIM_COMMAND"
 pbcopy <"$TMP_FILE"
-{{- end }}
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}
