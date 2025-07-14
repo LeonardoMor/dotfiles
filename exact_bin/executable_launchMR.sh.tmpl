@@ -14,7 +14,13 @@ fi
 
 cmd+=("$@")
 
-"${cmd[@]}"
+(
+    exec "${cmd[@]}"
+)
 
 systemctl --user start kanata.service
-{{- end }}
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}
