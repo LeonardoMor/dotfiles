@@ -7,7 +7,7 @@ export PROTON_NO_WM_DECORATION=1 MANGOHUD=1
 
 cmd=(prime-run game-performance)
 
-if protonutils version >/dev/null 2>&1 && protonutils list --json | jq -e '.["proton-cachyos"].games["Marvel Rivals"].isInstalled == true' >/dev/null; then
+if [[ $* =~ "proton-cachyos" ]]; then
     cmd+=(dlss-swapper)
 fi
 
