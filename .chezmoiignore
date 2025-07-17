@@ -30,7 +30,7 @@ bin
 !.config/starship.toml
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
-bin/launchMR.sh
+bin/rungame
 gtkrc-2.0.mine
 {{- end }}
 {{- if ne .chezmoi.os "darwin" }}
