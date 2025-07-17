@@ -23,7 +23,6 @@ _vimrc
 {{- else }}
 *profile*
 .bash*
-Documents
 bin
 .config
 !.config/git
