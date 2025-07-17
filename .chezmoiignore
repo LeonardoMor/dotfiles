@@ -28,8 +28,6 @@ bin
 !.config/git
 !.config/kanata
 !.config/starship.toml
-Documents
-bin
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 bin/launchMR.sh
