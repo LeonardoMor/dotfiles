@@ -24,7 +24,7 @@ _vimrc
 *profile*
 .bash*
 bin
-.config
+.config/*
 !.config/git
 !.config/kanata
 !.config/starship.toml
