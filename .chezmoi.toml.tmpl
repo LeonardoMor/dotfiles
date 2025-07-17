@@ -34,7 +34,6 @@
     name = "Leonardo Mora Castro"
     VaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote -}}
 {{/* Externally modified files */}}
-    Brewfile = {{ joinPath .chezmoi.sourceDir ".externally_modified" "brewfile" "Brewfile" | quote }}
     mouseless_darwin = {{ joinPath .chezmoi.sourceDir ".externally_modified" "mouseless" "darwin" "config.yaml" | quote }}
 {{- if eq .chezmoi.hostname "LMORACAS-M-D6L6" }}
     email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/work email" "my.1password.com" | quote }}
