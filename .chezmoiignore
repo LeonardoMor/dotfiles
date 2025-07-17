@@ -36,7 +36,7 @@ gtkrc-2.0.mine
 {{- if ne .chezmoi.os "darwin" }}
 Library
 {{- else }}
-.config
+.config/*
 !.config/*vim
 !.config/bat
 !.config/blesh
