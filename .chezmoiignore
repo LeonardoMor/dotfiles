@@ -31,6 +31,7 @@ bin
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 bin/launchMR.sh
+.config/autostart
 .config/azote
 .config/btop
 .config/electron-flags.conf
