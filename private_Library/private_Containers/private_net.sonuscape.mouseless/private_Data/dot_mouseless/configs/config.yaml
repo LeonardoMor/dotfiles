@@ -97,13 +97,13 @@ monitor_assignment_mode: auto
 name: ''
 style_configs:
 - always_on_subgrid_rgba:
+  - 0.58
   - 1
-  - 1
-  - 1
-  - 0.2
+  - 0.42
+  - 0.05
   background_rgba:
-  - 0
-  - 0
+  - 0.05
+  - 0.2
   - 0
   - 0.35
   char_spacing_cell_width_ratio: 0.5
@@ -125,10 +125,10 @@ style_configs:
   - 1.0
   - 0.7
   cursor_rgba:
+  - 0.34
   - 1
-  - 0.54
-  - 0.0
-  - 0.7
+  - 0
+  - 0.8
   cursor_right_button_rgba:
   - 0.92
   - 0.32
@@ -138,22 +138,22 @@ style_configs:
   font_size_multiplier: 0.4
   grid_line_style: lines
   grid_rgba:
+  - 0.58
   - 1
-  - 1
-  - 1
+  - 0.42
   - 0.5
   highlight_rgba:
-  - 0.77
-  - 0.44
-  - 0.15
-  - 0.25
+  - 0
+  - 1
+  - 0.05
+  - 0.2
   name: default
   show_initial_highlight: false
   subgrid_font_size_multiplier: 0.75
   subgrid_rgba:
+  - 0.58
   - 1
-  - 1
-  - 1
+  - 0.42
   - 0.5
   subgrid_text_rgba:
   - 1
@@ -165,13 +165,13 @@ style_configs:
   - 1
   - 1
   - 1
-  text_shadow_blur_radius: 2
+  text_shadow_blur_radius: 4
   text_shadow_offset:
   - 0
   - 0
   text_shadow_rgba:
-  - 0
-  - 0
+  - 0.28
+  - 1
   - 0
   - 1
   window_opacity: 1.0
