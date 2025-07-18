@@ -1,7 +1,6 @@
 [packages]
 linux = [
 	"1password",
-	"protonutils",
 	"1password-cli",
 	"bash-completion",
 	"bat",
@@ -24,8 +23,10 @@ linux = [
 	"nvm",
 	"nwg-shell",
 	"obsidian",
+	"pipewire",
 	"protonplus",
 	"protonup-qt",
+	"protonutils",
 	"ripgrep",
 	"rofi-wayland",
 	"spotify",
@@ -37,6 +38,7 @@ linux = [
 	"ufw",
 	"ufw-docker",
 	"vim",
+	"wireplumber",
 	"zen-browser",
 ]
 cachyos = ["cachyos-gaming-meta", "cachyos-gaming-applications", "grub-btrfs-support"]
