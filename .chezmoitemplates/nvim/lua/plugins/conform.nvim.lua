@@ -93,6 +93,7 @@ return {
         end,
         -- jq = { 'jqfmt' },
         python = { 'isort', 'black' },
+	toml = { 'taplo' },
         ['*'] = { 'injected' },
         ['_'] = { 'injected' },
 {{- if ne .chezmoi.os "windows" }}

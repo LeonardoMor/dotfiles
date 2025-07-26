@@ -185,10 +185,10 @@ return {
       typos_lsp = {},
       vimls = {},
       jqls = {},
+      taplo = {},
 {{- if ne .chezmoi.os "windows" }}
       awk_ls = {},
       bashls = {},
-      dockerls = {},
       basedpyright = {
         settings = {
           basedpyright = {
@@ -201,6 +201,7 @@ return {
           },
         },
       },
+      dockerls = {},
 {{- else }}
       powershell_es = {},
 {{- end }}
