@@ -1,0 +1,9 @@
+{{ if eq .chezmoi.osRelease.id "cachyos" -}}
+#!/usr/bin/env bash
+
+sudo plymouth-set-default-theme -R cachyos-bootanimation
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}
