@@ -45,6 +45,7 @@ linux = [
 cachyos = [
   "cachyos-gaming-meta",
   "cachyos-gaming-applications",
-  "grub-btrfs-support",
+  "cachyos-gaming-meta",
   "cachyos-plymouth-bootanimation",
+  "grub-btrfs-support",
 ]
