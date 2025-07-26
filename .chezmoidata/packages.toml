@@ -43,9 +43,9 @@ linux = [
   "zen-browser",
 ]
 cachyos = [
-  "cachyos-gaming-meta",
   "cachyos-gaming-applications",
   "cachyos-gaming-meta",
   "cachyos-plymouth-bootanimation",
   "grub-btrfs-support",
+  "cachyos-grub-theme",
 ]
