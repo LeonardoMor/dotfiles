@@ -1,7 +1,9 @@
-{{ if eq .chezmoi.osRelease.id "cachyos" -}}
+{{ if eq .chezmoi.os "linux" -}}
+{{     if eq .chezmoi.osRelease.id "cachyos"      -}}
 #!/usr/bin/env bash
 
 sudo plymouth-set-default-theme -R cachyos-bootanimation
+{{-     end -}}
 {{- end -}}
 
 {{/*

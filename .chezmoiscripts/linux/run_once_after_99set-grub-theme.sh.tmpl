@@ -1,4 +1,5 @@
-{{ if eq .chezmoi.osRelease.id "cachyos" -}}
+{{ if eq .chezmoi.os "linux" -}}
+{{     if eq .chezmoi.osRelease.id "cachyos"      -}}
 #!/usr/bin/env bash
 
 set -o errexit
@@ -13,6 +14,7 @@ change_dir ~/source/repos
 [[ -d ${THEME_REPO#*/} ]] || git clone "git@github.com:${THEME_REPO}.git"
 change_dir "${THEME_REPO#*/}"
 sudo bash install.sh
+{{-     end -}}
 {{- end -}}
 
 {{/*
