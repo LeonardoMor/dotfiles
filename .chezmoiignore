@@ -6,7 +6,7 @@
 biome.json
 README.md
 
-{{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "infinity") }}
+{{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "cachyos-inf") }}
 .config/brewfile
 {{- end }}
 
