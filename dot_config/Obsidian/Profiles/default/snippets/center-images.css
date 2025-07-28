@@ -1,0 +1,7 @@
+/* Taken from: https://www.reddit.com/r/ObsidianMD/comments/v1fs0f/comment/iamghtr/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button */
+img[alt*="center"] {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+

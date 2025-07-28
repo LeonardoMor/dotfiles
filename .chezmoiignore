@@ -47,6 +47,7 @@ Library
 !.config/kanata
 !.config/starship.toml
 !.config/tmux
+!.config/Obsidian
 {{- end -}}
 
 {{/*
