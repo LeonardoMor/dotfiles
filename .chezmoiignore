@@ -5,8 +5,6 @@
 .ssh/known_hosts*
 biome.json
 README.md
-source/repos/*/.obsidian/graph.json
-source/repos/*/.obsidian/workspace.json
 
 {{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "infinity") }}
 .config/brewfile
