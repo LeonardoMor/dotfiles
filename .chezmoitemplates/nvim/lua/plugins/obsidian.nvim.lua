@@ -2,8 +2,7 @@ local utils = require('custom.utils')
 
 return {
   'obsidian-nvim/obsidian.nvim',
-  -- version = '*',
-  commit = '62aaefccfe067f3e80c4929a9cef08d774603a1d',
+  version = '*',
   lazy = true,
   ft = "markdown",
   dependencies = {
@@ -46,17 +45,22 @@ return {
       :totable()
   end,
   cmd = { "Obsidian" }
-  -- config = function()
-  --   vim.api.nvim_create_autocmd('FileType', {
-  --     desc = 'Markdown Conceal for Obsidian vault files',
-  --     group = vim.api.nvim_create_augroup('MarkdownConceal', { clear = true }),
-  --     pattern = 'markdown',
-  --     callback = function()
-  --       local path = vim.fn.expand '%:p'
-  --       if string.match(path, '^' .. vim.fn.expand '~/source/repos/Codice' .. '/') then
-  --         vim.opt_local.conceallevel = 2
-  --       end
-  --     end,
-  --   })
-  -- end,
+{{/*
+  config = function()
+    vim.api.nvim_create_autocmd('FileType', {
+      desc = 'Markdown Conceal for Obsidian vault files',
+      group = vim.api.nvim_create_augroup('MarkdownConceal', { clear = true }),
+      pattern = 'markdown',
+      callback = function()
+        local path = vim.fn.expand '%:p'
+        if string.match(path, '^' .. vim.fn.expand '~/source/repos/Codice' .. '/') then
+          vim.opt_local.conceallevel = 2
+        end
+      end,
+    })
+  end,
+*/}}
 }
+{{/*
+vim: filetype=lua.gotmpl
+*/}}
