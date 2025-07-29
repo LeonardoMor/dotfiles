@@ -2,11 +2,13 @@
 #!/usr/bin/env bash
 # TODO: first check if nwg-shell is already setup. For now, just ask
 
+NWGSHELL=false
+
 until [[ $REPLY =~ y|n ]]; do
     read -rp 'Set up nwg-shell? [y|n] '
     case "$REPLY" in
         n) ;;
-        y) nwg-shell-installer -a -hypr ;;
+        y) NWGSHELL=true; nwg-shell-installer -a -hypr ;;
         *) echo 'ERROR: incorrect answer. Must be y or n' ;;
     esac
 done
@@ -16,7 +18,12 @@ done
 # [default_session]
 # command = "Hyprland -c /etc/nwg-hello/hyprland.conf"
 # On the file: /etc/greetd/config.toml
-hyprcmd="Hyprland -c /etc/nwg-hello/hyprland.conf"
-currentcmd="$(sudo dasel --read toml --file /etc/greetd/config.toml 'default_session.command' | xargs)"
-[[ $currentcmd == "$hyprcmd" ]] || sudo dasel put --write toml --file /etc/greetd/config.toml --type string --value "$hyprcmd" 'default_session.command'
+if $NWGSHELL; then
+    hyprcmd="Hyprland -c /etc/nwg-hello/hyprland.conf"
+    currentcmd="$(sudo dasel --read toml --file /etc/greetd/config.toml 'default_session.command' | xargs)"
+    [[ $currentcmd == "$hyprcmd" ]] || sudo dasel put --write toml --file /etc/greetd/config.toml --type string --value "$hyprcmd" 'default_session.command'
+else
+    hyprcmd="agreety --cmd Hyprland"
+    sudo dasel put --write toml --file /etc/greetd/config.toml --type string --value "$hyprcmd" 'default_session.command'
+fi
 {{- end -}}
