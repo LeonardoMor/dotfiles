@@ -6,6 +6,7 @@ linux = [
   "bash-completion",
   "bat",
   "blesh-git",
+  "cmatrix-git",
   "chezmoi",
   "dasel",
   "discord",
