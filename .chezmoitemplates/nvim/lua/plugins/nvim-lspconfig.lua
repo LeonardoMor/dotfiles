@@ -202,6 +202,8 @@ return {
         },
       },
       dockerls = {},
+{{- else if eq .chezmoi.os "linux" }}
+      hyprls = {},
 {{- else }}
       powershell_es = {},
 {{- end }}
