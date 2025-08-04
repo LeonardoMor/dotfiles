@@ -1,7 +1,16 @@
 {{ if eq .chezmoi.os "darwin" -}}
 #!/usr/bin/env bash
 
-read -rp "$(printf '%s\n' "Follow the steps. When done, press Enter to continue: https://github.com/jtroo/kanata/releases")"
+echo "Fetching latest Karabiner DriverKit pkg URL..."
+DRIVERKIT_PKG_URL="$(
+    curl -s "https://api.github.com/repos/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/latest" |
+        jq -r '.assets[] | select(.name|endswith(".pkg")) | .browser_download_url'
+)"
+echo "Downloading DriverKit from: $DRIVERKIT_PKG_URL"
+curl -L -o /tmp/karabiner-driverkit.pkg "$DRIVERKIT_PKG_URL"
+echo "Installing DriverKit..."
+sudo installer -pkg /tmp/karabiner-driverkit.pkg -target /
+rm -f /tmp/karabiner-driverkit.pkg
 
 service_name='com.jtroo.kanata'
 driver_daemon='org.pqrs.service.daemon.Karabiner-VirtualHIDDevice-Daemon'
@@ -90,11 +99,18 @@ for s in "${!service_configs[@]}"; do
 	}
 
 	sudo launchctl print "system/$s" >/dev/null 2>&1 || {
-		sudo launchctl enable "system/$s"
 		sudo launchctl bootstrap system /Library/LaunchDaemons/${s}.plist
+		sudo launchctl enable "system/$s"
 	}
 done
 
 echo 'Services for kanata are ready'
-echo 'You may need to do the remaining steps from https://github.com/jtroo/kanata/discussions/1537'
+
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+read -rp "Add ${KANATA_BIN} to Accessibility, then press Enter to continue... "
+
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent"
+read -rp "Add Kanata to Input Monitoring, then press Enter to continue... "
+
+echo "Kanata and Karabiner services are now installed and enabled."
 {{ end -}}
