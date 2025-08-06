@@ -182,6 +182,7 @@ return {
       },
       marksman = {},
       html = {},
+      lemminx = {},
       typos_lsp = {},
       vimls = {},
       jqls = {},
