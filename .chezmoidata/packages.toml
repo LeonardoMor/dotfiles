@@ -33,6 +33,7 @@ linux = [
   "rofi-wayland",
   "spotify",
   "starship",
+  "tldr",
   "tmux",
   "tokyonight-gtk-theme-git",
   "tree",
