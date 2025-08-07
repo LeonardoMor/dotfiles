@@ -101,6 +101,44 @@ vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { desc = 'Copy to system clipbo
 vim.keymap.set({ 'n', 'v' }, '<leader>Y', '"+y$', { desc = 'Copy from cursor to system clipboard' })
 vim.keymap.set('n', '<leader>ay', '<cmd>%y+<CR>', { desc = 'Yank entire buffer to system clipboard' })
 
+local function copy_with_linenumbers()
+  -- Ensure the selection is linewise (visual line mode)
+  if vim.fn.visualmode() ~= 'V' then
+    print('To yank with line numbers, use visual line mode (V), not ' .. vim.fn.visualmode())
+    return
+  end
+
+  -- Get the start and end line numbers of the visual selection
+  local start_line = math.min(vim.api.nvim_buf_get_mark(0, '<')[1], vim.api.nvim_buf_get_mark(0, '>')[1])
+  local end_line = math.max(vim.api.nvim_buf_get_mark(0, '<')[1], vim.api.nvim_buf_get_mark(0, '>')[1])
+
+  -- Retrieve the selected lines (0-based indexing, end exclusive)
+  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+
+  -- Calculate the width for line numbers based on the largest line number
+  local width = string.len(tostring(end_line))
+
+  -- Create a new table with lines prefixed by their right-justified line numbers
+  local new_lines = {}
+  for i, line in ipairs(lines) do
+    local line_num = start_line + i - 1
+    -- Format the line number to be right-justified with one space before the code
+    local formatted_line = string.format('%' .. width .. 'd %s', line_num, line)
+    table.insert(new_lines, formatted_line)
+  end
+
+  -- Copy the modified lines to the system clipboard in linewise mode
+  vim.fn.setreg('+', new_lines, 'l')
+
+  -- Print confirmation message with the number of lines copied
+  print('Copied ' .. #new_lines .. ' numbered lines to clipboard')
+
+  -- Return to normal mode
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+end
+
+vim.keymap.set('v', '<leader>ny', copy_with_linenumbers, { noremap = true, desc = '[N]umbered lines [Y]anking' })
+
 -- Miscellaneous
 vim.keymap.set('n', '<leader>ds', "<cmd>lua require('neogen').generate()<CR>", { desc = 'Generate docstring' })
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Scroll down half page and center the cursor vertically' })
