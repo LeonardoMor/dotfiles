@@ -96,6 +96,11 @@ vim.keymap.set('n', '<leader>qq', '<cmd>qa<cr>', { desc = 'Quit all' })
 -- Chezmoi
 vim.keymap.set('n', '<leader>cx', '<cmd>vnew | r ! chezmoi execute-template <#<cr>', { desc = 'Execute chezmoi template for preview' })
 
+-- Yanking
+vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { desc = 'Copy to system clipboard' })
+vim.keymap.set({ 'n', 'v' }, '<leader>Y', '"+y$', { desc = 'Copy from cursor to system clipboard' })
+vim.keymap.set('n', '<leader>ay', '<cmd>%y+<CR>', { desc = 'Yank entire buffer to system clipboard' })
+
 -- Miscellaneous
 vim.keymap.set('n', '<leader>ds', "<cmd>lua require('neogen').generate()<CR>", { desc = 'Generate docstring' })
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Scroll down half page and center the cursor vertically' })
@@ -104,8 +109,5 @@ vim.keymap.set('n', '<leader>rw', [[<cmd>%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><L
 vim.keymap.set('n', 'J', 'mzJ`z', { desc = "Append the next line to the current but don't move the cursor" })
 vim.keymap.set('n', 'n', 'nzzzv', { desc = 'Next search result and center the cursor vertically' })
 vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous search result and center the cursor vertically' })
-vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { desc = 'Copy to system clipboard' })
-vim.keymap.set({ 'n', 'v' }, '<leader>Y', '"+y$', { desc = 'Copy from cursor to system clipboard' })
-vim.keymap.set('n', '<leader>ay', '<cmd>%y+<CR>', { desc = 'Yank entire buffer to system clipboard' })
 vim.keymap.set({ 'i', 'n', 'v' }, '<S-Insert>', '"+p', { desc = 'Paste from clipboard' })
 vim.keymap.set('i', '<C-e>', '<esc>A', { desc = 'Put the cursor at the end of the line' })
