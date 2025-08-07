@@ -37,6 +37,7 @@ linux = [
   "tmux",
   "tokyonight-gtk-theme-git",
   "tree",
+  "ttf-fantasque-nerd",
   "ttf-jetbrains-mono-nerd",
   "ufw",
   "ufw-docker",
