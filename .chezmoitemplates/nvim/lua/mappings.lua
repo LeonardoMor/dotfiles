@@ -102,12 +102,6 @@ vim.keymap.set({ 'n', 'v' }, '<leader>Y', '"+y$', { desc = 'Copy from cursor to 
 vim.keymap.set('n', '<leader>ay', '<cmd>%y+<CR>', { desc = 'Yank entire buffer to system clipboard' })
 
 local function copy_with_linenumbers()
-  -- Ensure the selection is linewise (visual line mode)
-  if vim.fn.visualmode() ~= 'V' then
-    print('To yank with line numbers, use visual line mode (V), not ' .. vim.fn.visualmode())
-    return
-  end
-
   -- Get the start and end line numbers of the visual selection
   local start_line = math.min(vim.api.nvim_buf_get_mark(0, '<')[1], vim.api.nvim_buf_get_mark(0, '>')[1])
   local end_line = math.max(vim.api.nvim_buf_get_mark(0, '<')[1], vim.api.nvim_buf_get_mark(0, '>')[1])
