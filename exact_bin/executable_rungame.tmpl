@@ -5,6 +5,8 @@ systemctl --user stop kanata.service
 
 cmd=(prime-run game-performance)
 
+cmd+=("$@")
+
 (
     exec "${cmd[@]}"
 )
