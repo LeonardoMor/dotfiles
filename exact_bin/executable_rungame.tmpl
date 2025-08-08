@@ -5,12 +5,6 @@ systemctl --user stop kanata.service
 
 cmd=(prime-run game-performance)
 
-if [[ $* =~ "proton-cachyos" ]]; then
-    cmd+=(dlss-swapper)
-fi
-
-cmd+=("$@")
-
 (
     exec "${cmd[@]}"
 )
