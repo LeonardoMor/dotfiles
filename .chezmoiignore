@@ -28,6 +28,7 @@ bin
 !.config/starship.toml
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
+.local
 bin/rungame
 gtkrc-2.0.mine
 {{- end }}
