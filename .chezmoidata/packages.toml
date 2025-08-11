@@ -26,6 +26,7 @@ linux = [
   "net-tools",
   "nvm",
   "obsidian",
+  "openssh",
   "pipewire",
   "protonplus",
   "protonup-qt",

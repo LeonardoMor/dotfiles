@@ -1,0 +1,7 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+sudo systemctl enable --now sshd
+sudo sed -i'' -Ef {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" ".disable_ssh_pass.sed" }} /etc/ssh/sshd_config
+sudo systemctl restart sshd
+{{- end -}}
