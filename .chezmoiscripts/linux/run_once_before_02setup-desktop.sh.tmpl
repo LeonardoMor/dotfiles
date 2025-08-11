@@ -14,10 +14,6 @@ until [[ $REPLY =~ y|n ]]; do
 done
 
 # Configure greetd
-# TODO: Find a way to edit toml files from a script. Other than using sed. This is what needs to be changed:
-# [default_session]
-# command = "Hyprland -c /etc/nwg-hello/hyprland.conf"
-# On the file: /etc/greetd/config.toml
 if $NWGSHELL; then
     hyprcmd="Hyprland -c /etc/nwg-hello/hyprland.conf"
     currentcmd="$(sudo dasel --read toml --file /etc/greetd/config.toml 'default_session.command' | xargs)"
