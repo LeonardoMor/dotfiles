@@ -3,7 +3,7 @@
 #
 #alias open='xdg-open'
 alias clip=
-{{- if eq .chezmoi.hostname "cassini" -}}
+{{- if eq .chezmoi.os "linux" -}}
 'wl-copy --trim-newline'
 {{- else if eq .chezmoi.os "darwin" -}}
 "xargs printf '%s' | pbcopy"
