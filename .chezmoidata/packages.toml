@@ -23,6 +23,7 @@ linux = [
   "kanata",
   "neovim",
   "nerd-fonts-inter",
+  "net-tools",
   "nvm",
   "obsidian",
   "pipewire",
