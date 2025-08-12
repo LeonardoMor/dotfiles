@@ -2,9 +2,9 @@
 # .bash_aliases
 #
 #alias open='xdg-open'
-alias clip=
 {{- if eq .chezmoi.os "linux" -}}
-'wl-copy --trim-newline'
-{{- else if eq .chezmoi.os "darwin" -}}
-"xargs printf '%s' | pbcopy"
-{{ end }}
+alias clip='wl-copy --trim-newline'
+{{- else if eq .chezmoi.os "darwin" }}
+alias clip="xargs printf '%s' | pbcopy"
+alias sed=gsed
+{{ end -}}
