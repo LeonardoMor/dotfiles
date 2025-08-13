@@ -1,3 +1,4 @@
+{{- if eq .chezmoi.hostname "cachyos-inf" -}}
 monitor.alsa.rules = [
     {
         matches = [
@@ -12,3 +13,4 @@ monitor.alsa.rules = [
         }
     }
 ]
+{{- end -}}
