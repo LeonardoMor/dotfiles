@@ -58,3 +58,8 @@ vim.o.incsearch = true
 
 -- Mark the 80th column
 vim.o.colorcolumn = '80'
+
+-- Set the clipboard correctly
+if vim.env.SSH_CONNECTION then
+  vim.g.clipboard = 'osc52'
+end
