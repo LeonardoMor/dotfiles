@@ -10,6 +10,8 @@ hyprctl switchxkblayout "$KEYBOARD" next
 ACTIVE_KEYMAP="$(hyprctl -j devices | jq -r ".keyboards[] | select(.name == \"$KEYBOARD\") | .active_keymap")"
 
 notify-send --app-name="Hyprland" --icon="$ICON" "Keyboard changed" "$ACTIVE_KEYMAP"
+sleep 4
+qs ipc call notification closeLast
 {{ end -}}
 
 {{/*
