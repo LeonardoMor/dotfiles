@@ -21,9 +21,7 @@ cmd=(prime-run game-performance)
 
 cmd+=("$@")
 
-(
-    exec "${cmd[@]}"
-)
+"${cmd[@]}"
 
 systemctl --user start kanata.service
 hyprctl reload
