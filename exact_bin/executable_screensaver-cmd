@@ -1,3 +1,4 @@
+{{- if eq .chezmoi.hostname "cachyos-inf" -}}
 #!/usr/bin/env bash
 
 exit-screensaver() {
@@ -6,7 +7,16 @@ exit-screensaver() {
     exit 0
 }
 
-trap exit-screensaver SIGINT SIGTERM SIGHUP SIGQUIT
+trap exit-screensaver EXIT SIGINT SIGTERM SIGHUP SIGQUIT
+
+if pidof -q cmatrix; then
+    exit 0
+fi
 
 sleep 0.5
 exec cmatrix -s
+{{- end -}}
+
+{{/*
+vim: filetype=jq.gotmpl
+*/}}

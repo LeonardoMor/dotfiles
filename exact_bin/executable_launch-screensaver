@@ -1,3 +1,4 @@
+{{- if eq .chezmoi.hostname "cachyos-inf" -}}
 #!/usr/bin/env bash
 
 if pgrep -x cmatrix >/dev/null; then
@@ -13,3 +14,8 @@ for m in $(hyprctl monitors -j | jq -r '.[] | .name'); do
 done
 
 hyprct dispatch focusmonitor "$FOCUSED"
+{{- end -}}
+
+{{/*
+vim: filetype=jq.gotmpl
+*/}}

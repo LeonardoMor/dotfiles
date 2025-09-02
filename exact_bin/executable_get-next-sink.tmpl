@@ -13,7 +13,7 @@ map(
 ) | sort_by(.name) as $sinks
     | $sinks | map(.name) | index($default_sink_name) as $index
     | $sinks[($index + 1) % ($sinks | length)].id
-{{ end -}}
+{{- end -}}
 
 {{/*
 vim: filetype=jq.gotmpl
