@@ -137,7 +137,6 @@ vim.keymap.set('v', '<leader>ny', copy_with_linenumbers, { noremap = true, desc 
 vim.keymap.set('n', '<leader>ds', "<cmd>lua require('neogen').generate()<CR>", { desc = 'Generate docstring' })
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Scroll down half page and center the cursor vertically' })
 vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Scroll up half page and center the cursor vertically' })
-vim.keymap.set('n', '<leader>rw', [[<cmd>%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Replace word under cursor' })
 vim.keymap.set('n', 'J', 'mzJ`z', { desc = "Append the next line to the current but don't move the cursor" })
 vim.keymap.set('n', 'n', 'nzzzv', { desc = 'Next search result and center the cursor vertically' })
 vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous search result and center the cursor vertically' })
