@@ -34,6 +34,7 @@ brew jpeg-turbo
 brew jpeg-xl
 brew kanata
 brew keychain
+brew lftp
 brew libassuan
 brew libde265
 brew libdeflate
@@ -90,6 +91,7 @@ brew python-packaging
 brew python-setuptools
 brew python@3.13
 brew readline
+brew rename
 brew ripgrep
 brew ruby
 brew shared-mime-info
