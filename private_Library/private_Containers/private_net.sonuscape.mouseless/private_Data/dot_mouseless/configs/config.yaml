@@ -1,6 +1,7 @@
-app_version: 0.3.1
+app_version: 0.4.0
 behavior_configs:
 - base_wheel_speed: 16
+  free_mode_auto_off_s: 10
   hide_cursor_on_click: false
   hide_location: bottom_left
   initial_overlay_monitor: last_used
@@ -9,7 +10,6 @@ behavior_configs:
   multi_action_timeout_ms: 400
   name: main_behavior
   tap_threshold_ms: 200
-  wheel_mode_auto_off_s: 10
   wheel_speed_multiplier: 4
   wheel_step_size: 100
   wheel_step_size_large: 500
@@ -20,17 +20,19 @@ grid_configs:
   grid_defn:
   - border_width: 0.0
     callback: build_cell_strings
+    keys: QWERT ASDFG ZXCVB YUIOP HJKL; NM,./
     num_cells_x: 5
     num_cells_y: 6
   - border_width: 1.0
     callback: build_cell_strings
+    keys: QWERT ASDFG ZXCVB YUIOP HJKL; NM,./
     num_cells_x: 5
     num_cells_y: 6
   - border_width: 0.0
     callback: apply_strings_and_subgrid_to_cells
+    keys: ''
     num_cells_x: 2
     num_cells_y: 1
-  mouse_action_keys: QWERT ASDFG ZXCVB YUIOP HJKL; NM,./
   name: position_based
   strategy: subgrid
   subgrid_dims:
@@ -46,10 +48,10 @@ keymaps:
     cycle mouse button: null
     decrease overlay opacity: ArrowDown
     edit config: Tab
-    enter wheel mode: null
+    enter free mode: null
     execute mouse action: Space
     execute mouse move: OptionLeft tap
-    exit wheel mode: Escape
+    exit free mode: Escape
     forward mouse button (w/o overlay): null
     hide overlay: Escape
     hold for back button: null
@@ -73,8 +75,8 @@ keymaps:
     show overlay: CommandLeft tap
     switch monitor left: ShiftLeft tap
     switch monitor right: ShiftRight tap
+    toggle free mode: OptionLeft tap
     toggle overlay: null
-    toggle wheel mode: OptionLeft tap
     undo last key: Backspace
     wheel down: U
     wheel down fast: D
