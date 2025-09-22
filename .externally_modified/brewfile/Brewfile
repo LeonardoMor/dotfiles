@@ -131,6 +131,8 @@ cask whatsapp
 cask zen-browser
 cask zoom
 
+tap hashicorp/tap
+
 tap rcmdnk/file
 brew brew-file
 
