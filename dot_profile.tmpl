@@ -27,6 +27,9 @@ for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"
 done
 
 export BARTIB_FILE=~/activities.bartib
+{{- if eq .chezmoi.hostname .work_host }}
+export VAULT_ADDR=https://cluster-01-pdx10.prod.vault.splunkcloud.systems
+{{- end }}
 
 {{ if eq .chezmoi.os "darwin" -}}
 # Set brew
