@@ -104,6 +104,7 @@ brew tree-sitter-cli
 brew unbound
 brew unibilium
 brew utf8proc
+brew vault
 brew vim
 brew webp
 brew x265
