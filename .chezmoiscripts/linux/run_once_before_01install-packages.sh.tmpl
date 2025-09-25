@@ -1,15 +1,17 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
-{{ .update_cmd }}
-xargs --no-run-if-empty {{ .install_cmd }} <<EOF
-{{ range .packages.linux -}}
-{{     .     }}
-{{ end -}}
+# Track all packages: {{ include ".externally_modified/metapac/groups/all.toml" | sha256sum }}
+# Track default packages: {{ include ".externally_modified/metapac/groups/default.toml" | sha256sum }}
+# Track archdevtools packages: {{ include ".externally_modified/metapac/groups/archdevtools.toml" | sha256sum }}
 {{ if eq .chezmoi.osRelease.id "cachyos" -}}
-{{     range .packages.cachyos -}}
-{{         .         }}
-{{     end -}}
+# Track cachyos packages: {{ include ".externally_modified/metapac/groups/cachyos.toml" | sha256sum }}
 {{ end -}}
-EOF
-{{ end -}}
+{{ .update_cmd }}
+metapac sync
+metapac clean
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

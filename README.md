@@ -90,15 +90,15 @@ Which produces:
 
 ```toml
 [merge]
-    command = "nvim"
-    args = [
-        "-O3",
-        "{{.Destination}}",
-        "{{.Source}}",
-        "{{.Target}}",
-        "-c",
-        "windo diffthis"
-    ]
+command = "nvim"
+args = [
+  "-O3",
+  "{{.Destination}}",
+  "{{.Source}}",
+  "{{.Target}}",
+  "-c",
+  "windo diffthis",
+]
 ```
 
 on the actual config file: `${XDG_CONFIG_HOME}/chezmoi/chezmoi.toml`
@@ -290,11 +290,69 @@ Things are set up to use the Bash that comes from Homebrew. For completions to
 work, the `.bash_profile` has to be edited as explained
 [here](https://docs.brew.sh/Shell-Completion).
 
+## Manage packages declaratively with `metapac`
+
+See [metapac](https://github.com/ripytide/metapac).
+
+`metapac` config is tracked with `chezmoi`. Later, if I have to, I'll track it
+as template to also use this system on Windows.
+
+`metapac` groups are tracked with `chezmoi` as externally modifiable files.
+
+### Linux
+
+CachyOS for now, but with this system it'll be just as easy to deploy these
+dotfiles on other distros.
+
+The workflow is as follows:
+
+#### Installing packages
+
+1. Run
+
+```bash
+metapac add --backend arch --group GROUP --package PACKAGE
+```
+
+This will add the package to the `GROUP` group.
+
+2. Run
+
+```bash
+chezmoi apply --verbose
+```
+
+There's a script in `.chezmoiscripts/linux` that will detect the change and run
+the `metapac sync`.
+
+#### Uninstalling packages
+
+First, run
+
+```bash
+metapac remove --backend arch --package PACKAGE
+```
+
+The second step is the same.
+
+Once you're happy with the changes, add and commit them:
+
+```bash
+chezmoi git add .
+chezmoi git commit
+```
+
+### Windows
+
+Once setup, things should work in the same way as on Linux.
+
 # TODO
 
 - [ ] Add Linux and Windows sections with anything that's worth.
-- [ ] Write wrappers for `paru` and `winget` emulating `brew-file`
+- [x] Write wrappers for `paru` and `winget` emulating `brew-file`
       functionality.
+- [ ] Replace `brew-file` with `metapac` as `brew` is a supported backend.
+- [ ] Give some love to the Windows side.
 
 [chezmoi reference]: https://www.chezmoi.io/reference/
 [template]: htps://pkg.go.dev/text/template

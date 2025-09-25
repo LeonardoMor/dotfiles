@@ -1,0 +1,7 @@
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "cachyos") -}}
+{{- joinPath .chezmoi.sourceDir ".externally_modified" "metapac" "groups" "cachyos.toml" -}}
+{{- end -}}
+
+{{/*
+vim: filetype=gotmpl
+*/}}
