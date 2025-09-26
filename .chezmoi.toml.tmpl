@@ -17,12 +17,10 @@
 [merge]
     command = "nvim"
     args = [
-        "-O3",
+        "-d",
         {{ print "{{.Destination}}" | quote }},
         {{ print "{{.Source}}" | quote }},
         {{ print "{{.Target}}" | quote }},
-        "-c",
-        "windo diffthis"
     ]
 
 [git]
