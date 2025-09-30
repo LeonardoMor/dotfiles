@@ -104,7 +104,6 @@ brew tree-sitter-cli
 brew unbound
 brew unibilium
 brew utf8proc
-brew vault
 brew vim
 brew webp
 brew x265
@@ -125,7 +124,6 @@ cask google-chrome
 cask mouseless
 cask obsidian
 cask raycast
-cask rectangle
 cask slack
 cask spotify
 cask whatsapp
@@ -133,6 +131,7 @@ cask zen-browser
 cask zoom
 
 tap hashicorp/tap
+brew vault
 
 tap rcmdnk/file
 brew brew-file
