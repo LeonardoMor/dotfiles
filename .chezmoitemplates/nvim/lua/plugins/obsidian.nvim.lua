@@ -31,6 +31,10 @@ return {
       date_format = "%F",
       default_tags = {}
     },
+    legacy_commands = false,
+    footer = {
+      enabled = true,
+    },
   },
   event = function(self)
     return vim
