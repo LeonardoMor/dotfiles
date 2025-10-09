@@ -2,7 +2,6 @@ local utils = require('custom.utils')
 
 return {
   'obsidian-nvim/obsidian.nvim',
-  version = '*',
   lazy = true,
   dependencies = {
     'nvim-lua/plenary.nvim',
