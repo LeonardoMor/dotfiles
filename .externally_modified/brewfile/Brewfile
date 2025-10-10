@@ -7,8 +7,10 @@ brew bartib
 brew bash
 brew bash-completion@2
 brew bat
+brew bfg
 brew brotli
 brew ca-certificates
+brew cairo
 brew chezmoi
 brew dos2unix
 brew fastfetch
@@ -26,7 +28,10 @@ brew gnu-sed
 brew gnupg
 brew gnutls
 brew go
+brew graphite2
+brew harfbuzz
 brew highway
+brew icu4c@77
 brew imagemagick
 brew imath
 brew jasper
@@ -61,6 +66,12 @@ brew libusb
 brew libuv
 brew libvmaf
 brew libvterm
+brew libx11
+brew libxau
+brew libxcb
+brew libxdmcp
+brew libxext
+brew libxrender
 brew libyaml
 brew libzip
 brew little-cms2
@@ -70,6 +81,7 @@ brew lua
 brew luajit
 brew luv
 brew lz4
+brew lzo
 brew m4
 brew mpdecimal
 brew mpfr
@@ -82,12 +94,14 @@ brew npth
 brew nvm
 brew oniguruma
 brew openexr
+brew openjdk
 brew openjpeg
 brew openjph
 brew openssl@3
 brew p11-kit
 brew pcre2
 brew pinentry
+brew pixman
 brew pkgconf
 brew python-packaging
 brew python-setuptools
@@ -111,6 +125,7 @@ brew vim
 brew webp
 brew x265
 brew xcodegen
+brew xorgproto
 brew xz
 brew yyjson
 brew z3
