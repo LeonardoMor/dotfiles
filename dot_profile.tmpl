@@ -5,11 +5,15 @@
 
 # Set variables
 #   Set PATH
+prepend2PATH() {
+    echo ":${PATH}:" | grep -q ":${1}:" || if [ -d "$1" ]; then PATH="${1}:${PATH}"; fi
+}
+
 for p in "${HOME}/.bin" "${HOME}/.local/bin" "${HOME}/bin"; do
-    echo ":${PATH}:" | grep -q ":${p}:" || if [ -d "$p" ]; then PATH="${p}:${PATH}"; fi
+    prepend2PATH "$p"
 done
 {{- if eq .chezmoi.os "darwin" }}
-PATH="{{ .brewPrefix }}/opt/gnu-getopt/bin:$PATH"
+prepend2PATH "{{ .brewPrefix }}/opt/gnu-getopt/bin"
 {{- end }}
 
 #   Set environment
