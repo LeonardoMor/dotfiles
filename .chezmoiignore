@@ -6,10 +6,6 @@
 biome.json
 README.md
 
-{{- if or (eq .chezmoi.hostname "cassini") (eq .chezmoi.hostname "cachyos-inf") }}
-.config/brewfile
-{{- end }}
-
 {{- if ne .chezmoi.hostname .work_host }}
 Library/Services/note_case.workflow
 {{- end }}
@@ -39,7 +35,6 @@ Library
 !.config/*vim
 !.config/bat
 !.config/blesh
-!.config/brewfile
 !.config/gh
 !.config/ghostty
 !.config/git

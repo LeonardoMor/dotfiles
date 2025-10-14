@@ -159,14 +159,14 @@ Here is the `brew` and `brew-file` setup function:
 ```bash
 bootstrap_darwin() {
     # Assume Apple silicon
-    local brew_prefix='/opt/homebrew'
+    local brewPrefix='/opt/homebrew'
     local Brewfile="${XDG_CONFIG_HOME:-~/.config}/brewfile/Brewfile"
 
     # Install brew
     brew --version >/dev/null 2>&1 || {
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     }
-    INSTALL="${brew_prefix}/bin/brew install"
+    INSTALL="${brewPrefix}/bin/brew install"
 
     # Will manage brew packages with Homebrew-file
     brew-file --version >/dev/null 2>&1 || {
@@ -176,8 +176,8 @@ bootstrap_darwin() {
         rm -f "$Brewfile"
         touch "$Brewfile"
     fi
-    "${brew_prefix}/bin/brew-file" set_local
-    INSTALL="${brew_prefix}/bin/brew-file install"
+    "${brewPrefix}/bin/brew-file" set_local
+    INSTALL="${brewPrefix}/bin/brew-file install"
 }
 ```
 
@@ -233,13 +233,13 @@ which will produce the `.profile` file on `$HOME`. The relevant contents are:
 
 ```
 # Set brew
-if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
+if {{ printf "%s/bin/brew" .brewPrefix }} --version >/dev/null 2>&1; then
     # Reference: https://stackoverflow.com/a/65980738/7830232
-    eval {{ printf "$(%s/bin/brew shellenv)" .brew_prefix | quote }}
+    eval {{ printf "$(%s/bin/brew shellenv)" .brewPrefix | quote }}
 
     # Set Homebrew-file
-    if [ -f {{ printf "%s/etc/brew-wrap" .brew_prefix }} ]; then
-        . {{ printf "%s/etc/brew-wrap" .brew_prefix }}
+    if [ -f {{ printf "%s/etc/brew-wrap" .brewPrefix }} ]; then
+        . {{ printf "%s/etc/brew-wrap" .brewPrefix }}
 
         _post_brewfile_update() {
             chezmoi git add .
@@ -281,7 +281,7 @@ after running `chezmoi apply`.
 
 <!-- prettier-ignore -->
 > [!NOTE]
-> `.brew_prefix` does not come with `chezmoi`. I defined it on my
+> `.brewPrefix` does not come with `chezmoi`. I defined it on my
 > `.chezmoi.toml.tmpl`.
 
 ### Bash command completion

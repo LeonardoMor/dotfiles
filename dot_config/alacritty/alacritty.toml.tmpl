@@ -33,7 +33,7 @@ save_to_clipboard = true
 
 [terminal.shell]
 {{- if eq .chezmoi.os "darwin" }}
-program = "{{ .brew_prefix }}/bin/bash"
+program = "{{ .brewPrefix }}/bin/bash"
 {{- else }}
 program = "bash"
 {{ end }}

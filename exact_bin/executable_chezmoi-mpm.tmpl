@@ -1,0 +1,37 @@
+{{ if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+NAME="$(basename "$0")"
+TERMINATE=false
+PARSEDARGS="$(getopt --name "$NAME" --options 'h' --longoptions 'help' -- "$@")" || {
+    mpm --help
+    exit 1
+}
+eval "set -- $PARSEDARGS"
+
+while true; do
+    case $1 in
+        -h | --help) TERMINATE=true ;;
+        *) break ;;
+    esac
+done
+
+mpm "$@"
+
+if $TERMINATE; then
+    exit $?
+fi
+
+PACKAGES={{ joinPath .chezmoi.sourceDir ".externally_modified" "mpm" (printf "%s.toml" .chezmoi.os) }}
+
+mpm cleanup
+mpm backup --overwrite "$PACKAGES"
+chezmoi git add .
+chezmoi git commit
+if [[ $(chezmoi git -- branch --show-current) == master ]]; then
+    chezmoi git push origin master
+fi
+{{- end -}}
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

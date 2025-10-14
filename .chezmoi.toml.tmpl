@@ -37,7 +37,7 @@
     email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/email" "my.1password.com" | quote }}
 {{- end }}
 {{- if eq .chezmoi.os "darwin" }}
-    brew_prefix = "/opt/homebrew"
+    brewPrefix = "/opt/homebrew"
 {{- end }}
 {{- if eq .chezmoi.os "linux" }}
 {{-     if eq .chezmoi.osRelease.idLike "arch" }}

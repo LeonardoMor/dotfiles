@@ -1,6 +1,15 @@
 {{ if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 
-# Track the Brewfile: {{ include ".externally_modified/brewfile/Brewfile" | sha256sum }}
-brew file update
+mpm --version >/dev/null 2>&1 || {
+    echo "meta-package-manager is not installed"
+    exit 1
+}
+
+PACKAGES={{ joinPath .chezmoi.sourceDir ".externally_modified" "mpm" (printf "%s.toml" .chezmoi.os) }}
+
+mpm restore "$PACKAGES"
 {{ end -}}
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

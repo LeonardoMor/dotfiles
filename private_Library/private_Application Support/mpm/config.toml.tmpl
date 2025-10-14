@@ -1,0 +1,16 @@
+[mpm]
+{{- if eq .chezmoi.os "darwin" }}
+brew = true
+cask = true
+gem = false
+pip = false
+{{- end }}
+cargo = true
+npm = true
+
+[mpm.search]
+exact = true
+
+{{- /*
+vim: filetype=toml.gotmpl
+*/}}

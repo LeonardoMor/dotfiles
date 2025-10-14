@@ -4,7 +4,7 @@ set -g mouse on
 
 # Set prefix
 {{- if eq .chezmoi.os "darwin" }}
-set-option -g default-shell {{.brew_prefix}}/bin/bash
+set-option -g default-shell {{.brewPrefix}}/bin/bash
 {{- end }}
 unbind C-b
 set -g prefix C-Space

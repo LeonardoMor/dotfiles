@@ -4,12 +4,12 @@
 
 # ble.sh this has to be the first line. Notice, if not running interactively,
 # don't do anything
-[[ $- != *i* ]] && return
-{{- if eq .chezmoi.os "darwin" }}
-export BLESH_PATH=~/.local/share/blesh
-{{- else if eq .chezmoi.osRelease.idLike "arch" }}
-export BLESH_PATH=/usr/share/blesh
+[[ $- == *i* ]] || return
+{{- $bleshPrefix := "~/.local/share" }}
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.idLike "arch") }}
+{{- $bleshPrefix = "/usr/share" }}
 {{- end }}
+export BLESH_PATH={{ $bleshPrefix }}/blesh
 source "${BLESH_PATH}/ble.sh" --noattach
 
 # Command history settings
@@ -28,29 +28,20 @@ HISTFILESIZE=4000
 
 # Enable color support of ls and grep and also add handy aliases
 if [[ -x /usr/bin/dircolors ]]; then
-	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-	alias ls='ls --color=auto'
-	alias dir='dir --color=auto'
-	alias vdir='vdir --color=auto'
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
 
-	alias grep='grep --color=auto'
-	alias fgrep='fgrep --color=auto'
-	alias egrep='egrep --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
 fi
 
 # Load alias file if it exists
 if [[ -f ~/.bash_aliases ]]; then
-	source ~/.bash_aliases
+    source ~/.bash_aliases
 fi
-
-# Other environment variables
-export VISUAL=nvim
-export EDITOR="$VISUAL"
-export NVIM_LOG_FILE="${XDG_CACHE_HOME}/nvim/log"
-{{- if eq .chezmoi.hostname "cassini" }}
-export BROWSER=firefox
-export LIBVIRT_DEFAULT_URI='qemu:///system'
-{{- end }}
 
 # fzf theme
 source "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/fzf/tokyonight_night.sh"
@@ -58,8 +49,8 @@ source "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/fzf/tokyonight_night.s
 # Enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    . /etc/bash_completion
+if [[ -f /etc/bash_completion ]] && ! shopt -oq posix; then
+    source /etc/bash_completion
 fi
 
 # Starship Prompt
@@ -67,11 +58,19 @@ eval "$(starship init bash)"
 
 # nvm
 {{- if eq .chezmoi.os "darwin" }}
-[ -s "{{ .brew_prefix }}/opt/nvm/etc/bash_completion.d/nvm" ] && source "{{ .brew_prefix }}/opt/nvm/etc/bash_completion.d/nvm"
+if [[ -s "{{ .brewPrefix }}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+    source "{{ .brewPrefix }}/opt/nvm/etc/bash_completion.d/nvm"
+fi
 {{- else if eq .chezmoi.osRelease.idLike "arch" }}
 source "${NVM_DIR}/bash_completion"
 source "${NVM_DIR}/install-nvm-exec"
 {{- end }}
 
 # ble.sh: this has to be the last line
-[[ ${BLE_VERSION-} ]] && ble-attach
+if [[ ${BLE_VERSION-} ]]; then
+    ble-attach
+fi
+
+{{- /*
+vim: filetype=sh.gotmpl
+*/}}

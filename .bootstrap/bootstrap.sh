@@ -4,8 +4,6 @@
 # This is a pre-requisite, pure bash script. In particular, templating syntax
 # is not available here
 
-set -o errexit
-
 die() {
     case "$1" in
         i)
@@ -62,25 +60,14 @@ bootstrap_linux() {
 
 bootstrap_darwin() {
     # Assume Apple silicon
-    local brew_prefix='/opt/homebrew'
-    local Brewfile="${XDG_CONFIG_HOME:-~/.config}/brewfile/Brewfile"
+    local brewPrefix='/opt/homebrew'
 
     # Install brew
-    brew --version >/dev/null 2>&1 || {
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    }
-    INSTALL="${brew_prefix}/bin/brew install"
+    brew --version >/dev/null 2>&1 || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-    # Will manage brew packages with Homebrew-file
-    brew-file --version >/dev/null 2>&1 || {
-        $INSTALL rcmdnk/file/brew-file
-    }
-    if [[ -L $Brewfile ]] && [[ ! -e $Brewfile ]]; then
-        rm -f "$Brewfile"
-        touch "$Brewfile"
-    fi
-    "${brew_prefix}/bin/brew-file" set_local
-    INSTALL="${brew_prefix}/bin/brew-file install"
+    INSTALL="${brewPrefix}/bin/brew install"
+
+    mpm --version >/dev/null 2>&1 || $INSTALL meta-package-manager
 }
 
 OS="$(uname)"

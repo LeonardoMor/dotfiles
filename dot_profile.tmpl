@@ -3,66 +3,43 @@
 #
 # Keep it POSIX-compliant
 
-# Set PATH
-if ! echo ":${PATH}:" | grep -q ":${HOME}/.bin:"; then
-    export PATH="${HOME}/.bin:${PATH}"
-fi
-if ! echo ":${PATH}:" | grep -q ":${HOME}/.local/bin:"; then
-    export PATH="${HOME}/.local/bin:${PATH}"
-fi
-if ! echo ":${PATH}:" | grep -q ":${HOME}/bin:"; then
-    export PATH="${HOME}/bin:${PATH}"
-fi
+# Set variables
+#   Set PATH
+for p in "${HOME}/.bin" "${HOME}/.local/bin" "${HOME}/bin"; do
+    echo ":${PATH}:" | grep -q ":${p}:" || if [ -d "$p" ]; then PATH="${p}:${PATH}"; fi
+done
+{{- if eq .chezmoi.os "darwin" }}
+PATH="{{ .brewPrefix }}/opt/gnu-getopt/bin:$PATH"
+{{- end }}
 
-# XDG Base Dir spec https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-# https://wiki.archlinux.org/title/XDG_Base_Directory
-export XDG_CONFIG_HOME={{ printf "${XDG_CONFIG_HOME:-%s}" .XDG_CONFIG_HOME | quote }}
-export XDG_CACHE_HOME={{ printf "${XDG_CACHE_HOME:-%s}" .XDG_CACHE_HOME | quote }}
-export XDG_DATA_HOME={{ printf "${XDG_DATA_HOME:-%s}" .XDG_DATA_HOME | quote }}
-export XDG_STATE_HOME={{ printf "${XDG_STATE_HOME:-%s}" .XDG_STATE_HOME | quote }}
-export XDG_DATA_DIRS={{ printf "${XDG_DATA_DIRS:-%s}" .XDG_DATA_DIRS | quote }}
-export XDG_CONFIG_DIRS={{ printf "${XDG_CONFIG_DIRS:-%s}" .XDG_CONFIG_DIRS | quote }}
+#   Set environment
+{{ with $environ := includeTemplate "environment" . | splitList "\n" -}}
+export {{ prepend $environ "PATH" | join " \\\n    " }}
+{{ end -}}
+
 for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"; do
     mkdir -p "$d"
 done
 
-export BARTIB_FILE=~/activities.bartib
-{{- if eq .chezmoi.hostname .work_host }}
-export VAULT_ADDR=https://cluster-01-pdx10.prod.vault.splunkcloud.systems
-{{- end }}
-
+{{/* Default value for nvm script */ -}}
+{{ $nvmsh := joinPath .brewPrefix "opt" "nvm" "nvm.sh" -}}
 {{ if eq .chezmoi.os "darwin" -}}
 # Set brew
-if {{ printf "%s/bin/brew" .brew_prefix }} --version >/dev/null 2>&1; then
+if {{ printf "%s/bin/brew" .brewPrefix }} --version >/dev/null 2>&1; then
     # Reference: https://stackoverflow.com/a/65980738/7830232
-    eval {{ printf "$(%s/bin/brew shellenv)" .brew_prefix | quote }}
+    eval {{ printf "$(%s/bin/brew shellenv)" .brewPrefix | quote }}
+fi
+{{- else if eq .chezmoi.osRelease.idLike "arch" }}
+{{/*
+TODO: set nvm properly on Arch Linux
+*/}}
+{{- end }}
 
-    # Set Homebrew-file
-    if [ -f {{ printf "%s/etc/brew-wrap" .brew_prefix }} ]; then
-        . {{ printf "%s/etc/brew-wrap" .brew_prefix }}
-
-        _post_brewfile_update() {
-            chezmoi git add .
-            echo 'Commit message? '
-            read -r
-            chezmoi git -- commit -m "$REPLY"
-            [[ $(chezmoi git -- branch --show-current) == master ]] && chezmoi git push origin master
-        }
-        export HOMEBREW_CASK_OPTS="--no-quarantine"
-    fi
+# Set nvm
+if [ -n "$NVM_DIR" ] && [ -s {{ $nvmsh | quote }} ]; then
+    . {{ $nvmsh | quote }}
 fi
 
-# Set nvm
-[ -z "$NVM_DIR" ] && export NVM_DIR="${HOME}/.nvm"
-[ -s "{{ .brew_prefix }}/opt/nvm/nvm.sh" ] && . "{{ .brew_prefix }}/opt/nvm/nvm.sh"
-
-# Set imagemagick
-export DYLD_FALLBACK_LIBRARY_PATH="$(brew --prefix)/lib:$DYLD_FALLBACK_LIBRARY_PATH"
-
-export LANG="en_US.UTF-8"
-export LC_ALL="en_US.UTF-8"
-{{- else if eq .chezmoi.osRelease.idLike "arch" }}
-# Set nvm
-[ -z "$NVM_DIR" ] && export NVM_DIR=/usr/share/nvm
-. "${NVM_DIR}/nvm.sh"
-{{- end }}
+{{- /*
+vim: filetype=sh.gotmpl
+*/}}
