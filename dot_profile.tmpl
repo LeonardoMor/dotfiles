@@ -9,7 +9,7 @@ prepend2PATH() {
     echo ":${PATH}:" | grep -q ":${1}:" || if [ -d "$1" ]; then PATH="${1}:${PATH}"; fi
 }
 
-for p in "${HOME}/.bin" "${HOME}/.local/bin" "${HOME}/bin"; do
+for p in "${HOME}/.cargo/bin" "${HOME}/.bin" "${HOME}/.local/bin" "${HOME}/bin"; do
     prepend2PATH "$p"
 done
 
