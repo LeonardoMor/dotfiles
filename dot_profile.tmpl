@@ -45,9 +45,10 @@ if [ -s {{ printf "%s/etc/bash_completion.d/nvm" $optnvm | quote }} ]; then
 fi
 
 prepend2PATH "{{ .brewPrefix }}/opt/gnu-getopt/bin"
+
 {{ else if eq .chezmoi.osRelease.idLike "arch" -}}
 source /usr/share/nvm/init-nvm.sh
-{{- end }}
+{{ end -}}
 
 export PATH
 {{- /*
