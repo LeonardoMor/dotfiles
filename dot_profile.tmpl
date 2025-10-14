@@ -12,9 +12,6 @@ prepend2PATH() {
 for p in "${HOME}/.bin" "${HOME}/.local/bin" "${HOME}/bin"; do
     prepend2PATH "$p"
 done
-{{- if eq .chezmoi.os "darwin" }}
-prepend2PATH "{{ .brewPrefix }}/opt/gnu-getopt/bin"
-{{- end }}
 
 #   Set environment
 {{- with $environ := includeTemplate "environment" . | splitList "\n" }}
@@ -29,25 +26,30 @@ for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"
     mkdir -p "$d"
 done
 
-{{/* Default value for nvm script */ -}}
-{{ $nvmsh := joinPath .brewPrefix "opt" "nvm" "nvm.sh" -}}
 {{ if eq .chezmoi.os "darwin" -}}
 # Set brew
 if {{ printf "%s/bin/brew" .brewPrefix }} --version >/dev/null 2>&1; then
     # Reference: https://stackoverflow.com/a/65980738/7830232
     eval {{ printf "$(%s/bin/brew shellenv)" .brewPrefix | quote }}
 fi
-{{- else if eq .chezmoi.osRelease.idLike "arch" }}
-{{/*
-TODO: set nvm properly on Arch Linux
-*/}}
-{{- end }}
 
 # Set nvm
-if [ -n "$NVM_DIR" ] && [ -s {{ $nvmsh | quote }} ]; then
-    . {{ $nvmsh | quote }}
+# Reference: https://formulae.brew.sh/formula/nvm
+{{ $optnvm := joinPath .brewPrefix "opt" "nvm" -}}
+[ -d "$NVM_DIR" ] || mkdir -p "$NVM_DIR"
+if  [ -s {{ joinPath $optnvm "nvm.sh" | quote }} ]; then
+    . {{ joinPath $optnvm "nvm.sh" | quote }}
+fi
+if [ -s {{ printf "%s/etc/bash_completion.d/nvm" $optnvm | quote }} ]; then 
+    . {{ printf "%s/etc/bash_completion.d/nvm" $optnvm | quote }}
 fi
 
+prepend2PATH "{{ .brewPrefix }}/opt/gnu-getopt/bin"
+{{- else if eq .chezmoi.osRelease.idLike "arch" }}
+source /usr/share/nvm/init-nvm.sh
+{{- end }}
+
+export PATH
 {{- /*
 vim: filetype=sh.gotmpl
 */}}
