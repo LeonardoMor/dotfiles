@@ -17,9 +17,13 @@ prepend2PATH "{{ .brewPrefix }}/opt/gnu-getopt/bin"
 {{- end }}
 
 #   Set environment
-{{ with $environ := includeTemplate "environment" . | splitList "\n" -}}
-export {{ prepend $environ "PATH" | join " \\\n    " }}
-{{ end -}}
+{{- with $environ := includeTemplate "environment" . | splitList "\n" }}
+{{- range (prepend $environ "PATH") }}
+{{- if . }}
+{{ printf "export %s" . }}
+{{- end }}
+{{- end }}
+{{- end }}
 
 for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"; do
     mkdir -p "$d"
