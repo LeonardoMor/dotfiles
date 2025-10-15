@@ -3,16 +3,16 @@ return {
 {{- if ne .chezmoi.hostname .work_host }}
       {
         name = 'Codice',
-        path = ([[{{ joinPath .VaultsDir "Codice" }}]]):gsub('\\', '/'),
+        path = ([[{{ joinPath .vaultsDir "Codice" }}]]):gsub('\\', '/'),
       },
 {{- end }}
       {
         name = 'Meta Work',
-        path = ([[{{ joinPath .VaultsDir "Meta_Work" }}]]):gsub('\\', '/'),
+        path = ([[{{ joinPath .vaultsDir "Meta_Work" }}]]):gsub('\\', '/'),
       },
       {
         name = 'Splunk Cloud Support',
-        path = ([[{{ joinPath .VaultsDir "Splunk_Cloud_Support" }}]]):gsub('\\', '/'),
+        path = ([[{{ joinPath .vaultsDir "Splunk_Cloud_Support" }}]]):gsub('\\', '/'),
       },
     }
 }

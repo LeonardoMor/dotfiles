@@ -22,16 +22,16 @@ die() {
             die e "Invalid option or format"
             ;;
     esac
+    [[ -z $3 ]] || exit "$3"
 }
 
-change_dir() {
+change-dir() {
     cd "$1" || {
-        die e "Failed to change $1"
-        exit 1
+        die f "Failed to change $1" 1
     }
 }
 
-bootstrap_linux() {
+bootstrap-linux() {
     # Determine Linux distro
     local ID_LIKE
     eval "$(grep -E '^ID_LIKE' /etc/os-release)"
@@ -52,13 +52,16 @@ bootstrap_linux() {
             UPDATE='paru -Syu'
             ;;
         *)
-            die e "Unknown or not supported Linux derivative"
+            die e "Unknown or not supported Linux derivative" 1
             ;;
     esac
 
+    $UPDATE
+    pipx --version >/dev/null 2>&1 || $INSTALL pipx
+    mpm --version >/dev/null 2>&1 || pipx install meta-package-manager
 }
 
-bootstrap_darwin() {
+bootstrap-darwin() {
     # Assume Apple silicon
     local brewPrefix='/opt/homebrew'
 
@@ -73,14 +76,10 @@ bootstrap_darwin() {
 OS="$(uname)"
 
 case "${OS,}" in
-    linux)
-        bootstrap_linux
-        $UPDATE
-        ;;
-    darwin) bootstrap_darwin ;;
+    linux) bootstrap-linux ;;
+    darwin) bootstrap-darwin ;;
     *)
-        die e "$OS platform is not supported at this time."
-        exit
+        die e "$OS platform is not supported at this time." 1
         ;;
 esac
 

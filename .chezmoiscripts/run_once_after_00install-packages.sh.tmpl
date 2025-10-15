@@ -1,0 +1,20 @@
+{{ if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+{{ includeTemplate "utils.sh" . }}
+
+mpm --version >/dev/null 2>&1 || emit f "meta-package-manager is not installed" 1
+
+{{ if eq .chezmoi.osRelease.idLike "arch" -}}
+{{ .update_cmd }}
+
+{{ end -}}
+
+for m in "${MANAGERS[@]}"; do
+    mpm restore "$PACKAGESPREFIX/${m}.toml"
+done
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

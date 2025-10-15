@@ -2,7 +2,8 @@
 #!/usr/bin/env bash
 
 source ~/.profile
-source {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" ".utils.sh" | quote }}
+
+{{ includeTemplate "utils.sh" . }}
 
 emit i 'Executing post deploy tasks...'
 
@@ -24,14 +25,12 @@ bash "${BLESH_PATH}/ble.sh" --version >/dev/null 2>&1 || {
 {{- end }}
 
 # Install node
-node --version >/dev/null 2>&1 || {
-    emit i 'Installing node Iron...'
-    if nvm install --lts=iron; then
-        nvm use --lts=iron || emit e "Failed using node Iron"
-    else
-        emit -e "Failed to install node Iron"
-    fi
-}
+emit i 'Installing node Iron...'
+if nvm install --lts=iron; then
+    nvm use --lts=iron || emit e "Failed using node Iron"
+else
+    emit -e "Failed to install node Iron"
+fi
 
 # Install prettier and it's awk formatter globally
 npm list --global prettier >/dev/null 2>&1 || {
@@ -65,10 +64,18 @@ fi
 
 emit i "Authenticating to github.com..."
 if gh --version >/dev/null 2>&1; then
-    gh auth status >/dev/null 2>&1 && {
+    if gh auth status >/dev/null 2>&1; then
         emit i "Already authenticated!"
-        exit
-    }
-    gh auth login || emit e "Failed to authenticate to github.com"
+    else
+        gh auth login || emit e "Failed to authenticate to github.com"
+    fi
+else
+    emit i "gh is not installed"
 fi
-{{ end -}}
+
+emit i "Updating system..."
+~/bin/update
+{{- end -}}
+{{- /*
+vim: filetype=sh.gotmpl
+*/}}

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-{{- if eq .chezmoi.os "linux" }}
-{{- if eq .chezmoi.osRelease.idLike "arch" }}
+{{ if eq .chezmoi.os "linux" -}}
+{{ if eq .chezmoi.osRelease.idLike "arch" -}}
 # Complete system upgrade
 paru -Syu
 {{- end }}
@@ -9,28 +9,16 @@ paru -Syu
 # Update hyprland Desktop Experience
 ~/.config/hyprland-de/scripts/update.sh
 
-chezmoi apply --verbose
-
-# Update snaps
-# sleep 1
-# sudo snap refresh
-
-# Update flatpaks
-# sleep 1
-# flatpak update -y
-
-# Update global npm modules
-# sleep 1
-# npm update -g
+pidof -q chezmoi || chezmoi apply --verbose
 {{- else }}
-brew upgrade
-brew upgrade --cask --greedy
-
 # Update ble.sh in macOS
 BLESH_PATH=~/.local/share/blesh
 bash "${BLESH_PATH}/ble.sh" --update
-
-# Update global npm modules
-sleep 1
-npm update -g
 {{- end }}
+
+# Update all packages
+~/bin/chezmoi-mpm upgrade
+
+{{- /*
+vim: filetype=sh.gotmpl
+*/}}

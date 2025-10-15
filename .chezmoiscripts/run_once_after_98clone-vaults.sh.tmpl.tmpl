@@ -1,9 +1,10 @@
 {{ if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
+{{ includeTemplate "utils.sh" . }}
+
 git --version >/dev/null 2>&1 || {
-    echo 'WARNING: git is not yet installed. Clone vaults manually later' >&2
-    exit
+    emit w 'git is not yet installed. Clone vaults manually later' 0
 }
 
 vaults=(
@@ -12,18 +13,20 @@ vaults=(
     Meta_Work
 )
 
-vaults_dir={{ .VaultsDir }}
+VAULTSDIR={{ .vaultsDir }}
 
-[[ -d $vaults_dir ]] || mkdir -p "$vaults_dir"
+[[ -d $VAULTSDIR ]] || mkdir -p "$VAULTSDIR"
 
 for vault in "${vaults[@]}"; do
-    [[ -d ${vaults_dir}/$vault ]] && rm -rf "${vaults_dir}/$vault"
+    if [[ -d ${VAULTSDIR}/$vault ]]; then
+        rm -rf "${VAULTSDIR}/$vault"
+    fi
     (
-        cd "$vaults_dir" || {
-            echo "FATAL: failed to cd to $vaults_dir" >&2
-            exit 1
-        }
+        change-dir "$VAULTSDIR"
         git clone "https://github.com/LeonardoMor/${vault}.git"
     )
 done
 {{ end -}}
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

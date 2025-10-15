@@ -1,31 +1,29 @@
 {{ if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-NAME="$(basename "$0")"
-TERMINATE=false
-PARSEDARGS="$(getopt --name "$NAME" --options 'h' --longoptions 'help' -- "$@")" || {
-    mpm --help
-    exit 1
-}
-eval "set -- $PARSEDARGS"
+{{ includeTemplate "utils.sh" . }}
 
-while true; do
-    case $1 in
-        -h | --help) TERMINATE=true ;;
-        *) break ;;
-    esac
-done
+NAME="$(basename "$0")"
+TERMINATE=true
+TMPPACKAGES="/tmp/$(date +%s).packages.toml"
 
 mpm "$@"
+
+if [[ $1 =~ ^(install|upgrade|update|remove|uninstall)$ ]]; then
+    TERMINATE=false
+fi
 
 if $TERMINATE; then
     exit $?
 fi
 
-PACKAGES={{ joinPath .chezmoi.sourceDir ".externally_modified" "mpm" (printf "%s.toml" .chezmoi.os) }}
-
 mpm cleanup
-mpm backup --overwrite "$PACKAGES"
+mpm backup --overwrite "$TMPPACKAGES"
+
+for m in "${MANAGERS[@]}"; do
+    qq --output toml "{$m}" "$TMPPACKAGES" >"$PACKAGESPREFIX/${m}.toml"
+done
+
 chezmoi git add .
 chezmoi git commit
 if [[ $(chezmoi git -- branch --show-current) == master ]]; then
