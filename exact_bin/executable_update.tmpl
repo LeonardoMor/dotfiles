@@ -10,7 +10,7 @@ paru -Syu
 ~/.config/hyprland-de/scripts/update.sh
 
 pidof -q chezmoi || chezmoi apply --verbose
-{{- else }}
+{{ else -}}
 # Update ble.sh in macOS
 BLESH_PATH=~/.local/share/blesh
 bash "${BLESH_PATH}/ble.sh" --update
