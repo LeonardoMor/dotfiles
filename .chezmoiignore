@@ -3,6 +3,7 @@
 .config/nvim/LICENSE
 .config/tmux/plugins
 .ssh/known_hosts*
+AGENTS.md
 biome.json
 README.md
 
