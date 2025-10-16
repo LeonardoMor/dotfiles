@@ -1,6 +1,6 @@
 return {
   vaults = {
-{{- if ne .chezmoi.hostname .work_host }}
+{{- if ne .chezmoi.hostname .workHost }}
       {
         name = 'Codice',
         path = ([[{{ joinPath .vaultsDir "Codice" }}]]):gsub('\\', '/'),

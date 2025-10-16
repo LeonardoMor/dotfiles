@@ -5,7 +5,7 @@ Host *
 	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 {{- end }}
 
-{{ if eq .chezmoi.hostname .work_host -}}
+{{ if eq .chezmoi.hostname .workHost -}}
 Match exec "/usr/local/bin/sft resolve -q  %h"
     ProxyCommand "/usr/local/bin/sft" proxycommand  %h
     UserKnownHostsFile "/Users/lmoracas/Library/Application Support/ScaleFT/proxycommand_known_hosts"

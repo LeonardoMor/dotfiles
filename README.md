@@ -53,7 +53,7 @@ for your personal computer and your work email for your work computer. In my
 case that is:
 
 ```
-{{- if eq .chezmoi.hostname .work_host }}
+{{- if eq .chezmoi.hostname .workHost }}
     email = "work@email"
 {{- else }}
     email = "personal@email"

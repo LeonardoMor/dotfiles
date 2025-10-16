@@ -35,7 +35,7 @@ commitMessageTemplate = {{ print "{{ promptString \"Commit message\" }}" | quote
 {{ $workHost := "LMORACAS-M-D6L6" -}}
 [data]
 osid = {{ $osid | quote }}
-work_host = {{ $workHost | quote }}
+workHost = {{ $workHost | quote }}
 name = "Leonardo Mora Castro"
 vaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
 {{ if eq .chezmoi.hostname $workHost -}}
@@ -61,12 +61,12 @@ packageManagers = { "paru" = { command = "paru", args = [
 {{ end -}}
 {{ if ne .chezmoi.os "windows" -}}
 {{/*     XDG spec variables */ -}}
-XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
-XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
-XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
-XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
-XDG_DATA_DIRS = "/usr/local/share:/usr/share"
-XDG_CONFIG_DIRS = "/etc/xdg"
+xdgConfigHome = "{{ .chezmoi.homeDir }}/.config"
+xdgCacheHome = "{{ .chezmoi.homeDir }}/.cache"
+xdgDataHome = "{{ .chezmoi.homeDir }}/.local/share"
+xdgStateHome = "{{ .chezmoi.homeDir }}/.local/state"
+xdgDataDirs = "/usr/local/share:/usr/share"
+xdgConfigDirs = "/etc/xdg"
 {{- end -}}
 
 {{/*

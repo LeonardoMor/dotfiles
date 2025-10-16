@@ -6,7 +6,7 @@
 biome.json
 README.md
 
-{{- if ne .chezmoi.hostname .work_host }}
+{{- if ne .chezmoi.hostname .workHost }}
 Library/Services/note_case.workflow
 {{- end }}
 
