@@ -9,8 +9,8 @@ git --version >/dev/null 2>&1 || {
 
 vaults=(
     Splunk_Cloud_Support
-    Codice
     Meta_Work
+    {{ if ne .chezmoi.hostname .work_host -}} Codice {{- end }}
 )
 
 VAULTSDIR={{ .vaultsDir }}
