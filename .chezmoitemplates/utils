@@ -5,7 +5,7 @@ mapfile -t MANAGERS < <(
     jq --raw-output 'keys[]' <<<"$MANAGERSjson"
 )
 mapfile -t OTHERMANAGERS < <(
-    jq --argjson excluded {{ keys .packageManagers | toJson | squote }} --raw-output 'keys - $excluded | .[]' <<<"$MANAGERSjson"
+    jq --argjson excluded {{ keys .packageManagers | sortAlpha | toJson | squote }} --raw-output 'keys - $excluded | .[]' <<<"$MANAGERSjson"
 )
 
 emit() {
