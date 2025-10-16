@@ -74,7 +74,7 @@ else
 fi
 
 emit i "Installing other packages..."
-for m in "${MANAGERS[@]}"; do
+for m in "${OTHERMANAGERS[@]}"; do
     mpm restore "$PACKAGESPREFIX/${m}.toml"
 done
 {{- end -}}
