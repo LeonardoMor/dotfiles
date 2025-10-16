@@ -6,8 +6,9 @@
 xargs {{ .command }} {{ .args | join " " }} <<EOF
 {{ range $pkg := (index $packages $m) -}}{{ $pkg }}
 {{ end }}EOF
-{{- end -}}
+
+{{ end -}}
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl
-*/}}
+*/ -}}
