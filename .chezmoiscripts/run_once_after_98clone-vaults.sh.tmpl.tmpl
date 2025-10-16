@@ -7,23 +7,20 @@ git --version >/dev/null 2>&1 || {
     emit w 'git is not yet installed. Clone vaults manually later' 0
 }
 
-vaults=(
+VAULTS=(
     Splunk_Cloud_Support
     Meta_Work
     {{ if ne .chezmoi.hostname .work_host -}} Codice {{- end }}
 )
 
-VAULTSDIR={{ .vaultsDir }}
+VAULTSDIR={{ .vaultsDir | quote }}
 
 [[ -d $VAULTSDIR ]] || mkdir -p "$VAULTSDIR"
 
-for vault in "${vaults[@]}"; do
-    if [[ -d ${VAULTSDIR}/$vault ]]; then
-        rm -rf "${VAULTSDIR}/$vault"
-    fi
+for vault in "${VAULTS[@]}"; do
     (
         change-dir "$VAULTSDIR"
-        git clone "https://github.com/LeonardoMor/${vault}.git"
+        [[ -d $vault ]] || git clone "https://github.com/LeonardoMor/${vault}.git"
     )
 done
 {{ end -}}
