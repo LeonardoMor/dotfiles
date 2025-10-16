@@ -1,11 +1,12 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-{{ $root := . }}{{ range $m, $_ := $root.packageManagers -}}
+{{ $packages := includeTemplate "packages.toml" . | fromToml -}}
+{{- range $m, $_ := .packageManagers -}}
 xargs {{ .command }} {{ .args | join " " }} <<EOF
-{{ range $pkg := keys (index $root $m) }}{{ $pkg }}
+{{ range $pkg := (index $packages $m) -}}{{ $pkg }}
 {{ end }}EOF
-{{ end -}}
+{{- end -}}
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl
