@@ -1,9 +1,11 @@
 PACKAGESPREFIX={{ joinPath .chezmoi.sourceDir ".chezmoidata" | quote }}
 
+MANAGERSjson="$(mpm --output-format json managers)"
+mapfile -t MANAGERS=(
+     jq --raw-output 'keys[]' <<<"$MANAGERSjson"
+)
 mapfile -t OTHERMANAGERS < <(
-    mpm --output-format json managers |
-        jq --argjson excluded {{ keys .packageManagers | toJson | squote }} \
-            --raw-output 'keys - $excluded'
+    jq --argjson excluded {{ keys .packageManagers | toJson | squote }} --raw-output 'keys - $excluded | .[]' <<<"$MANAGERSjson"
 )
 
 emit() {
