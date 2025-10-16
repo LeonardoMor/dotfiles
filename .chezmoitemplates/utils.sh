@@ -1,4 +1,4 @@
-PACKAGESPREFIX={{ joinPath .chezmoi.sourceDir ".chezmoidata" }}
+PACKAGESPREFIX={{ joinPath .chezmoi.sourceDir ".chezmoidata" | quote }}
 
 mapfile -t OTHERMANAGERS < <(
     mpm --output-format json managers |
