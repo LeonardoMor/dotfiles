@@ -1,9 +1,9 @@
-{{ if ne .chezmoi.os "windows" -}}
+{{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
 source ~/.profile
 
-{{ includeTemplate "utils.sh" . }}
+{{ includeTemplate "utils.sh" . -}}
 
 emit i 'Executing post deploy tasks...'
 
@@ -22,7 +22,7 @@ bash "${BLESH_PATH}/ble.sh" --version >/dev/null 2>&1 || {
         emit e "Failed to clone ble.sh repo"
     fi
 }
-{{- end }}
+{{ end -}}
 
 # Install node
 emit i 'Installing node Iron...'
@@ -73,8 +73,10 @@ else
     emit i "gh is not installed"
 fi
 
-emit i "Updating system..."
-~/bin/update
+emit i "Installing other packages..."
+for m in "${MANAGERS[@]}"; do
+    mpm restore "$PACKAGESPREFIX/${m}.toml"
+done
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl

@@ -1,22 +1,14 @@
-{{ if ne .chezmoi.os "windows" -}}
+{{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
 {{ includeTemplate "utils.sh" . }}
 
-mpm --version >/dev/null 2>&1 || emit f "meta-package-manager is not installed" 1
-
-{{ if eq .chezmoi.os "linux" -}}
-{{ if eq .chezmoi.osRelease.idLike "arch" -}}
-{{ .update_cmd }}
-
+{{ range $m, $_ := .packageManagers -}}
+xargs {{ .command }} {{ .args | join " " }} < <(
+    qq --raw-output {{ printf ".%s | keys[]" $m | squote }} "$PACKAGESPREFIX"/{{ $m }}.toml
+)
 {{ end -}}
-{{ end -}}
-
-for m in "${MANAGERS[@]}"; do
-    mpm restore "$PACKAGESPREFIX/${m}.toml"
-done
 {{- end -}}
-
-{{/*
+{{- /*
 vim: filetype=sh.gotmpl
 */}}

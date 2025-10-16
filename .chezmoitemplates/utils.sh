@@ -1,5 +1,10 @@
-PACKAGESPREFIX={{ joinPath .chezmoi.sourceDir ".externally_modified" "mpm" }}
-mapfile -t MANAGERS < <(mpm --output-format json managers | jq -r 'keys[]')
+PACKAGESPREFIX={{ joinPath .chezmoi.sourceDir ".chezmoidata" }}
+
+mapfile -t OTHERMANAGERS < <(
+    mpm --output-format json managers |
+        jq --argjson excluded {{ keys .packageManagers | toJson | squote }} \
+            --raw-output 'keys - $excluded'
+)
 
 emit() {
     case "$1" in
@@ -15,6 +20,7 @@ emit() {
 change-dir() {
     cd "$1" || emit f "Failed to change $1" 1
 }
-{{/*
+
+{{- /*
 vim: filetype=sh.gotmpl
 */}}

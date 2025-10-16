@@ -1,58 +1,72 @@
 {{- if ne .chezmoi.os "windows" -}}
 [cd]
-    command = "bash"
-    args = ["--login"]
-{{- else }}
-[interpreters]
-    ps1 = { command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}, args = ["-NoLogo", "-NoProfile"] }
+command = "bash"
+args = ["--login"]
 
+{{ else -}}
 [cd]
-    command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
-    args = ["-NoLogo"]
-{{- end }}
+command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
+args = ["-NoLogo"]
 
+[interpreters]
+ps1 = { command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}, args = ["-NoLogo", "-NoProfile"] }
+
+{{ end -}}
 [edit]
-    command = "nvim"
+command = "nvim"
 
 [merge]
-    command = "nvim"
-    args = [
-        "-d",
-        {{ print "{{.Destination}}" | quote }},
-        {{ print "{{.Source}}" | quote }},
-        {{ print "{{.Target}}" | quote }},
-    ]
+command = "nvim"
+args = [
+    "-d",
+    {{ print "{{.Destination}}" | quote }},
+    {{ print "{{.Source}}" | quote }},
+    {{ print "{{.Target}}" | quote }},
+]
 
 [git]
-    autoPush = true
-    commitMessageTemplate = {{ print "{{ promptString \"Commit message\" }}" | quote }}
+autoPush = true
+commitMessageTemplate = {{ print "{{ promptString \"Commit message\" }}" | quote }}
 
+{{ $osid := .chezmoi.os -}}
+{{ if hasKey .chezmoi.osRelease "id" -}}
+{{   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
+{{ end -}}
+{{ $workHost := "LMORACAS-M-D6L6" -}}
 [data]
-    work_host = "LMORACAS-M-D6L6"
-    name = "Leonardo Mora Castro"
-    vaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote -}}
-{{- if eq .chezmoi.hostname "LMORACAS-M-D6L6" }}
-    email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/work email" "my.1password.com" | quote }}
-{{- else }}
-    email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/email" "my.1password.com" | quote }}
-{{- end }}
-{{- if eq .chezmoi.os "darwin" }}
-    brewPrefix = "/opt/homebrew"
-{{- end }}
-{{- if eq .chezmoi.os "linux" }}
-{{-     if eq .chezmoi.osRelease.idLike "arch" }}
-    update_cmd = "paru -Syu"
-    install_cmd = "paru --sync --needed --noconfirm --skipreview"
-{{-     end }}
-{{- end }}
-{{- if ne .chezmoi.os "windows" -}}
-{{/*     XDG spec variables */}}
-    XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
-    XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
-    XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
-    XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
-    XDG_DATA_DIRS = "/usr/local/share:/usr/share"
-    XDG_CONFIG_DIRS = "/etc/xdg"
+osid = {{ $osid | quote }}
+work_host = {{ $workHost | quote }}
+name = "Leonardo Mora Castro"
+vaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
+{{ if eq .chezmoi.hostname $workHost -}}
+email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/work email" "my.1password.com" | quote }}
+{{ else -}}
+email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/email" "my.1password.com" | quote }}
+{{ end -}}
+{{ if eq $osid "darwin" -}}
+brewPrefix = "/opt/homebrew"
+packageManagers = { "brew" = { command = "brew", args = ["install"] }, "cask" = { command = "brew", args = ["install", "--cask", "--no-quarantine"] } }
+{{ end -}}
+{{ if eq .chezmoi.os "linux" -}}
+{{     if eq .chezmoi.osRelease.idLike "arch" -}}
+packageManagers = { "paru" = { command = "paru", args = [
+  "--sync",
+  "--refresh",
+  "--sysupgrade",
+  "--needed",
+  "--noconfirm",
+  "--skipreview",
+] } }
+{{     end -}}
+{{ end -}}
+{{ if ne .chezmoi.os "windows" -}}
+{{/*     XDG spec variables */ -}}
+XDG_CONFIG_HOME = "{{ .chezmoi.homeDir }}/.config"
+XDG_CACHE_HOME = "{{ .chezmoi.homeDir }}/.cache"
+XDG_DATA_HOME = "{{ .chezmoi.homeDir }}/.local/share"
+XDG_STATE_HOME = "{{ .chezmoi.homeDir }}/.local/state"
+XDG_DATA_DIRS = "/usr/local/share:/usr/share"
+XDG_CONFIG_DIRS = "/etc/xdg"
 {{- end -}}
 
 {{/*

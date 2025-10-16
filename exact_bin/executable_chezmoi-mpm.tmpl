@@ -25,7 +25,12 @@ for m in "${MANAGERS[@]}"; do
 done
 
 chezmoi git add .
-chezmoi git commit
+if [[ $1 =~ ^(upgrade|update)$ ]]; then
+    chezmoi git commit -m 'chore: update packages'
+else
+    chezmoi git commit || emit i "Probably no changes to commit"
+fi
+
 if [[ $(chezmoi git -- branch --show-current) == master ]]; then
     chezmoi git push origin master
 fi

@@ -1,23 +1,13 @@
 #!/usr/bin/env bash
 
-{{ if eq .chezmoi.os "linux" -}}
-{{ if eq .chezmoi.osRelease.idLike "arch" -}}
-# Complete system upgrade
-paru -Syu
-{{- end }}
+# Update all other packages
+~/bin/chezmoi-mpm upgrade
 
-# Update hyprland Desktop Experience
-~/.config/hyprland-de/scripts/update.sh
-
-pidof -q chezmoi || chezmoi apply --verbose
-{{ else -}}
+{{ if eq .osid "darwin" -}}
 # Update ble.sh in macOS
 BLESH_PATH=~/.local/share/blesh
 bash "${BLESH_PATH}/ble.sh" --update
 {{- end }}
-
-# Update all packages
-~/bin/chezmoi-mpm upgrade
 
 {{- /*
 vim: filetype=sh.gotmpl
