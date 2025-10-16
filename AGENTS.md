@@ -51,6 +51,7 @@
 ### General
 
 - Do not commit any changes unless explicitly requested
+- When told to commit, use semantic commit messages
 - No comments unless essential
 - Follow existing patterns in each file type
 - Use absolute paths for file operations
