@@ -38,17 +38,20 @@
 ### Chezmoi Templates
 
 - Delimiters: `{{` and `}}`
-- Context: `.` initially refers to all Chezmoi data (see `chezmoi data`); changes in scoped constructs like `range` or `with`
+- Context: `.` initially refers to all Chezmoi data (see `chezmoi data`);
+  changes in scoped constructs like `range` or `with`
 - Template functions: Use sprig library functions
 - Conditional logic: `{{- if condition }}...{{- end }}`
 - Naming: camelCase (first letter lowercase)
-- Data handling: `.chezmoidata` files cannot be templates. Set dynamic machine data in `.chezmoi.toml.tmpl` data section. Read dynamic environment data using `output`, `fromJson`, `fromYaml`, etc.
+- Data handling: `.chezmoidata` files cannot be templates. Set dynamic machine
+  data in `.chezmoi.toml.tmpl` data section. Read dynamic environment data using
+  `output`, `fromJson`, `fromYaml`, etc.
 - Reference: https://chezmoi.io
 
 ### General
 
+- Do not commit any changes unless explicitly requested
 - No comments unless essential
 - Follow existing patterns in each file type
 - Use absolute paths for file operations
 - Store command arguments in array-like variables
-
