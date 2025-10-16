@@ -6,7 +6,9 @@
 - **Format Lua**: `stylua .` (2-space indent, 160 width, single quotes)
 - **Format JS/JSON**: `biome format --write .` (4-space indent)
 - **Format prose**: `prettier --write .` (prose wrap always)
-- **No test framework** - manual testing via `chezmoi apply --dry-run`
+- **No test framework** - manual testing via `chezmoi apply --dry-run`. If
+  `.chezmoi.toml.tmpl` was changed, run `chezmoi init` to catch config errors.
+  Then run `chezmoi apply --dry-run`.
 
 ## Code Style Guidelines
 
