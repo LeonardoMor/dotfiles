@@ -1,7 +1,7 @@
 {{ if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-{{ includeTemplate "utils.sh" . }}
+source -p ~/bin utils.sh
 
 NAME="$(basename "$0")"
 TERMINATE=true

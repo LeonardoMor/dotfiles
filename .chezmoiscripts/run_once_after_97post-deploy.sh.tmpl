@@ -1,9 +1,8 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-source ~/.profile
-
-{{ includeTemplate "utils.sh" . -}}
+source -p ~ .profile
+source -p ~/bin utils.sh
 
 emit i 'Executing post deploy tasks...'
 

@@ -1,8 +1,6 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-{{ includeTemplate "utils.sh" . }}
-
 {{ $root := . }}{{ range $m, $_ := $root.packageManagers -}}
 xargs {{ .command }} {{ .args | join " " }} <<EOF
 {{ range $pkg := keys (index $root $m) }}{{ $pkg }}
