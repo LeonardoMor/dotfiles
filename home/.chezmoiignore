@@ -3,9 +3,6 @@
 .config/nvim/LICENSE
 .config/tmux/plugins
 .ssh/known_hosts*
-AGENTS.md
-biome.json
-README.md
 
 {{- if ne .chezmoi.hostname .workHost }}
 Library/Services/note_case.workflow
