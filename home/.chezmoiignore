@@ -6,6 +6,8 @@
 
 {{- if ne .chezmoi.hostname .workHost }}
 Library/Services/note_case.workflow
+bin/edit_case_mail.sh
+bin/edit_case_note.sh
 {{- end }}
 
 {{- if ne .chezmoi.os "windows" }}
@@ -23,7 +25,12 @@ bin
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 .local
+bin/get-next-sink
+bin/launch-or-focus
+bin/launch-screensaver
+bin/layoutshoutout
 bin/rungame
+bin/screensaver-cmd
 gtkrc-2.0.mine
 {{- end }}
 {{- if ne .chezmoi.os "darwin" }}
