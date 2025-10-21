@@ -1,5 +1,6 @@
 [brew]
   aom = "3.13.1"
+  asciinema = "3.0.0"
   bartib = "1.1.0"
   bash = "5.3.3"
   "bash-completion@2" = "2.16.0"
