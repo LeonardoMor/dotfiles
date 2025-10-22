@@ -9,7 +9,7 @@ TMPPACKAGES="/tmp/$(date +%s).packages.toml"
 
 if [[ $1 =~ ^(upgrade|update)$ ]]; then
     {{- range .packageManagers }}
-    {{- if .update }}{{ .command }} {{ block "toShArgs" .update }}{{ . | join " " }}{{ end }}{{ end }}
+    {{ if .update }}{{ .command }} {{ block "toShArgs" .update }}{{ . | join " " }}{{ end }}{{ end }}
     {{ .command }} {{ template "toShArgs" .upgrade }}
     {{- end }}
     xargs mpm <<EOF
