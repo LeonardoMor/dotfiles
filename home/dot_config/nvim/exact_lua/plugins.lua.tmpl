@@ -1,3 +1,5 @@
+local utils = require('custom.utils')
+
 return {
   {{ includeTemplate "nvim/lua/plugins/aerial.nvim.lua" . | printf "{\n%s  }," }}
   {{ includeTemplate "nvim/lua/plugins/barbecue.nvim.lua" . | printf "{\n%s  }," }}
