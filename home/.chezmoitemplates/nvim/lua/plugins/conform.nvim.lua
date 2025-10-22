@@ -83,12 +83,12 @@
         end,
         formatters_by_ft = {
           html = function(bufnr)
-            { first(bufnr, 'prettierd', 'prettier'), 'injected' }
+            return { first(bufnr, 'prettierd', 'prettier'), 'injected' }
           end,
           lua = { 'stylua' },
           json = { 'biome' },
           markdown = function(bufnr)
-            { first(bufnr, 'prettierd', 'prettier'), 'injected' }
+            return { first(bufnr, 'prettierd', 'prettier'), 'injected' }
           end,
           -- jq = { 'jqfmt' },
           python = { 'isort', 'black' },

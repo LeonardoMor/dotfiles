@@ -1,17 +1,17 @@
     'Ernest1338/termplug.nvim',
-  {{- if eq .chezmoi.os "windows" }}
+    {{- if eq .chezmoi.os "windows" }}
     opts = {
-      shell = 'pwsh.exe -NoLogo'
+        shell = 'pwsh.exe -NoLogo'
     },
-  {{- else }}
+    {{- else }}
     opts = {},
-  {{- end }}
+    {{- end }}
     cmd = 'Term',
     keys = {
-      {
-        '<leader>tt',
-        '<cmd>Term<CR>',
-        mode = { 'n', 't' },
-        desc = '[T]oggle terminal',
-      },
+        {
+            '<leader>tt',
+            '<cmd>Term<CR>',
+            mode = { 'n', 't' },
+            desc = '[T]oggle terminal',
+        },
     },
