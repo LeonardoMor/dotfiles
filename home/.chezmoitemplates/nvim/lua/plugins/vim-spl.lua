@@ -1,4 +1,2 @@
-return {
-  'lilyinstarlight/vim-spl',
-  ft = { 'spl' },
-}
+    'lilyinstarlight/vim-spl',
+    ft = { 'spl' },

@@ -1,5 +1,3 @@
-return {
-  'declancm/maximize.nvim',
-  config = true,
-  event = 'WinEnter',
-}
+    'declancm/maximize.nvim',
+    config = true,
+    event = 'WinEnter',

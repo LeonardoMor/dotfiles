@@ -1,11 +1,9 @@
-return {
-  'Hashino/doing.nvim',
-  opts = {
-    ignored_buffers = { 'aerial', 'neo-tree' },
-  },
-  cmd = {
-    'Do',
-    'Do!',
-    'Done',
-  },
-}
+    'Hashino/doing.nvim',
+    opts = {
+      ignored_buffers = { 'aerial', 'neo-tree' },
+    },
+    cmd = {
+      'Do',
+      'Do!',
+      'Done',
+    },

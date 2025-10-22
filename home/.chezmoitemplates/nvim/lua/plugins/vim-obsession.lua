@@ -1,4 +1,2 @@
-return {
-  'tpope/vim-obsession',
-  event = 'BufWritePost',
-}
+    'tpope/vim-obsession',
+    event = 'BufWritePost',

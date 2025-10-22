@@ -1,3 +1,1 @@
-return {
-  'RRethy/nvim-treesitter-endwise',
-}
+    'RRethy/nvim-treesitter-endwise',
