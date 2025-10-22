@@ -7,7 +7,20 @@ NAME="$(basename "$0")"
 TERMINATE=true
 TMPPACKAGES="/tmp/$(date +%s).packages.toml"
 
-mpm "$@"
+if [[ $1 =~ ^(upgrade|update)$ ]]; then
+    {{- range .packageManagers }}
+    {{ .command }} {{ if .update }}{{ block "toShArgs" .update }}{{ . | join " " }}{{ end }}{{ end }}
+    {{ .command }} {{ template "toShArgs" .upgrade }}
+    {{- end }}
+    xargs mpm <<EOF
+{{- range .packageManagers | keys }}
+{{ printf "--no-%s" . }}
+{{- end }}
+upgrade
+EOF
+else
+    mpm "$@"
+fi
 
 if [[ $1 =~ ^(install|upgrade|update|remove|uninstall)$ ]]; then
     TERMINATE=false

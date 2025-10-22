@@ -45,18 +45,33 @@ email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/e
 {{ end -}}
 {{ if eq $osid "darwin" -}}
 brewPrefix = "/opt/homebrew"
-packageManagers = { "brew" = { command = "brew", args = ["install"] }, "cask" = { command = "brew", args = ["install", "--cask", "--no-quarantine"] } }
+packageManagers = { "brew" = { command = "brew", install = [
+  "install",
+], update = [
+  "update",
+], upgrade = [
+  "upgrade",
+] }, "cask" = { command = "brew", install = [
+  "install",
+  "--cask",
+  "--no-quarantine",
+], update = [
+  "update",
+], upgrade = [
+  "upgrade",
+  "--cask",
+] } }
 {{ end -}}
 {{ if eq .chezmoi.os "linux" -}}
 {{     if eq .chezmoi.osRelease.idLike "arch" -}}
-packageManagers = { "paru" = { command = "paru", args = [
+packageManagers = { "paru" = { command = "paru", install = [
   "--sync",
   "--refresh",
   "--sysupgrade",
   "--needed",
   "--noconfirm",
   "--skipreview",
-] } }
+], update = [], upgrade = ["--sync", "--refresh", "--sysupgrade", "--skipreview"] } }
 {{     end -}}
 {{ end -}}
 {{ if ne .chezmoi.os "windows" -}}

@@ -3,7 +3,7 @@
 
 {{ $packages := includeTemplate "packages.toml" . | fromToml -}}
 {{- range $m, $_ := .packageManagers -}}
-xargs {{ .command }} {{ .args | join " " }} <<EOF
+xargs {{ .command }} {{ .install | join " " }} <<EOF
 {{ range $pkg := (index $packages $m) -}}{{ $pkg }}
 {{ end }}EOF
 
