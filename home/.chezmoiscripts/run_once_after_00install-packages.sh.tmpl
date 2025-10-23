@@ -1,12 +1,12 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-{{ $packages := includeTemplate "packages.toml" . | fromToml -}}
-{{- range $m, $_ := .packageManagers -}}
-xargs {{ .command }} {{ .install | join " " }} <<EOF
-{{ range $pkg := (index $packages $m) -}}{{ $pkg }}
-{{ end }}EOF
-
+{{ range $pm, $args := .packageManagers -}}
+xargs {{ $args.command }} {{ $args.install | join " " }} <<EOF
+{{ range (index $ $pm | keys | sortAlpha) -}}
+{{ . }}
+{{ end -}}
+EOF
 {{ end -}}
 {{- end -}}
 {{- /*

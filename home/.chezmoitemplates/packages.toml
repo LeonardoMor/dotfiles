@@ -1,8 +1,0 @@
-{{- $root := . -}}
-{{- range $pm, $_ := $root.packageManagers -}}
-{{- dict $pm (keys (index $root $pm) | sortAlpha) | toToml -}}
-{{- end -}}
-
-{{- /*
-vim: filetype=toml.gotmpl
-*/ -}}
