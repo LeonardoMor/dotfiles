@@ -8,14 +8,14 @@ TERMINATE=true
 TMPPACKAGES="/tmp/$(date +%s).packages.toml"
 
 if [[ $1 =~ ^(upgrade|update)$ ]]; then
-    {{- range .packageManagers }}
+    {{ range .packageManagers -}}
     {{ if .update }}{{ .command }} {{ block "toShArgs" .update }}{{ . | join " " }}{{ end }}{{ end }}
     {{ .command }} {{ template "toShArgs" .upgrade }}
-    {{- end }}
+    {{ end -}}
     xargs mpm <<EOF
-{{- range .packageManagers | keys }}
+{{ range .packageManagers | keys -}}
 {{ printf "--no-%s" . }}
-{{- end }}
+{{ end -}}
 upgrade
 EOF
 else
