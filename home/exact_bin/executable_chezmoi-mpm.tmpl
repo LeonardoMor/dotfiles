@@ -29,10 +29,16 @@ EOF
 post() {
     "$OTHERPM" cleanup
     "$OTHERPM" backup --overwrite "$TMPPACKAGES"
+
+    for m in "${MANAGERS[@]}"; do
+        qq --output toml "{$m}" "$TMPPACKAGES" >"$PACKAGESPREFIX/${m}.toml"
+    done
+
+    chezmoi git add .
+    if (chezmoi git commit || emit i "Probably no changes to commit") && [[ $(chezmoi git -- branch --show-current) == master ]]; then
+        chezmoi git push origin master
+    fi
 }
-else
-    "$OTHERPM" "$@"
-fi
 
 if [[ $1 =~ ^(install|upgrade|update|remove|uninstall)$ ]]; then
     TERMINATE=false
