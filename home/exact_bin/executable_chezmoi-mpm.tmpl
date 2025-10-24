@@ -7,17 +7,23 @@ NAME="$(basename "$0")"
 TERMINATE=true
 TMPPACKAGES="/tmp/$(date +%s).packages.toml"
 
-if [[ $1 =~ ^(upgrade|update)$ ]]; then
-    {{ range .packageManagers -}}
-    {{ if .update }}{{ .command }} {{ block "toShArgs" .update }}{{ . | join " " }}{{ end }}{{ end }}
-    {{ .command }} {{ template "toShArgs" .upgrade }}
-    {{ end -}}
-    xargs mpm <<EOF
-{{ range .packageManagers | keys -}}
-{{ printf "--no-%s" . }}
-{{ end -}}
-upgrade
+help() {
+    cat <<EOF
+Usage:
+    ${NAME#*-} [OPTION] [PACKAGE[ PACKAGE...]]
+
+Options:
+    {{ $packageManagerOptionsString }}
+        Use the system package managers. Changes to packages are tracked by chezmoi.
+    --update
+        Update all packages.
+        Packages not managed by the system package managers will be updated with ${OTHERPM}.
+    --$OTHERPM
+        Use ${OTHERPM}. Changes to packages are tracked by chezmoi.
+    --help
+        Show this help and exit.
 EOF
+}
 else
     mpm "$@"
 fi
