@@ -25,6 +25,11 @@ Options:
         Show this help and exit.
 EOF
 }
+
+post() {
+    "$OTHERPM" cleanup
+    "$OTHERPM" backup --overwrite "$TMPPACKAGES"
+}
 else
     "$OTHERPM" "$@"
 fi
