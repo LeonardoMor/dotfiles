@@ -40,9 +40,13 @@ post() {
     fi
 }
 
-if [[ $1 =~ ^(install|upgrade|update|remove|uninstall)$ ]]; then
+{{range $packageManagers -}}
+_{{.}}() {
+    {{ . }} "$@"
     TERMINATE=false
-fi
+}
+
+{{ end -}}
 
 if $TERMINATE; then
     exit $?
