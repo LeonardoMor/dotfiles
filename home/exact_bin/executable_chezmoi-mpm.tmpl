@@ -6,6 +6,7 @@ source -p ~/bin utils.sh
 NAME="$(basename "$0")"
 TERMINATE=true
 TMPPACKAGES="/tmp/$(date +%s).packages.toml"
+OTHERPM=mpm
 
 help() {
     cat <<EOF
@@ -25,7 +26,7 @@ Options:
 EOF
 }
 else
-    mpm "$@"
+    "$OTHERPM" "$@"
 fi
 
 if [[ $1 =~ ^(install|upgrade|update|remove|uninstall)$ ]]; then
