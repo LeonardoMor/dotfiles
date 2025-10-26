@@ -22,12 +22,12 @@ Usage:
 Options:
     {{ $packageManagerOptionsString }}
         Use the system package managers.
-    --update
+    --update|-u
         Update all packages.
         Packages not managed by the system package managers will be updated with ${OTHERPM}.
     --$OTHERPM
         Use ${OTHERPM}.
-    --help
+    --help|-h
         Show this help and exit.
     
 Changes to packages are tracked by chezmoi.
@@ -69,6 +69,32 @@ upgrade
 EOF
     TERMINATE=false
 }
+
+case $1 in
+    {{ range $packageManagers -}}
+    --{{ . -}})
+        shift
+        _{{ . }} "$@"
+        ;;
+    {{- end }}
+    --update)
+        shift
+        update
+        ;;
+    --"$OTHERPM")
+        shift
+        "$OTHERPM" "$@"
+        ;;
+    --help)
+        help
+        exit 0
+        ;;
+    *)
+        emit e "Bad usage."
+        help
+        exit 1
+        ;;
+esac
 
 if $TERMINATE; then
     exit $?
