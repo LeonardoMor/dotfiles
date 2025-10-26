@@ -48,16 +48,23 @@ _{{ $pm }}() {
 
 {{ end -}}
 
-if $TERMINATE; then
-    exit $?
-fi
+update() {
+    {{ range $pm, $args := .packageManagers -}}
+    {{ if $args.update -}}
+    {{ $args.command }} {{ includeTemplate "toShellArgs" $args.update }}
 
-mpm cleanup
-mpm backup --overwrite "$TMPPACKAGES"
+    {{ end -}}
+    {{ $args.command }} {{ template "toShellArgs" $args.upgrade }}
 
-for m in "${MANAGERS[@]}"; do
-    qq --output toml "{$m}" "$TMPPACKAGES" >"$PACKAGESPREFIX/${m}.toml"
-done
+    {{ end -}}
+    xargs mpm <<EOF
+{{ range .packageManagers | keys -}}
+{{ printf "--no-%s" . }}
+{{ end -}}
+upgrade
+EOF
+    TERMINATE=false
+}
 
 chezmoi git add .
 if [[ $1 =~ ^(upgrade|update)$ ]]; then
