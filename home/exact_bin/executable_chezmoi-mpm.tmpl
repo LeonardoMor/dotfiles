@@ -57,11 +57,10 @@ _{{ $pm }}() {
 {{ end -}}
 
 update() {
-    {{ range $pm, $args := .packageManagers -}}
-    {{ if $args.update -}}
-    {{ $args.command }} {{ includeTemplate "toShellArgs" $args.update -}}
-    {{ end -}}
-    {{- $args.command }} {{ template "toShellArgs" $args.upgrade }} {{- end }}
+{{ range $pm, $args := .packageManagers -}}
+{{- if $args.update -}}{{- block "indent" $args.command -}}{{- printf "    %s" . }}{{- end }} {{ includeTemplate "toShellArgs" $args.update -}}{{- end -}}
+{{- template "indent" $args.command }} {{ template "toShellArgs" $args.upgrade }}
+{{- end }}
 {{- printf "    xargs mpm <<EOF" }}
 {{ range .packageManagers | keys -}}
 {{ printf "--no-%s" . }}
