@@ -15,14 +15,16 @@ Usage:
 
 Options:
     {{ $packageManagerOptionsString }}
-        Use the system package managers. Changes to packages are tracked by chezmoi.
+        Use the system package managers.
     --update
         Update all packages.
         Packages not managed by the system package managers will be updated with ${OTHERPM}.
     --$OTHERPM
-        Use ${OTHERPM}. Changes to packages are tracked by chezmoi.
+        Use ${OTHERPM}.
     --help
         Show this help and exit.
+    
+Changes to packages are tracked by chezmoi.
 EOF
 }
 
