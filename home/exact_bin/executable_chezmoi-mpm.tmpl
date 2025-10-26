@@ -61,9 +61,8 @@ update() {
     {{ if $args.update -}}
     {{ $args.command }} {{ includeTemplate "toShellArgs" $args.update }}
     {{ end -}}
-    {{ $args.command }} {{ template "toShellArgs" $args.upgrade -}}
-    {{ end -}}
-    xargs mpm <<EOF
+    {{ $args.command }} {{ template "toShellArgs" $args.upgrade }} {{ end }}
+{{- printf "    xargs mpm <<EOF" }}
 {{ range .packageManagers | keys -}}
 {{ printf "--no-%s" . }}
 {{ end -}}
