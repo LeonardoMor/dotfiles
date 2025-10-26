@@ -40,9 +40,9 @@ post() {
     fi
 }
 
-{{range $packageManagers -}}
-_{{.}}() {
-    {{ . }} "$@"
+{{range $pm, $args := .packageManagers -}}
+_{{ $pm }}() {
+    {{ $args.command }} "$@"
     TERMINATE=false
 }
 
