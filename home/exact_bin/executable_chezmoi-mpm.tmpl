@@ -1,4 +1,10 @@
 {{ if ne .chezmoi.os "windows" -}}
+{{   $packageManagers := .packageManagers | keys | sortAlpha -}}
+{{   $packageManagerOptions := list -}}
+{{   range $packageManagers -}}
+{{     $packageManagerOptions = append $packageManagerOptions (printf "--%s" .) -}}
+{{   end -}}
+{{   $packageManagerOptionsString := $packageManagerOptions | join "|"   -}}
 #!/usr/bin/env bash
 
 source -p ~/bin utils.sh
@@ -54,10 +60,8 @@ update() {
     {{ range $pm, $args := .packageManagers -}}
     {{ if $args.update -}}
     {{ $args.command }} {{ includeTemplate "toShellArgs" $args.update }}
-
     {{ end -}}
-    {{ $args.command }} {{ template "toShellArgs" $args.upgrade }}
-
+    {{ $args.command }} {{ template "toShellArgs" $args.upgrade -}}
     {{ end -}}
     xargs mpm <<EOF
 {{ range .packageManagers | keys -}}
