@@ -68,16 +68,11 @@ EOF
     TERMINATE=false
 }
 
-chezmoi git add .
-if [[ $1 =~ ^(upgrade|update)$ ]]; then
-    chezmoi git commit -- -m 'chore: update packages' || emit i "Probably no changes to commit"
-else
-    chezmoi git commit || emit i "Probably no changes to commit"
+if $TERMINATE; then
+    exit $?
 fi
+post
 
-if [[ $(chezmoi git -- branch --show-current) == master ]]; then
-    chezmoi git push origin master
-fi
 {{- end -}}
 {{/*
 vim: filetype=sh.gotmpl
