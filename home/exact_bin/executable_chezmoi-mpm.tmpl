@@ -77,7 +77,7 @@ case $1 in
         _{{ . }} "$@"
         ;;
     {{- end }}
-    --update)
+    --update|-u)
         shift
         update
         ;;
@@ -85,7 +85,7 @@ case $1 in
         shift
         "$OTHERPM" "$@"
         ;;
-    --help)
+    --help|-h)
         help
         exit 0
         ;;
