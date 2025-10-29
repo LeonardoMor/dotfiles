@@ -61,7 +61,7 @@ update() {
 {{- block "indent" $args.command -}}
 {{ printf "    %s" . }}
 {{- end }} {{ includeTemplate "toShellArgs" $args.update }}
-{{- end }}
+{{ end -}}
 {{ template "indent" $args.command }} {{ template "toShellArgs" $args.upgrade }}
 {{ end -}}
 {{- template "indent" "xargs mpm <<EOF" }}
