@@ -1,7 +1,6 @@
 {{ if ne .chezmoi.os "windows" -}}
-{{   $packageManagers := .packageManagers | keys | sortAlpha -}}
 {{   $packageManagerOptions := list -}}
-{{   range $packageManagers -}}
+{{   range .packageManagers | keys | sortAlpha -}}
 {{     $packageManagerOptions = append $packageManagerOptions (printf "--%s" .) -}}
 {{   end -}}
 {{   $packageManagerOptionsString := $packageManagerOptions | join "|"   -}}
@@ -58,11 +57,15 @@ _{{ $pm }}() {
 
 update() {
 {{ range $pm, $args := .packageManagers -}}
-{{- if $args.update -}}{{- block "indent" $args.command -}}{{- printf "    %s" . }}{{- end }} {{ includeTemplate "toShellArgs" $args.update -}}{{- end -}}
-{{- template "indent" $args.command }} {{ template "toShellArgs" $args.upgrade }}
+{{- if $args.update -}}
+{{- block "indent" $args.command -}}
+{{ printf "    %s" . }}
+{{- end }} {{ includeTemplate "toShellArgs" $args.update }}
 {{- end }}
-{{- printf "    xargs mpm <<EOF" }}
-{{ range .packageManagers | keys -}}
+{{ template "indent" $args.command }} {{ template "toShellArgs" $args.upgrade }}
+{{ end -}}
+{{- template "indent" "xargs mpm <<EOF" }}
+{{ range .packageManagers | keys | sortAlpha -}}
 {{ printf "--no-%s" . }}
 {{ end -}}
 upgrade
@@ -71,12 +74,12 @@ EOF
 }
 
 case $1 in
-    {{ range $packageManagers -}}
-    --{{ . -}})
+    {{ range .packageManagers | keys | sortAlpha -}}
+    --{{ . }})
         shift
         _{{ . }} "$@"
         ;;
-    {{- end }}
+    {{ end -}}
     --update|-u)
         shift
         update
