@@ -14,6 +14,7 @@
   slack = "4.46.104"
   spotify = "1.2.74.477"
   whatsapp = "2.25.29.73"
+  wireshark-app = "4.6.0"
   zen = "1.17.1b"
   zoom = "6.6.5.67181"
 
