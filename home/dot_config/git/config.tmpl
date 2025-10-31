@@ -10,7 +10,7 @@
 [user]
 	name = {{ .name | quote }}
 	email = {{ .email | quote }}
-	signingkey = {{ onepasswordRead "op://Private/personal_id_ed25519/public key" "my.1password.com" }}
+	signingkey = {{ onepasswordRead "op://Employee/workKey/public key" "cisco.1password.com" }}
 [core]
 	editor = nvim
 {{- if eq .chezmoi.os "windows" }}
@@ -23,7 +23,7 @@
 	format = ssh
 [gpg "ssh"]
 {{- if eq .chezmoi.os "darwin" }}
-	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 {{- else if eq .chezmoi.os "windows" }}
 	program = "C:/Users/leomc/AppData/Local/1Password/app/8/op-ssh-sign.exe"
 {{- else if eq .chezmoi.os "linux" }}

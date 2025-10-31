@@ -39,9 +39,9 @@ workHost = {{ $workHost | quote }}
 name = "Leonardo Mora Castro"
 vaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
 {{ if eq .chezmoi.hostname $workHost -}}
-email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/work email" "my.1password.com" | quote }}
+email = {{ onepasswordRead "op://Employee/workKey/add more/email" "cisco.1password.com" | quote }}
 {{ else -}}
-email = {{ onepasswordRead "op://Private/Leonardo Mora Castro/Internet Details/email" "my.1password.com" | quote }}
+email = {{ onepasswordRead "op://Private/personal_id_ed25519/add more/email" "my.1password.com" | quote }}
 {{ end -}}
 {{ if eq $osid "darwin" -}}
 brewPrefix = "/opt/homebrew"
