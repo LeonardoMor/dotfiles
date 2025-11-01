@@ -10,7 +10,7 @@
 [user]
 	name = {{ .name | quote }}
 	email = {{ .email | quote }}
-	signingkey = {{ onepasswordRead "op://Employee/workKey/public key" "cisco.1password.com" }}
+	signingkey = {{ if eq .chezmoi.hostname .workHost }}{{ onepasswordRead "op://Employee/workKey/public key" "cisco.1password.com" }}{{ else }}{{ onepasswordRead "op://Private/personal_id_ed25519/public key" "my.1password.com" }}{{ end }}
 [core]
 	editor = nvim
 {{- if eq .chezmoi.os "windows" }}
