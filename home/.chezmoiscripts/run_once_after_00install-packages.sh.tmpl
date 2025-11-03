@@ -1,0 +1,12 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+{{ range $pm, $args := .packageManagers -}}
+xargs {{ $args.command }} {{ template "toShellArgs" $args.install }} <<EOF
+{{ index $ $pm | keys | sortAlpha | join "\n" }}
+EOF
+{{ end -}}
+{{- end -}}
+{{- /*
+vim: filetype=sh.gotmpl
+*/ -}}

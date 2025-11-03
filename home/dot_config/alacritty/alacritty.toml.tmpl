@@ -1,0 +1,45 @@
+[env]
+TERM = "xterm-256color"
+
+[window]
+padding.x = 10
+padding.y = 10
+opacity = 0.9
+blur = false
+{{- if eq .chezmoi.os "linux" }}
+decorations = "none"
+startup_mode = "Fullscreen"
+{{- end }}
+{{- if eq .chezmoi.os "darwin" }}
+decorations = "Buttonless"
+startup_mode = "Maximized"
+option_as_alt = "Both"
+{{- end }}
+
+[font]
+normal.family = "JetBrainsMono Nerd Font"
+{{- if eq .chezmoi.os "darwin" }}
+size = 14
+{{- end }}
+
+[general]
+# import = ["~/.config/alacritty/themes/themes/tokyonight_night.toml"]
+import = [
+	"~/.local/share/nvim/lazy/tokyonight.nvim/extras/alacritty/tokyonight_night.toml",
+]
+
+[selection]
+save_to_clipboard = true
+
+[terminal.shell]
+{{- if eq .chezmoi.os "darwin" }}
+program = "{{ .brewPrefix }}/bin/bash"
+{{- else }}
+program = "bash"
+{{ end }}
+args = ["--login", "-c", "tmux attach 2>/dev/null || tmux"]
+
+[keyboard]
+bindings = [
+	{ key = "Back", mods = "Control", chars = "\u0017" }
+]

@@ -1,0 +1,55 @@
+.config/alacritty
+.config/nvim/*lock.json
+.config/nvim/LICENSE
+.config/tmux/plugins
+.ssh/known_hosts*
+
+{{- if ne .chezmoi.hostname .workHost }}
+Library/Services/note_case.workflow
+bin/edit_case_mail.sh
+bin/edit_case_note.sh
+{{- end }}
+
+{{- if ne .chezmoi.os "windows" }}
+AppData
+OneDrive
+_vimrc
+{{- else }}
+*profile*
+.bash*
+bin
+.config/*
+!.config/git
+!.config/kanata
+!.config/starship.toml
+{{- end }}
+{{- if ne .chezmoi.os "linux" }}
+.local
+bin/get-next-sink
+bin/launch-or-focus
+bin/launch-screensaver
+bin/layoutshoutout
+bin/rungame
+bin/screensaver-cmd
+gtkrc-2.0.mine
+{{- end }}
+{{- if ne .chezmoi.os "darwin" }}
+Library
+{{- else }}
+.config/*
+!.config/*vim
+!.config/bat
+!.config/blesh
+!.config/gh
+!.config/ghostty
+!.config/git
+!.config/kanata
+!.config/obsidian
+!.config/pip
+!.config/starship.toml
+!.config/tmux
+{{- end -}}
+
+{{/*
+vim: filetype=gotmpl
+*/}}

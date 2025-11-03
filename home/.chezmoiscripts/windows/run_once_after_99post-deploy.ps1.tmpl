@@ -1,0 +1,34 @@
+{{/* TODO: bat and nvm will not run because the present shell has no access to the refreshed PATH. But, you can run the commands in a new shell. Learn some powershell, then use chezmoi syntax to set a variable with the path of pwsh. Then execute it. Maybe you can even pass an array of arguments */}}
+{{- if eq .chezmoi.os "windows" -}}
+function Refresh-Env {
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Machine)
+    $env:PATH += ";" + [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::User)
+}
+
+Refresh-Env
+
+try {
+    bat cache --build
+} catch {
+    Write-Host "Error: $_"
+}
+
+try {
+    if (-not (gh auth status)) {
+        gh auth login
+    }
+} catch {
+    Write-Host "Error: $_"
+}
+
+try {
+    node --version
+} catch {
+    nvm install Iron
+    nvm use Iron
+}
+
+# TODO: Ask if this should be done. Don't just do it.
+# Fix time discrepancy for dual booting
+reg add "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\TimeZoneInformation" /v RealTimeIsUniversal /d 1 /t REG_DWORD /f
+{{ end -}}

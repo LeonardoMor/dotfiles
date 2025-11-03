@@ -1,0 +1,15 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+{{- $sed := or (lookPath "gsed") (lookPath "sed") }}
+
+{{- if eq .chezmoi.os "linux" }}
+sudo systemctl enable --now sshd
+{{- else if eq .chezmoi.os "darwing" }}
+sudo systemsetup -setremotelogin on
+{{- end }}
+sudo {{ $sed }} -i'' -Ef {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" ".disable_ssh_pass.sed" }} /etc/ssh/sshd_config
+{{- if eq .chezmoi.os "linux" }}
+sudo systemctl restart sshd
+{{- end }}
+{{- end -}}

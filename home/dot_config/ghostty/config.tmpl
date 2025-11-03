@@ -1,0 +1,14 @@
+theme = TokyoNight
+mouse-hide-while-typing = true
+background-opacity = 0.9
+shell-integration-features = true
+window-height=1000
+window-width=1000
+{{- if eq .chezmoi.os "darwin" }}
+command = {{ joinPath .brewPrefix "bin" "bash" }} --login
+macos-option-as-alt = true
+keybind = alt+backspace=text:\x17
+{{- else }}
+command = bash --login
+keybind = ctrl+backspace=text:\x17
+{{- end }}

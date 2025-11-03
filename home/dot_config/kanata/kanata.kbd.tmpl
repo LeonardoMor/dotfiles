@@ -1,0 +1,50 @@
+(defcfg
+  process-unmapped-keys yes
+{{- if eq .chezmoi.os "darwin" }}
+  macos-dev-names-exclude (
+    "Keychron Q3 Pro"
+  )
+{{ end -}}
+)
+
+(defvar
+  tap-time 150
+  hold-time 200
+)
+
+(defalias
+  a (tap-hold $tap-time $hold-time a lsft)
+  s (tap-hold $tap-time $hold-time s lalt)
+  d (tap-hold $tap-time $hold-time d lmet)
+  f (tap-hold $tap-time $hold-time f lctl)
+  j (tap-hold $tap-time $hold-time j lctl)
+  k (tap-hold $tap-time $hold-time k lmet)
+  l (tap-hold $tap-time $hold-time l lalt)
+  ; (tap-hold $tap-time $hold-time ; rsft)
+)
+
+{{ if eq .chezmoi.os "darwin" -}}
+;; kanata doesn't take care of the function keys
+(defsrc
+  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10   f11   f12
+  caps a s d f j k l ;
+)
+
+(deflayer base
+  brdn  brup  _    _    _    _   prev  pp  next  mute  vold  volu
+  esc @a @s @d @f @j @k @l @;
+)
+
+(deflayer fn
+  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10   f11   f12
+  esc _ _ _ _ _ _ _ _
+)
+{{- else -}}
+(defsrc
+  caps a s d f j k l ;
+)
+
+(deflayer base
+  esc @a @s @d @f @j @k @l @;
+)
+{{- end -}}

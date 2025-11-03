@@ -1,0 +1,21 @@
+{{- if eq .chezmoi.hostname "cachyos-inf" -}}
+#!/usr/bin/env bash
+
+if pgrep -x cmatrix >/dev/null; then
+    exit
+fi
+
+FOCUSED=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true).name')
+
+for m in $(hyprctl monitors -j | jq -r '.[] | .name'); do
+    hyprctl dispatch focusmonitor "$m"
+    hyprctl dispatch exec -- \
+        kitty --start-as fullscreen --class Screensaver screensaver-cmd
+done
+
+hyprctl dispatch focusmonitor "$FOCUSED"
+{{- end -}}
+
+{{/*
+vim: filetype=jq.gotmpl
+*/}}

@@ -1,0 +1,17 @@
+{{- if eq .chezmoi.hostname "cachyos-inf" -}}
+#!/usr/bin/env bash
+
+# launch-or-focus APP
+
+address="$(hyprctl -j clients | jq --raw-output --arg app "$1" 'map(select(.initialClass == $app)) | first | .address')"
+
+if [[ $address != "null" ]]; then
+    hyprctl dispatch focuswindow address:"$address"
+else
+    exec "$@"
+fi
+{{ end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

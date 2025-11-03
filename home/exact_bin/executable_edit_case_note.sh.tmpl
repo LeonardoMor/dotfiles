@@ -1,0 +1,22 @@
+{{ if eq .chezmoi.hostname .workHost -}}
+#!/usr/bin/env bash
+
+TMP_FILE="/tmp/case_note_$(date +%s).md"
+
+# Adhering to https://splunk.atlassian.net/wiki/spaces/HSSR/pages/188781630553/Casework+Hygiene#Key-Documentation-Fields
+cat <<HERE >"$TMP_FILE"
+Theory: 
+Error:
+Docs/refs:
+Changes made/recommended:
+HERE
+
+printf -v NVIM_COMMAND "/opt/homebrew/bin/nvim -c '%s' %s" 'call feedkeys("/Theory\<CR>A", "n")' "$TMP_FILE"
+
+open -Wna ghostty --args -e "$NVIM_COMMAND"
+pbcopy <"$TMP_FILE"
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

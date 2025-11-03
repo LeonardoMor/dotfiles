@@ -1,0 +1,19 @@
+{{- if eq .chezmoi.hostname "cachyos-inf" -}}
+#!/usr/bin/env bash
+
+NAME="$(basename "$0")"
+ICON="/usr/share/icons/Tokyonight-Dark/devices/16/keyboard.svg"
+KEYBOARD="$(hyprctl -j devices | jq -r '.keyboards[] | select(.main == true) | .name')"
+
+hyprctl switchxkblayout "$KEYBOARD" next
+
+ACTIVE_KEYMAP="$(hyprctl -j devices | jq -r ".keyboards[] | select(.name == \"$KEYBOARD\") | .active_keymap")"
+
+notify-send --app-name="Hyprland" --icon="$ICON" "Keyboard changed" "$ACTIVE_KEYMAP"
+sleep 4
+qs ipc call notification closeLast
+{{ end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

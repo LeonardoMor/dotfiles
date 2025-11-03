@@ -1,0 +1,66 @@
+#
+# ~/.bashrc
+#
+
+# ble.sh this has to be the first line. Notice, if not running interactively,
+# don't do anything
+[[ $- == *i* ]] || return
+{{- $bleshPrefix := "~/.local/share" }}
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.idLike "arch") }}
+{{- $bleshPrefix = "/usr/share" }}
+{{- end }}
+export BLESH_PATH={{ $bleshPrefix }}/blesh
+source "${BLESH_PATH}/ble.sh" --noattach
+
+# Command history settings
+# Don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+# Append to the history file, don't overwrite it
+shopt -s histappend
+# For setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=3000
+HISTFILESIZE=4000
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# Enable color support of ls and grep and also add handy aliases
+if [[ -x /usr/bin/dircolors ]]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# Load alias file if it exists
+if [[ -f ~/.bash_aliases ]]; then
+    source ~/.bash_aliases
+fi
+
+# fzf theme
+source "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/fzf/tokyonight_night.sh"
+
+# Enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if [[ -f /etc/bash_completion ]] && ! shopt -oq posix; then
+    source /etc/bash_completion
+fi
+
+# Starship Prompt
+eval "$(starship init bash)"
+
+# ble.sh: this has to be the last line
+if [[ ${BLE_VERSION-} ]]; then
+    ble-attach
+fi
+
+{{- /*
+vim: filetype=sh.gotmpl
+*/}}

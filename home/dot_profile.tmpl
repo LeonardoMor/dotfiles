@@ -1,0 +1,56 @@
+#
+# ~/.profile
+#
+# Keep it POSIX-compliant
+
+# Set variables
+#   Set PATH
+prepend2PATH() {
+    echo ":${PATH}:" | grep -q ":${1}:" || if [ -d "$1" ]; then PATH="${1}:${PATH}"; fi
+}
+
+for p in "${HOME}/.cargo/bin" "${HOME}/.bin" "${HOME}/.local/bin" "${HOME}/bin"; do
+    prepend2PATH "$p"
+done
+
+#   Set environment
+{{- with $environ := includeTemplate "environment" . | splitList "\n" }}
+{{- range $environ }}
+{{- if . }}
+{{ printf "export %s" . }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+for d in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"; do
+    mkdir -p "$d"
+done
+
+{{ if eq .chezmoi.os "darwin" -}}
+# Set brew
+if {{ printf "%s/bin/brew" .brewPrefix }} --version >/dev/null 2>&1; then
+    # Reference: https://stackoverflow.com/a/65980738/7830232
+    eval {{ printf "$(%s/bin/brew shellenv)" .brewPrefix | quote }}
+fi
+
+# Set nvm
+# Reference: https://formulae.brew.sh/formula/nvm
+{{ $optnvm := joinPath .brewPrefix "opt" "nvm" -}}
+[ -d "$NVM_DIR" ] || mkdir -p "$NVM_DIR"
+if [ -s {{ joinPath $optnvm "nvm.sh" | quote }} ]; then
+    . {{ joinPath $optnvm "nvm.sh" | quote }}
+fi
+if [ -s {{ printf "%s/etc/bash_completion.d/nvm" $optnvm | quote }} ]; then
+    . {{ printf "%s/etc/bash_completion.d/nvm" $optnvm | quote }}
+fi
+
+prepend2PATH "{{ .brewPrefix }}/opt/gnu-getopt/bin"
+
+{{ else if eq .chezmoi.osRelease.idLike "arch" -}}
+source /usr/share/nvm/init-nvm.sh
+{{ end -}}
+
+export PATH
+{{- /*
+vim: filetype=sh.gotmpl
+*/}}

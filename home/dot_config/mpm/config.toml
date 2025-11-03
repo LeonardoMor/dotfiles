@@ -1,0 +1,10 @@
+[mpm]
+paru = true
+pacman = false
+pipx = true
+npm = true
+cargo = true
+pip = false
+
+[mpm.search]
+exact = true

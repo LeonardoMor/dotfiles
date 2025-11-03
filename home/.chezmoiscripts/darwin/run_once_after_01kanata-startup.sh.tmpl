@@ -1,0 +1,116 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/usr/bin/env bash
+
+echo "Fetching latest Karabiner DriverKit pkg URL..."
+DRIVERKIT_PKG_URL="$(
+    curl -s "https://api.github.com/repos/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/latest" |
+        jq -r '.assets[] | select(.name|endswith(".pkg")) | .browser_download_url'
+)"
+echo "Downloading DriverKit from: $DRIVERKIT_PKG_URL"
+curl -L -o /tmp/karabiner-driverkit.pkg "$DRIVERKIT_PKG_URL"
+echo "Installing DriverKit..."
+sudo installer -pkg /tmp/karabiner-driverkit.pkg -target /
+rm -f /tmp/karabiner-driverkit.pkg
+
+service_name='com.jtroo.kanata'
+driver_daemon='org.pqrs.service.daemon.Karabiner-VirtualHIDDevice-Daemon'
+driver_manager='org.pqrs.service.daemon.Karabiner-VirtualHIDDevice-Manager'
+
+declare -A service_configs
+service_configs=(
+	["$driver_manager"]="$(
+		cat <<HERE
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>$driver_manager</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager</string>
+        <string>activate</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>
+HERE
+	)"
+	["$driver_daemon"]="$(
+		cat <<HERE
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>$driver_daemon</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+  </dict>
+</plist>
+HERE
+	)"
+	["$service_name"]="$(
+		cat <<HERE
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>$service_name</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>{{ joinPath .brewPrefix "bin" "kanata" }}</string>
+      <string>--cfg</string>
+      <string>{{ joinPath .xdgConfigHome "kanata" "kanata.kbd" }}</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Library/Logs/Kanata/kanata.out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Library/Logs/Kanata/kanata.err.log</string>
+</dict>
+</plist>
+HERE
+	)"
+)
+
+for s in "${!service_configs[@]}"; do
+	[[ -f /Library/LaunchDaemons/${s}.plist ]] || {
+		echo "${service_configs[$s]}" >"/tmp/${s}.plist"
+		sudo chown root:wheel "/tmp/${s}.plist"
+		sudo chmod 644 "/tmp/${s}.plist"
+		sudo cp "/tmp/${s}.plist" /Library/LaunchDaemons
+		sudo rm -f "/tmp/${s}.plist"
+	}
+
+	sudo launchctl print "system/$s" >/dev/null 2>&1 || {
+		sudo launchctl bootstrap system /Library/LaunchDaemons/${s}.plist
+		sudo launchctl enable "system/$s"
+	}
+done
+
+echo 'Services for kanata are ready'
+
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+read -rp "Add ${KANATA_BIN} to Accessibility, then press Enter to continue... "
+
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent"
+read -rp "Add Kanata to Input Monitoring, then press Enter to continue... "
+
+echo "Kanata and Karabiner services are now installed and enabled."
+{{ end -}}

@@ -1,0 +1,30 @@
+{{- if ne .chezmoi.os "windows" -}}
+{{/*    XDG spec variables */ -}}
+XDG_CONFIG_HOME={{ printf "${XDG_CONFIG_HOME:-%s}" .xdgConfigHome | quote }}
+XDG_CACHE_HOME={{ printf "${XDG_CACHE_HOME:-%s}" .xdgCacheHome | quote }}
+XDG_DATA_HOME={{ printf "${XDG_DATA_HOME:-%s}" .xdgDataHome | quote }}
+XDG_STATE_HOME={{ printf "${XDG_STATE_HOME:-%s}" .xdgStateHome | quote }}
+XDG_DATA_DIRS={{ printf "${XDG_DATA_DIRS:-%s}" .xdgDataDirs | quote }}
+XDG_CONFIG_DIRS={{ printf "${XDG_CONFIG_DIRS:-%s}" .xdgConfigDirs | quote }}
+BARTIB_FILE=~/activities.bartib
+{{-     if eq .chezmoi.os "darwin" }}
+NVM_DIR={{ joinPath .chezmoi.homeDir ".nvm" | quote }}
+{{- /*  Set imagemagic */}}
+DYLD_FALLBACK_LIBRARY_PATH={{ printf "%s/lib:$DYLD_FALLBACK_LIBRARY_PATH" .brewPrefix | quote }}
+LANG="en_US.UTF-8"
+LC_ALL="en_US.UTF-8"
+{{-     end }}
+{{-     if eq .chezmoi.hostname .workHost }}
+VAULT_ADDR=https://cluster-01-pdx10.prod.vault.splunkcloud.systems
+{{-     end }}
+VISUAL=nvim
+EDITOR="$VISUAL"
+NVIM_LOG_FILE="${XDG_CACHE_HOME}/nvim/log"
+{{-     if eq .chezmoi.hostname "cachyos-inf" }}
+BROWSER=zen-browser
+LIBVIRT_DEFAULT_URI='qemu:///system'
+{{-     end }}
+{{- end -}}
+{{/*
+vim: filetype=toml.gotmpl
+*/}}

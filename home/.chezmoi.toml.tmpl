@@ -1,0 +1,89 @@
+{{- if ne .chezmoi.os "windows" -}}
+[cd]
+command = "bash"
+args = ["--login"]
+
+{{ else -}}
+[cd]
+command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}
+args = ["-NoLogo"]
+
+[interpreters]
+ps1 = { command = {{ or (lookPath "pwsh") (lookPath "powershell") | quote }}, args = ["-NoLogo", "-NoProfile"] }
+
+{{ end -}}
+[edit]
+command = "nvim"
+
+[merge]
+command = "nvim"
+args = [
+    "-d",
+    {{ print "{{.Destination}}" | quote }},
+    {{ print "{{.Source}}" | quote }},
+    {{ print "{{.Target}}" | quote }},
+]
+
+[git]
+autoPush = true
+commitMessageTemplate = {{ print "{{ promptString \"Commit message\" }}" | quote }}
+
+{{ $osid := .chezmoi.os -}}
+{{ if hasKey .chezmoi.osRelease "id" -}}
+{{   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
+{{ end -}}
+{{ $workHost := "LMORACAS-M-D6L6" -}}
+[data]
+osid = {{ $osid | quote }}
+workHost = {{ $workHost | quote }}
+name = "Leonardo Mora Castro"
+vaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
+{{ if eq .chezmoi.hostname $workHost -}}
+email = {{ onepasswordRead "op://Employee/workKey/add more/email" "cisco.1password.com" | quote }}
+{{ else -}}
+email = {{ onepasswordRead "op://Private/personal_id_ed25519/add more/email" "my.1password.com" | quote }}
+{{ end -}}
+{{ if eq $osid "darwin" -}}
+brewPrefix = "/opt/homebrew"
+packageManagers = { "brew" = { command = "brew", install = [
+  "install",
+], update = [
+  "update",
+], upgrade = [
+  "upgrade",
+] }, "cask" = { command = "brew", install = [
+  "install",
+  "--cask",
+  "--no-quarantine",
+], update = [
+  "update",
+], upgrade = [
+  "upgrade",
+  "--cask",
+] } }
+{{ end -}}
+{{ if eq .chezmoi.os "linux" -}}
+{{     if eq .chezmoi.osRelease.idLike "arch" -}}
+packageManagers = { "paru" = { command = "paru", install = [
+  "--sync",
+  "--refresh",
+  "--sysupgrade",
+  "--needed",
+  "--noconfirm",
+  "--skipreview",
+], update = [], upgrade = ["--sync", "--refresh", "--sysupgrade", "--skipreview"] } }
+{{     end -}}
+{{ end -}}
+{{ if ne .chezmoi.os "windows" -}}
+{{/*     XDG spec variables */ -}}
+xdgConfigHome = "{{ .chezmoi.homeDir }}/.config"
+xdgCacheHome = "{{ .chezmoi.homeDir }}/.cache"
+xdgDataHome = "{{ .chezmoi.homeDir }}/.local/share"
+xdgStateHome = "{{ .chezmoi.homeDir }}/.local/state"
+xdgDataDirs = "/usr/local/share:/usr/share"
+xdgConfigDirs = "/etc/xdg"
+{{- end -}}
+
+{{/*
+vim: filetype=toml.gotmpl
+*/}}

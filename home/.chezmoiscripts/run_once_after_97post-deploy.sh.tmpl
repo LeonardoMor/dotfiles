@@ -1,0 +1,82 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+source -p ~ .profile
+source -p ~/bin utils.sh
+
+emit i 'Executing post deploy tasks...'
+
+{{ if eq .chezmoi.os "darwin" -}}
+export BLESH_PATH=~/.local/share/blesh
+
+# Install ble.sh
+bash "${BLESH_PATH}/ble.sh" --version >/dev/null 2>&1 || {
+    emit i 'Installing ble.sh'
+    if git clone --recursive https://github.com/akinomyoga/ble.sh.git ~/ble.sh; then
+        (
+            change-dir ~/ble.sh
+            make install || emit -e "Failed to make ble.sh"
+        )
+    else
+        emit e "Failed to clone ble.sh repo"
+    fi
+}
+{{ end -}}
+
+# Install node
+emit i 'Installing node Iron...'
+if nvm install --lts=iron; then
+    nvm use --lts=iron || emit e "Failed using node Iron"
+else
+    emit -e "Failed to install node Iron"
+fi
+
+# Install prettier and it's awk formatter globally
+npm list --global prettier >/dev/null 2>&1 || {
+    if npm install --global prettier@^2; then
+        npm install --global prettier-plugin-awk || emit e "Failed to install the prettier awk formatter"
+    else
+        emit e "Failed to install prettier"
+    fi
+}
+
+emit i "Opening nvim for the first time..."
+sleep 2
+nvim || emit e "Failed to open Neovim"
+
+emit i "Building bat theme..."
+if bat --version >/dev/null 2>&1; then
+    bat cache --build
+else
+    emit i "bat is not installed"
+fi
+
+[[ -f "${XDG_CONFIG_HOME}/tmux/plugins/tpm/tpm" ]] || {
+    emit i 'Installing the Tmux Plugin Manager...'
+    if git clone https://github.com/tmux-plugins/tpm "${XDG_CONFIG_HOME}/tmux/plugins/tpm"; then
+        emit i 'Installing configured plugins...'
+        "${XDG_CONFIG_HOME}/tmux/plugins/tpm/bin/install_plugins" || emit e "Failed to install configured plugins"
+    else
+        emit e "Failed to install Tmux Plugin Manager"
+    fi
+}
+
+emit i "Authenticating to github.com..."
+if gh --version >/dev/null 2>&1; then
+    if gh auth status >/dev/null 2>&1; then
+        emit i "Already authenticated!"
+    else
+        gh auth login || emit e "Failed to authenticate to github.com"
+    fi
+else
+    emit i "gh is not installed"
+fi
+
+emit i "Installing other packages..."
+for m in "${OTHERMANAGERS[@]}"; do
+    mpm restore "$PACKAGESPREFIX/${m}.toml"
+done
+{{- end -}}
+{{- /*
+vim: filetype=sh.gotmpl
+*/}}

@@ -1,0 +1,110 @@
+{{ if ne .chezmoi.os "windows" -}}
+{{   $packageManagerOptions := list -}}
+{{   range .packageManagers | keys | sortAlpha -}}
+{{     $packageManagerOptions = append $packageManagerOptions (printf "--%s" .) -}}
+{{   end -}}
+{{   $packageManagerOptionsString := $packageManagerOptions | join "|"   -}}
+#!/usr/bin/env bash
+
+source -p ~/bin utils.sh
+
+NAME="$(basename "$0")"
+TERMINATE=true
+TMPPACKAGES="/tmp/$(date +%s).packages.toml"
+OTHERPM=mpm
+
+help() {
+    cat <<EOF
+Usage:
+    $NAME [OPTION] [PACKAGE[ PACKAGE...]]
+
+Options:
+    {{ $packageManagerOptionsString }}
+        Use the system package managers.
+    --update|-u
+        Update all packages.
+        Packages not managed by the system package managers will be updated with ${OTHERPM}.
+    --$OTHERPM
+        Use ${OTHERPM}.
+    --help|-h
+        Show this help and exit.
+    
+Changes to packages are tracked by chezmoi.
+EOF
+}
+
+post() {
+    "$OTHERPM" cleanup
+    "$OTHERPM" backup --overwrite "$TMPPACKAGES"
+
+    for m in "${MANAGERS[@]}"; do
+        qq --output toml "{$m}" "$TMPPACKAGES" >"$PACKAGESPREFIX/${m}.toml"
+    done
+
+    chezmoi git add .
+    if (chezmoi git commit || emit i "Probably no changes to commit") && [[ $(chezmoi git -- branch --show-current) == master ]]; then
+        chezmoi git push origin master
+    fi
+}
+
+{{range $pm, $args := .packageManagers -}}
+_{{ $pm }}() {
+    {{ $args.command }} "$@"
+    TERMINATE=false
+}
+
+{{ end -}}
+
+update() {
+{{ range $pm, $args := .packageManagers -}}
+{{- if $args.update -}}
+{{- block "indent" $args.command -}}
+{{ printf "    %s" . }}
+{{- end }} {{ includeTemplate "toShellArgs" $args.update }}
+{{ end -}}
+{{ template "indent" $args.command }} {{ template "toShellArgs" $args.upgrade }}
+{{ end -}}
+{{- template "indent" "xargs mpm <<EOF" }}
+{{ range .packageManagers | keys | sortAlpha -}}
+{{ printf "--no-%s" . }}
+{{ end -}}
+upgrade
+EOF
+    TERMINATE=false
+}
+
+case $1 in
+    {{ range .packageManagers | keys | sortAlpha -}}
+    --{{ . }})
+        shift
+        _{{ . }} "$@"
+        ;;
+    {{ end -}}
+    --update|-u)
+        shift
+        update
+        ;;
+    --"$OTHERPM")
+        shift
+        "$OTHERPM" "$@"
+        ;;
+    --help|-h)
+        help
+        exit 0
+        ;;
+    *)
+        emit e "Bad usage."
+        help
+        exit 1
+        ;;
+esac
+
+if $TERMINATE; then
+    exit $?
+fi
+post
+
+{{- end -}}
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

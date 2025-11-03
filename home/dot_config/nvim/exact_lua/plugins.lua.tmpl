@@ -1,0 +1,49 @@
+local utils = require('custom.utils')
+
+return {
+  {{ includeTemplate "nvim/lua/plugins/aerial.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/barbecue.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/blink.cmp.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/caps-word.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/conform.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/cord.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/doing.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/gitsigns.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/guess-indent.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/indent_line.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/lazydev.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/lualine.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/luvit-meta.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/markdown.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/mason-tool-installer.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/maximize.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/neo-tree.lua" . | printf "{\n%s  }," }}
+  {{ if ne .chezmoi.hostname .workHost }}
+  {{     includeTemplate "nvim/lua/plugins/neocodeium.lua" . | printf "{\n%s  },"     }}
+  {{ end -}}
+  {{ includeTemplate "nvim/lua/plugins/neogen.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/lint.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/nvim-lspconfig.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/nvim-surround.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/nvim-tmux-navigation.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/nvim-treesitter-endwise.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/nvim-treesitter.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/nvim-ts-autotag.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/obsidian.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/stickybuf.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/telescope.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/termplug.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/todo-comments.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/tokyonight.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/transparent.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/trouble.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/ultimate-autopair.nvim.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/vim-fugitive.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/vim-obsession.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/vim-undodir-tree.lua" . | printf "{\n%s  }," }}
+  {{ includeTemplate "nvim/lua/plugins/which-key.nvim.lua" . | printf "{\n%s  }," }}
+}
+
+{{- /*
+vim: filetype=lua.gotmpl
+*/}}

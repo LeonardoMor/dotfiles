@@ -1,0 +1,10 @@
+[mpm]
+brew = true
+cask = true
+gem = false
+pip = true
+cargo = true
+npm = true
+
+[mpm.search]
+exact = true

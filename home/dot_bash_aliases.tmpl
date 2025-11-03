@@ -1,0 +1,10 @@
+#
+# .bash_aliases
+#
+#alias open='xdg-open'
+{{- if eq .chezmoi.os "linux" }}
+alias clip='wl-copy --trim-newline'
+{{- else if eq .chezmoi.os "darwin" }}
+alias clip="xargs printf '%s' | pbcopy"
+alias sed=gsed
+{{ end -}}

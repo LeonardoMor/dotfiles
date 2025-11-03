@@ -1,0 +1,29 @@
+{{ if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+source -p ~/bin utils.sh
+
+git --version >/dev/null 2>&1 || {
+    emit w 'git is not yet installed. Clone vaults manually later' 0
+}
+
+VAULTS=(
+    Splunk_Cloud_Support
+    Meta_Work
+    {{ if ne .chezmoi.hostname .workHost -}} Codice {{- end }}
+)
+
+VAULTSDIR={{ .vaultsDir | quote }}
+
+[[ -d $VAULTSDIR ]] || mkdir -p "$VAULTSDIR"
+
+for vault in "${VAULTS[@]}"; do
+    (
+        change-dir "$VAULTSDIR"
+        [[ -d $vault ]] || git clone "https://github.com/LeonardoMor/${vault}.git"
+    )
+done
+{{ end -}}
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

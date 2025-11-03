@@ -1,0 +1,10 @@
+{{ if eq .chezmoi.hostname .workHost -}}
+#!/usr/bin/env bash
+
+TMP_FILE="/tmp/case_email_$(date +%s).html"
+
+NVIM_COMMAND="/opt/homebrew/bin/nvim $TMP_FILE"
+
+open -Wna ghostty --args -e "$NVIM_COMMAND"
+pbcopy <"$TMP_FILE"
+{{- end }}

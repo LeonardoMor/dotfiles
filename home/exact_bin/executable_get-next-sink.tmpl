@@ -1,0 +1,20 @@
+{{- if eq .chezmoi.hostname "cachyos-inf" -}}
+#!/usr/bin/env -S bash --
+# 
+# Get next sink
+# Usage:
+# 	pw-dump | get-next-sink
+# \
+exec jq --arg default_sink_name "$(pactl get-default-sink)" --from-file "$0" "$@"
+
+map(
+    select(.type == "PipeWire:Interface:Node" and .info.props["media.class"] == "Audio/Sink")
+    	| {id: .id, name: .info.props["node.name"]}
+) | sort_by(.name) as $sinks
+    | $sinks | map(.name) | index($default_sink_name) as $index
+    | $sinks[($index + 1) % ($sinks | length)].id
+{{- end -}}
+
+{{/*
+vim: filetype=jq.gotmpl
+*/}}

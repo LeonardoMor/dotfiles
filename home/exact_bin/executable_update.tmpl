@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+~/bin/chezmoi-mpm upgrade
+
+{{- if eq .osid "darwin" }}
+
+# Update ble.sh in macOS
+BLESH_PATH=~/.local/share/blesh
+bash "${BLESH_PATH}/ble.sh" --update
+{{- end }}
+
+{{- /*
+vim: filetype=sh.gotmpl
+*/}}
