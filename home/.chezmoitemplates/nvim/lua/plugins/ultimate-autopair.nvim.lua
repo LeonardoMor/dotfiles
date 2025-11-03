@@ -1,9 +1,14 @@
-    'altermo/ultimate-autopair.nvim',
-    dependencies = {
-        'kylechui/nvim-surround',
-    },
+    {
+        'altermo/ultimate-autopair.nvim',
+        dependencies = {
+            'kylechui/nvim-surround',
+        },
         event = { 'InsertEnter', 'CmdlineEnter' },
         branch = 'v0.6',
         config = function()
-        require('ultimate-autopair').setup {}
-    end,
+            require('ultimate-autopair').setup {}
+        end,
+    }
+{{- /*
+vim: filetype=lua.gotmpl
+*/ -}}

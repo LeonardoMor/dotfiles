@@ -1,1 +1,6 @@
-    'RRethy/nvim-treesitter-endwise',
+    {
+        'RRethy/nvim-treesitter-endwise',
+    }
+{{- /*
+vim: filetype=lua.gotmpl
+*/ -}}

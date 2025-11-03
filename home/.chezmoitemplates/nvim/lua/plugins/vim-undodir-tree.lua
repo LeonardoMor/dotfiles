@@ -1,2 +1,7 @@
-    'pixelastic/vim-undodir-tree',
-    event = 'VeryLazy',
+    {
+        'pixelastic/vim-undodir-tree',
+        event = 'VeryLazy',
+    }
+{{- /*
+vim: filetype=lua.gotmpl
+*/ -}}

@@ -1,2 +1,7 @@
-    'lilyinstarlight/vim-spl',
-    ft = { 'spl' },
+    {
+        'lilyinstarlight/vim-spl',
+        ft = { 'spl' },
+    }
+{{- /*
+vim: filetype=lua.gotmpl
+*/ -}}
