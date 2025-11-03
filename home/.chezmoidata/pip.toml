@@ -1,0 +1,3 @@
+[pip]
+  git-filter-repo = "2.47.0"
+
