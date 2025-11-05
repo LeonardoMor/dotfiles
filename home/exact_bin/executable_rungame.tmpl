@@ -1,30 +1,41 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
-HYPRGAMEMODE="$(hyprctl -j getoption animations:enabled | jq -r '.set')"
 
-if $HYPRGAMEMODE; then
-    hyprctl --batch "\
-        keyword animations:enabled 0; \
-        keyword animation borderangle,0: \
-        keyword decoration:shadow:enabled 0;\
-        keyword decoration:blur:enabled 0;\
-        keyword decoration:fullscreen_opacity 1;\
-        keyword general:gaps_in 0;\
-        keyword general:gaps_out 0;\
-        keyword general:border_size 1;\
-        keyword decoration:rounding 0"
-fi
+pre() {
+    local hyprgamemode
+    hyprgamemode="$(hyprctl -j getoption animations:enabled | jq -r '.set')"
+    if $hyprgamemode; then
+        hyprctl --batch "\
+            keyword animations:enabled 0; \
+            keyword animation borderangle,0: \
+            keyword decoration:shadow:enabled 0;\
+            keyword decoration:blur:enabled 0;\
+            keyword decoration:fullscreen_opacity 1;\
+            keyword general:gaps_in 0;\
+            keyword general:gaps_out 0;\
+            keyword general:border_size 1;\
+            keyword decoration:rounding 0"
+    fi
+    systemctl --user stop kanata.service
+    qs ipc call notification setDnD true
+}
 
-systemctl --user stop kanata.service
+main() {
+    local cmd
+    cmd=(prime-run game-performance)
+    cmd+=("$@")
+    "${cmd[@]}"
+}
 
-cmd=(prime-run game-performance)
+post() {
+    systemctl --user start kanata.service
+    hyprctl reload
+    qs ipc call notification setDnD false
+}
 
-cmd+=("$@")
-
-"${cmd[@]}"
-
-systemctl --user start kanata.service
-hyprctl reload
+pre
+main "$@"
+post
 {{- end -}}
 
 {{/*
