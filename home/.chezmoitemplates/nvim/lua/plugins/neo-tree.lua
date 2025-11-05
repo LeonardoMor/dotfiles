@@ -28,6 +28,13 @@
                         require('neo-tree.command').execute { action = 'close' }
                     end,
                 },
+                {
+                  event = "neo_tree_buffer_enter",
+                  handler = function(arg)
+                    vim.o.number = true
+                    vim.o.relativenumber = true
+                  end,
+                },
             },
         },
     }
