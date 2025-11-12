@@ -4,42 +4,33 @@
 # This is a pre-requisite, pure bash script. In particular, templating syntax
 # is not available here
 
-die() {
+emit() {
     case "$1" in
-        i)
-            printf 'INFO: %s\n' "$2" >&2
-            ;;
-        e)
-            printf 'ERROR: %s\n' "$2" >&2
-            ;;
-        w)
-            printf 'WARNING: %s\n' "$2" >&2
-            ;;
-        f)
-            printf 'FATAL: %s\n' "$2" >&2
-            ;;
-        *)
-            die e "Invalid option or format"
-            ;;
+        i) printf 'INFO: %s\n' "$2" >&2 ;;
+        e) printf 'ERROR: %s\n' "$2" >&2 ;;
+        w) printf 'WARNING: %s\n' "$2" >&2 ;;
+        f) printf 'FATAL: %s\n' "$2" >&2 ;;
+        *) emit e "Invalid option or format" ;;
     esac
     [[ -z $3 ]] || exit "$3"
 }
 
 change-dir() {
-    cd "$1" || {
-        die f "Failed to change $1" 1
-    }
+    cd "$1" || emit f "Failed to change directory to $1" $?
 }
 
-bootstrap-linux() {
-    # Determine Linux distro
-    local ID_LIKE
-    eval "$(grep -E '^ID_LIKE' /etc/os-release)"
+is-installed() {
+    command -v "$1" || emit w "$1 not is installed"
+}
 
-    case "$ID_LIKE" in
-        arch)
-            # Install paru
-            paru --version >/dev/null 2>&1 || (
+install-system-package-manager() {
+    emit -i "Installing $1"
+    case "$1" in
+        brew)
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            ;;
+        paru)
+            (
                 change_dir "$HOME"
                 sudo pacman --sync --sysupgrade
                 sudo pacman --sync --needed base-devel
@@ -48,46 +39,71 @@ bootstrap-linux() {
                 change_dir /opt/paru
                 makepkg -si
             )
-            INSTALL='paru --noconfirm --sync --needed'
-            UPDATE='paru -Syu'
             ;;
-        *)
-            die e "Unknown or not supported Linux derivative" 1
-            ;;
+        *) emit e "$1 package manager not supported" 1 ;;
+    esac
+}
+
+set-INSTALL() {
+    local opt OPTIND OPTARG
+    while getopts 'p:' opt; do
+        case "$opt" in
+            p)
+                INSTALL="${OPTARG}/"
+                ;;
+            *)
+                emit i "set-INSTALL: wrong option"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    is-installed "$1" || install-system-package-manager "$1"
+    INSTALL+="$1"
+    shift
+    ARGS=("$@")
+}
+
+set-system-package-manager() {
+    local uname_out
+    uname_out="$(uname)"
+    case "$uname_out" in
+        Darwin) OS="${uname_out,,}" ;;
+        Linux) OS="$(grep -E '^ID_LIKE' /etc/os-release | cut -d'=' -f2)" OS="${OS,,}" ;;
+        *) emit i "Unsupported OS" 1 ;;
     esac
 
-    $UPDATE
-    pipx --version >/dev/null 2>&1 || $INSTALL pipx
-    mpm --version >/dev/null 2>&1 || pipx install meta-package-manager
+    case "$OS" in
+        arch) set-INSTALL paru -- --sync --refresh --sysupgrade --needed --noconfirm ;;
+        darwin) set-INSTALL -p "/opt/homebrew/bin" -- brew install ;;
+    esac
 }
 
-bootstrap-darwin() {
-    # Assume Apple silicon
-    local brewPrefix='/opt/homebrew'
-
-    # Install brew
-    brew --version >/dev/null 2>&1 || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-    INSTALL="${brewPrefix}/bin/brew install"
-
-    mpm --version >/dev/null 2>&1 || $INSTALL meta-package-manager
+_install() {
+    "$INSTALL" "${ARGS[@]}" "$@"
 }
 
-OS="$(uname)"
+PREREQUISITES=(
+    1password
+    1password-cli
+    chezmoi
+    pipx
+)
 
-case "${OS,}" in
-    linux) bootstrap-linux ;;
-    darwin) bootstrap-darwin ;;
-    *)
-        die e "$OS platform is not supported at this time." 1
-        ;;
-esac
+install-meta-pm() {
+    # The selected one is mpm for now
+    is-installed mpm || _install mpm || {
+        is-installed pipx || _install pipx
+        pipx install mpm
+    }
+}
 
-# 1password
-$INSTALL 1password
+# Entry point
+set-system-package-manager
+_install "${PREREQUISITES[@]}"
+install-meta-pm
+
 export OP_ACCOUNT=my.1password.com
 eval "$(op signin)"
 
-# chezmoi
-$INSTALL chezmoi
 chezmoi init --apply LeonardoMor
