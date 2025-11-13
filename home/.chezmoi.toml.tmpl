@@ -47,6 +47,7 @@ email = {{ onepasswordRead "op://Private/personal_id_ed25519/add more/email" "my
 brewPrefix = "/opt/homebrew"
 packageManagers = { "brew" = { command = "brew", install = [
   "install",
+  "--formula",
 ], update = [
   "update",
 ], upgrade = [
