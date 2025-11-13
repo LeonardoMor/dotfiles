@@ -4,39 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "e1744683c98ad794",
+        "id": "a56a0ab2fc080229",
         "type": "tabs",
         "children": [
           {
-            "id": "4a38b6ce7b79847e",
+            "id": "d6bcde1a4a895c6d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Resources/Deploying_Splunk/Deploying_Splunk.md",
+                "file": "Projects/Cases/3892476.md",
                 "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Deploying_Splunk"
-            }
-          },
-          {
-            "id": "09fb919104aafea7",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Resources/case_handling.md",
-                "mode": "preview",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "case_handling"
+              "title": "3892476"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -68,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "deplo",
+                "query": "knowledge object",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -175,6 +160,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:Create new base": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
@@ -184,53 +170,53 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "09fb919104aafea7",
+  "active": "d6bcde1a4a895c6d",
   "lastOpenFiles": [
-    "Archive/elevate.md",
-    "Projects/elevate.md",
-    "Resources/SCF04Access_Tools_Linkshandout.pdf",
-    "Archive/Splunk_Cloud_Certified_Admin/materials/1002-Transitioning_to_Splunk_Cloud_slides_9.4_Apr2025.pdf",
-    "Projects/Splunk_Enterprise_Architect/Troubleshooting_Splunk/materials/0062-Troubleshooting_Splunk_Enterprise-9.1-Slides (New).pdf",
-    "Projects/Splunk_Enterprise_Architect/Troubleshooting_Splunk/materials/0062-Troubleshooting_Splunk_Enterprise_9.1-Labs.pdf",
-    "Projects/Splunk_Enterprise_Architect/Beginer2Architect/docker.md",
-    "Resources/case_handling.md",
-    "Projects/Splunk_Enterprise_Architect/Beginer2Architect/beginner2architect.md",
-    "Resources/Tools_for_the_job.md",
+    "Pasted image 20251107115406.png",
+    "Resources/CCM/CCM.pdf",
+    "Projects/Cases/3892476.md",
+    "Projects/Cases/3891474.md",
+    "Archive/Training/Splunk_Certified_Power_User/Creating_Knowledge_Objects.md",
+    "Inbox/Journal/2025-11-04.md",
+    "Archive/Cases/3887303.md",
+    "Archive/Cases",
+    "Projects/Knowledge/sc4s_drop_unwanted_events.md~",
+    "Projects/Knowledge/sc4s_drop_unwanted_events.md",
+    "Resources/access_aws_console.md",
+    "Projects/Knowledge",
+    "Areas/KCS/sop.md",
+    "Areas/KCS",
+    "Areas",
+    "Untitled",
+    "Projects/Cases/3885779/federated.pcap",
+    "Projects/Cases/3885779/3885779.md",
+    "Projects/Cases/3885779",
+    "Resources/stack_access.md",
+    "Projects/Cases/3887303.md",
+    "Resources/Tools/Splunk_Bot.md",
+    "Resources/CCAB.md",
+    "Inbox/Journal/2025-10-28.md",
+    "Projects/Cases/3867144.md",
+    "Resources/Tools/attachments",
+    "Resources/Tools/attachments/IMG_20251027115217464.png",
+    "Resources/shellgrabbag.md",
+    "Inbox/Journal/2025-10-07.md",
+    "Resources/Tools/Splunk_Helper.md",
+    "Resources/Untitled.md",
     "Resources/Deploying_Splunk/Deploying_Splunk.md",
-    "Inbox/Journal",
-    "Inbox",
-    "Archive/Training/Splunk_Certified_Power_User/Result_modification.md",
-    "Archive/Training/Splunk_Certified_Power_User/Materials/Using_Fields_Slides.pdf",
-    "Archive/Training/Splunk_Certified_Power_User/Materials/SplunkEDU_STEPAccessingLabEnviro.pdf",
-    "Archive/Training/Splunk_Certified_Power_User/Materials/Comparing_Values_Lab_Guide.pdf",
-    "Archive/Training/Splunk_Certified_Power_User/Materials/0022_V02_Working_with_Time_Slides.pdf",
-    "Archive/Training/Training_Path.md",
+    "Resources/CCM/CCM.md",
+    "Resources/Tools/box.md",
+    "Resources/Tools/CorporateCloudManager.md",
+    "Projects/Cases/3860092/cache_turn_percent.png",
+    "Projects/Cases/3860092/some_expensive.png",
+    "Projects/Cases/3860092/most_expensive.png",
+    "Inbox/Journal/2025-10-01.md",
+    "Resources/CorporateCloudManager.md",
+    "Projects/Cases/3785247/90.png",
+    "Projects/Cases/3785247/94.png",
+    "Projects/Cases/3833876/splunkerror.png",
     "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250213140435809.png",
     "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250207173043827.png",
-    "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250207172055884.png",
-    "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250204150528863.png",
-    "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250129152548708.png",
-    "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250128180623933.png",
-    "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250128174720997.png",
-    "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250128111134372.png",
-    "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250128105652110.png",
-    "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250127125432537.png",
-    "Archive/Training/Splunk_Certified_Power_User/Working_with_Time.md",
-    "Archive/Training/Splunk_Certified_Power_User/Using_Fields.md",
-    "Archive/Training/Splunk_Certified_Power_User/Statistical_Processing.md",
-    "Archive/Training/Splunk_Certified_Power_User/Intro_to_Splunk.md",
-    "Archive/Training/Splunk_Certified_Power_User/Intro_to_Knowledge_Objects.md",
-    "Archive/Training/Splunk_Certified_Power_User/Data_Models.md",
-    "Archive/Training/Splunk_Certified_Power_User/Creating_Knowledge_Objects.md",
-    "Archive/Training/Splunk_Certified_Power_User/Creating_Field_Extractions.md",
-    "Archive/Training/Splunk_Certified_Power_User/Correlation_Analysis.md",
-    "Archive/Training/Splunk_Certified_Power_User/Comparing_Values.md",
-    "Archive/Splunk_Enterprise_System_Administration/Data_Admin/Splunk_Enterprise_Data_Administration.md",
-    "Resources/Glossary.md",
-    "Projects/Technical_Onboarding/Technical_Onboarding.md",
-    "Projects/Splunk_Enterprise_Architect/Troubleshooting_Splunk/Troubleshooting_Splunk.md",
-    "Projects/From_mentoring/From_Mentoring.md",
-    "Archive/Splunk_Enterprise_System_Administration/System_Admin/Splunk_Enterprise_System_Administration.md",
-    "Archive/Splunk_Enterprise_System_Administration/System_Admin/Deploying_Splunk.md"
+    "Archive/Training/Splunk_Certified_Power_User/attachments/IMG_20250207172055884.png"
   ]
 }
