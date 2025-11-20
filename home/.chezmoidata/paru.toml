@@ -257,7 +257,6 @@
   greetd-agreety = "0.10.3-1.1"
   grep = "3.12-2.1"
   grim = "1.5.0-2.1"
-  grimblast-git = "r150.32e1a75-1"
   groff = "1.23.0-7.1"
   grub = "2:2.14rc1-2"
   grub-btrfs = "4.14-1"
