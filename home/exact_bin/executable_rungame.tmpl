@@ -1,6 +1,11 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
+FIXEDWRAPPERS=(
+    game-performance
+    prime-run
+)
+
 pre() {
     #    local hyprgamemode
     #    hyprgamemode="$(hyprctl -j getoption animations:enabled | jq -r '.set')"
@@ -21,8 +26,8 @@ pre() {
 }
 
 main() {
-    local cmd
-    cmd=(prime-run game-performance)
+    local -a cmd
+    cmd=("${FIXEDWRAPPERS[@]}")
     cmd+=("$@")
     "${cmd[@]}"
 }
