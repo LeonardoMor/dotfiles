@@ -9,6 +9,8 @@
 Library/Services/note_case.workflow
 bin/edit_case_mail.sh
 bin/edit_case_note.sh
+{{- else }}
+!.config/op
 {{- end }}
 
 {{- if ne .chezmoi.os "windows" }}

@@ -56,6 +56,11 @@ fi
 # Starship Prompt
 eval "$(starship init bash)"
 
+{{ if eq .chezmoi.hostname .workHost -}}
+# 1Password plugins
+source "${XDG_CONFIG_HOME:-~/.config}/op/plugins.sh"
+{{- end }}
+
 # ble.sh: this has to be the last line
 if [[ ${BLE_VERSION-} ]]; then
     ble-attach

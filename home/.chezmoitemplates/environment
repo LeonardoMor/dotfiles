@@ -16,6 +16,8 @@ LC_ALL="en_US.UTF-8"
 {{-     end }}
 {{-     if eq .chezmoi.hostname .workHost }}
 VAULT_ADDR=https://cluster-01-pdx10.prod.vault.splunkcloud.systems
+GITLAB_VIM_URL="cd.splunkdev.com"
+GITLAB_TOKEN={{ onepasswordRead "op://Employee/a6dmc5vz2x6fkum7gtlkomfhcy/token" "cisco.1password.com" | quote }}
 {{-     end }}
 VISUAL=nvim
 EDITOR="$VISUAL"
