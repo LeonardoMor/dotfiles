@@ -7,6 +7,7 @@
   font-jetbrains-mono-nerd-font = "3.4.0"
   ghostty = "1.2.3"
   google-chrome = "143.0.7499.41"
+  hiddenbar = "1.9"
   mouseless = "0.4.3"
   obsidian = "1.10.6"
   raycast = "1.103.10"
