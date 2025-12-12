@@ -1,12 +1,15 @@
 Host *
 {{- if eq .chezmoi.os "linux" }}
-	IdentityAgent ~/.1password/agent.sock
+    IdentityAgent ~/.1password/agent.sock
 {{- else if eq .chezmoi.os "darwin" }}
-	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 {{- end }}
 
 {{ if eq .chezmoi.hostname .workHost -}}
 Match exec "/usr/local/bin/sft resolve -q  %h"
     ProxyCommand "/usr/local/bin/sft" proxycommand  %h
     UserKnownHostsFile "/Users/lmoracas/Library/Application Support/ScaleFT/proxycommand_known_hosts"
+
+Match exec "p0 ssh-resolve %h -q"
+    StrictHostKeyChecking accept-new
 {{- end }}
