@@ -1240,7 +1240,6 @@
   smbclient = "2:4.23.3-2.1"
   snap-pac = "3.0.1-3"
   snapper = "0.13.0-2.1"
-  snapper-rollback = "1.0-1"
   snappy = "1.2.2-2.1"
   sof-firmware = "2025.05.1-1"
   solid = "6.21.0-1.1"
