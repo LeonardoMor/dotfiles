@@ -31,6 +31,7 @@
   arch-install-scripts = "31-1"
   archlinux-keyring = "20251116-2"
   asciinema = "3.0.1-1.1"
+  asciinema-agg = "1.7.0-1"
   at-spi2-core = "2.58.2-1.1"
   attica = "6.21.0-1.1"
   attr = "2.5.2-1.1"
