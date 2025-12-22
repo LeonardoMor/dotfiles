@@ -1,4 +1,5 @@
 [brew]
+  agg = "1.7.0"
   aom = "3.13.1"
   asciinema = "3.0.1"
   bartib = "1.1.0"
