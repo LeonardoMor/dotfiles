@@ -41,7 +41,7 @@ Library
 {{- else }}
 .config/*
 !.config/*vim
-!.config/alacritty.toml
+!.config/alacritty
 !.config/bat
 !.config/blesh
 !.config/gh
