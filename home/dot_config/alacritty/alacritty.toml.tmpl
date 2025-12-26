@@ -37,7 +37,7 @@ program = "{{ .brewPrefix }}/bin/bash"
 {{- else }}
 program = "bash"
 {{ end }}
-args = ["--login", "-c", "tmux attach 2>/dev/null || tmux"]
+args = ["--login"]
 
 [keyboard]
 bindings = [
