@@ -15,18 +15,25 @@ until [[ $REPLY =~ y|n|N ]]; do
 done
 
 # Configure greetd
-current_default_session_command="$(sudo dasel --read toml --file /etc/greetd/config.toml 'default_session.command' | xargs)"
+GREETD_CONFIG="/etc/greetd/config.toml"
+current_default_session_command="$(dasel --in toml 'default_session.command' <"$GREETD_CONFIG" | tr -d "'")"
 
 if $NWGSHELL; then
-    hyprcmd="Hyprland -c /etc/nwg-hello/hyprland.conf"
+    hyprcmd="start-hyprland --config /etc/nwg-hello/hyprland.conf"
 else
-    hyprcmd="agreety --cmd Hyprland"
+    hyprcmd="agreety --cmd start-hyprland"
 fi
 
-[[ $current_default_session_command == "$hyprcmd" ]] || sudo dasel put --write toml --file /etc/greetd/config.toml --type string --value "$hyprcmd" 'default_session.command'
+[[ $current_default_session_command == "$hyprcmd" ]] || {
+    dasel --in toml --out toml "default_session.command = \"$hyprcmd\"" --root <"$GREETD_CONFIG" \
+        | sudo tee "$GREETD_CONFIG.tmp" >/dev/null
+    sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
+}
 
 [[ $(findmnt -no SOURCE /) =~ luks ]] && {
-    sudo dasel put --write toml --file /etc/greetd/config.toml --type string --value 'Hyprland' 'initial_session.command'
-    sudo dasel put --write toml --file /etc/greetd/config.toml --type string --value 'leo' 'initial_session.user'
+    dasel --in toml --out toml 'initial_session.command = "start-hyprland"' --root <"$GREETD_CONFIG" \
+        | dasel --in toml --out toml 'initial_session.user = "leo"' --root \
+        | sudo tee "$GREETD_CONFIG.tmp" >/dev/null
+    sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
 }
 {{- end -}}
