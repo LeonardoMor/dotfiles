@@ -60,9 +60,6 @@
                 })
             end,
             */}}
-        {{/*
-            vim: filetype=lua.gotmpl
-            */}}
     }
 {{- /*
 vim: filetype=lua.gotmpl
