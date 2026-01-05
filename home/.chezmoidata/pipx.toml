@@ -1,4 +1,4 @@
 [pipx]
-  meta-package-manager = "6.0.0"
+  meta-package-manager = "6.0.1"
   vdf2json = "1.1"
 
