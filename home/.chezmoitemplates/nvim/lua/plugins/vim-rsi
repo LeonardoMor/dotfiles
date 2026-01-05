@@ -1,0 +1,7 @@
+    {
+        'tpope/vim-rsi',
+        event = { 'InsertEnter', 'CmdlineEnter' }
+    }
+{{- /*
+vim: filetype=lua.gotmpl
+*/ -}}
