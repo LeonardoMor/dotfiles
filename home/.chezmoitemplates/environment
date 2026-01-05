@@ -22,7 +22,7 @@ GITLAB_TOKEN={{ onepasswordRead "op://Employee/a6dmc5vz2x6fkum7gtlkomfhcy/token"
 VISUAL=nvim
 EDITOR="$VISUAL"
 NVIM_LOG_FILE="${XDG_CACHE_HOME}/nvim/log"
-{{-     if eq .chezmoi.hostname "cachyos-inf" }}
+{{-     if eq .chezmoi.hostname "infinity" }}
 BROWSER=zen-browser
 LIBVIRT_DEFAULT_URI='qemu:///system'
 {{-     end }}
