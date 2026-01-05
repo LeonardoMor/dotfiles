@@ -45,7 +45,7 @@
                 :totable()
         end,
         cmd = { "Obsidian" }
-        {{/*
+        {{- /*
             config = function()
                 vim.api.nvim_create_autocmd('FileType', {
                     desc = 'Markdown Conceal for Obsidian vault files',
