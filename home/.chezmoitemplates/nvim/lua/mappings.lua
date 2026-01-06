@@ -141,4 +141,3 @@ vim.keymap.set('n', 'J', 'mzJ`z', { desc = "Append the next line to the current 
 vim.keymap.set('n', 'n', 'nzzzv', { desc = 'Next search result and center the cursor vertically' })
 vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous search result and center the cursor vertically' })
 vim.keymap.set({ 'i', 'n', 'v' }, '<S-Insert>', '"+p', { desc = 'Paste from clipboard' })
-vim.keymap.set('i', '<C-e>', '<esc>A', { desc = 'Put the cursor at the end of the line' })
