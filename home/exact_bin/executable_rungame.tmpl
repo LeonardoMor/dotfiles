@@ -1,34 +1,10 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
-set -x
-
 FIXEDWRAPPERS=(
     game-performance
     prime-run
 )
-
-SCOPEBUDDY_FLAGS=()
-GAME_ARGS=()
-
-parse-args() {
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --)
-                shift
-                GAME_ARGS+=("$@")
-                break
-                ;;
-            -*)
-                SCOPEBUDDY_FLAGS+=("$1")
-                ;;
-            *)
-                GAME_ARGS+=("$1")
-                ;;
-        esac
-        shift
-    done
-}
 
 pre() {
     #    local hyprgamemode
@@ -50,6 +26,18 @@ pre() {
         qs ipc call notification setDnD true
 }
 
+main() {
+    trap post EXIT INT TERM
+
+    local -a cmd=("${FIXEDWRAPPERS[@]}")
+    cmd+=(
+        scopebuddy
+        --
+        "$@"
+    )
+    "${cmd[@]}"
+}
+
 post() {
     systemctl --user start kanata.service
     hyprctl reload
@@ -57,28 +45,7 @@ post() {
         qs ipc call notification setDnD false
 }
 
-main() {
-    parse-args "$@"
-    pre
-    trap post EXIT INT TERM
-
-    local -a cmd=(
-        "${FIXEDWRAPPERS[@]}"
-        scopebuddy
-        --nested-width 2560
-        --nested-height 1440
-        --nested-refresh 280
-        --backend sdl
-        --force-grab-cursor
-        --mangoapp
-        --adaptive-sync
-        "${SCOPEBUDDY_FLAGS[@]}"
-        --
-        "${GAME_ARGS[@]}"
-    )
-    "${cmd[@]}"
-}
-
+pre
 main "$@"
 {{- end -}}
 
