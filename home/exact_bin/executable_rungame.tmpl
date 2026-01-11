@@ -6,6 +6,23 @@ FIXEDWRAPPERS=(
     prime-run
 )
 
+SCOPEBUDDY_FLAGS=()
+GAME_ARGS=()
+
+parse-args() {
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -*)
+                SCOPEBUDDY_FLAGS+=("$1")
+                ;;
+            *)
+                GAME_ARGS+=("$1")
+                ;;
+        esac
+        shift
+    done
+}
+
 pre() {
     #    local hyprgamemode
     #    hyprgamemode="$(hyprctl -j getoption animations:enabled | jq -r '.set')"
@@ -26,13 +43,6 @@ pre() {
         qs ipc call notification setDnD true
 }
 
-main() {
-    local -a cmd
-    cmd=("${FIXEDWRAPPERS[@]}")
-    cmd+=("$@")
-    "${cmd[@]}"
-}
-
 post() {
     systemctl --user start kanata.service
     hyprctl reload
@@ -40,9 +50,29 @@ post() {
         qs ipc call notification setDnD false
 }
 
-pre
+main() {
+    parse-args "$@"
+    pre
+    trap post EXIT INT TERM
+
+    local -a cmd=(
+        "${FIXEDWRAPPERS[@]}"
+        scopebuddy
+        --nested-width 2560
+        --nested-height 1440
+        --nested-refresh 280
+        --backend sdl
+        --force-grab-cursor
+        --mangoapp
+        --adaptive-sync
+        "${SCOPEBUDDY_FLAGS[@]}"
+        --
+        "${GAME_ARGS[@]}"
+    )
+    "${cmd[@]}"
+}
+
 main "$@"
-post
 {{- end -}}
 
 {{/*
