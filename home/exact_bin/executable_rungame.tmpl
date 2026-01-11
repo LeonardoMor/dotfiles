@@ -1,6 +1,8 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
+set -x
+
 FIXEDWRAPPERS=(
     game-performance
     prime-run
