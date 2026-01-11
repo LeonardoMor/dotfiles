@@ -1,6 +1,8 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
+set -x
+
 FIXEDWRAPPERS=(
     game-performance
     prime-run
@@ -12,6 +14,11 @@ GAME_ARGS=()
 parse-args() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
+            --)
+                shift
+                GAME_ARGS+=("$@")
+                break
+                ;;
             -*)
                 SCOPEBUDDY_FLAGS+=("$1")
                 ;;
