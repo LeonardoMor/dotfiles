@@ -3,9 +3,7 @@
 
 # launch-or-focus APP
 
-address="$(hyprctl -j clients | jq --raw-output --arg app "$1" 'map(select(.initialClass == $app)) | first | .address')"
-
-if [[ $address != "null" ]]; then
+if [[ ${address:="$(hyprctl -j clients | jq --raw-output --arg app "$1" 'map(select(.initialClass == $app)) | first | .address')"} != "null" ]]; then
     hyprctl dispatch focuswindow address:"$address"
 else
     exec "$@"
