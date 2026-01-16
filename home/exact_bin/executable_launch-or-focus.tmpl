@@ -3,10 +3,10 @@
 
 # launch-or-focus APP
 
-if [[ ${address:="$(hyprctl -j clients | jq --raw-output --arg app "$1" 'map(select(.initialClass == $app)) | first | .address')"} != "null" ]]; then
+if [[ ${address:="$(hyprctl -j clients | jq --raw-output --arg app "$1" 'map(select(.initialClass | test($app; "i"))) | first | .address')"} != "null" ]]; then
     hyprctl dispatch focuswindow address:"$address"
 else
-    exec "$@"
+    exec gtk-launch "$1"
 fi
 {{ end -}}
 
