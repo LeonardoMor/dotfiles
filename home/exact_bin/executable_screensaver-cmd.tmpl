@@ -7,10 +7,10 @@ EXECUTABLE="$1"
 LOCKFILE="/tmp/screensaver.lock"
 
 exit-screensaver() {
+    rm "$LOCKFILE" 2>/dev/null || return
     pkill --exact "$EXECUTABLE"
     pkill --full "$(</tmp/screensaver_cmd)"
     hyprctl dispatch focusmonitor "$(</tmp/focused)"
-    rm -f "$LOCKFILE"
 }
 
 trap exit-screensaver EXIT SIGINT SIGTERM SIGHUP SIGQUIT
