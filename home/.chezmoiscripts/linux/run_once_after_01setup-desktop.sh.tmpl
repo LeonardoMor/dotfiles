@@ -1,28 +1,11 @@
 {{- if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
-# TODO: first check if nwg-shell is already setup. For now, just ask
-
-NWGSHELL=false
-
-until [[ $REPLY =~ y|n|N ]]; do
-    read -rp 'Set up nwg-shell? [y|N] '
-    [[ -z $REPLY ]] && REPLY=n
-    case "$REPLY" in
-        n|N) ;;
-        y) NWGSHELL=true; nwg-shell-installer -a -hypr ;;
-        *) echo 'ERROR: incorrect answer. Must be y or n' ;;
-    esac
-done
 
 # Configure greetd
 GREETD_CONFIG="/etc/greetd/config.toml"
 current_default_session_command="$(dasel --in toml 'default_session.command' <"$GREETD_CONFIG" | tr -d "'")"
 
-if $NWGSHELL; then
-    hyprcmd="start-hyprland --config /etc/nwg-hello/hyprland.conf"
-else
-    hyprcmd="agreety --cmd start-hyprland"
-fi
+hyprcmd="agreety --cmd start-hyprland"
 
 [[ $current_default_session_command == "$hyprcmd" ]] || {
     dasel --in toml --out toml "default_session.command = \"$hyprcmd\"" --root <"$GREETD_CONFIG" \
