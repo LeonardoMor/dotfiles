@@ -1,22 +1,24 @@
 {{- if eq .chezmoi.hostname "infinity" -}}
 #!/usr/bin/env bash
 
+(($# > 0)) || exit 1
+
+EXECUTABLE="$1"
+LOCKFILE="/tmp/screensaver.lock"
+
 exit-screensaver() {
-    pkill -x cmatrix 2>/dev/null
-    pkill -f 'kitty --start-as fullscreen --class Screensaver screensaver-cmd'
-    exit 0
+    pkill --exact "$EXECUTABLE"
+    pkill --full "$(</tmp/screensaver_cmd)"
+    hyprctl dispatch focusmonitor "$(</tmp/focused)"
+    rm -f "$LOCKFILE"
 }
 
 trap exit-screensaver EXIT SIGINT SIGTERM SIGHUP SIGQUIT
 
-if pidof -q cmatrix; then
-    exit 0
-fi
-
 sleep 0.5
-exec cmatrix -s
+"$@"
 {{- end -}}
 
 {{/*
-vim: filetype=jq.gotmpl
+vim: filetype=sh.gotmpl
 */}}

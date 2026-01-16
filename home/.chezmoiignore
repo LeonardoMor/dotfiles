@@ -30,10 +30,11 @@ bin
 .local
 bin/get-next-sink
 bin/launch-or-focus
-bin/launch-screensaver
-bin/layoutshoutout
+  bin/screensaver
+ bin/screensaver-cmd
+ bin/layoutshoutout
 bin/rungame
-bin/screensaver-cmd
+
 gtkrc-2.0.mine
 {{- end }}
 {{- if ne .chezmoi.os "darwin" }}

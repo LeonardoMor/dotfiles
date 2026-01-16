@@ -36,6 +36,10 @@
 - Global constants: ALL_CAPS naming `GLOBAL_CONST_NAME`
 - 4-space indent
 - Prefer `command || action` over `if ! command; then action; fi`
+- Prefer bashisms over POSIX. We like bash, and we're not afraid of using its
+  features. For example, use `[[` instead of `[` or `test`. Do not quote
+  variables in `[[` expressions, and so on.
+- Prefer long-form options for commands where available (e.g., --raw-output over -r)
 
 ### Chezmoi Templates
 

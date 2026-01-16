@@ -1,0 +1,35 @@
+{{- if eq .chezmoi.hostname "infinity" -}}
+#!/usr/bin/env bash
+
+SCREENSAVER_CLASS="Screensaver"
+LOCKFILE="/tmp/screensaver.lock"
+
+[[ -f $LOCKFILE ]] && exit 0
+
+(($# > 0)) || {
+    echo "No arguments provided" >&2
+    exit 1
+}
+
+touch "$LOCKFILE"
+
+declare -a cmd=(
+    kitty
+    --start-as fullscreen
+    --class "$SCREENSAVER_CLASS"
+    -e screensaver-cmd "$@"
+)
+
+echo "${cmd[@]}" >/tmp/screensaver_cmd
+hyprctl monitors -j | jq --raw-output '.[] | select(.focused == true).name' >/tmp/focused
+
+for m in $(hyprctl monitors -j | jq --raw-output '.[] | .name'); do
+    hyprctl dispatch focusmonitor "$m"
+    hyprctl dispatch exec -- "${cmd[@]}"
+done
+
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}
