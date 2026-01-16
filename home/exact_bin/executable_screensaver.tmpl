@@ -16,6 +16,7 @@ touch "$LOCKFILE"
 declare -a CMD=(
     kitty
     --class "$SCREENSAVER_CLASS"
+    --start-as fullscreen
     -e screensaver-cmd "$@"
 )
 
