@@ -22,6 +22,7 @@ declare -a CMD=(
 
 echo "${CMD[@]}" >/tmp/screensaver_cmd
 MONITORS="$(hyprctl monitors -j | jq 'sort_by(.name)')"
+MONITORS_length="$(jq 'length' <<<"$MONITORS")"
 FOCUSED="$(jq --raw-output '.[] | select(.focused == true).name' <<<"$MONITORS" | tee /tmp/focused)"
 
 get-next-monitor() {
@@ -29,7 +30,7 @@ get-next-monitor() {
 }
 
 get-next-monitor "$FOCUSED"
-for ((i = 0; i < $(jq 'length' <<<"$MONITORS"); i++)); do
+for ((i = 0; i < MONITORS_length; i++)); do
     hyprctl dispatch focusmonitor "$MONITOR"
     hyprctl dispatch exec -- "${CMD[@]}"
     get-next-monitor "$MONITOR"
