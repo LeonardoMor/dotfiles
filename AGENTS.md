@@ -2,13 +2,8 @@
 
 ## Build/Lint/Test Commands
 
-- **Deploy dotfiles**: `chezmoi apply`
-- **Format Lua**: `stylua .` (2-space indent, 160 width, single quotes)
-- **Format JS/JSON**: `biome format --write .` (4-space indent)
-- **Format prose**: `prettier --write .` (prose wrap always)
-- **No test framework** - manual testing via `chezmoi apply --dry-run`. If
-  `.chezmoi.toml.tmpl` was changed, run `chezmoi init` to catch config errors.
-  Then run `chezmoi apply --dry-run`.
+Building will be done manually via `chezmoi` commands. Linting is integrated
+into the editor. Testing is done manually.
 
 ## Code Style Guidelines
 
@@ -28,6 +23,17 @@
 
 ### Shell Scripts
 
+- Prefer Bash. But when other tools are appropriate such as `sed`, `awk`, `jq`,
+  use them.
+- In Bash, everything is a command. Commands return nothing but an exit code,
+  but normally produce side effects in the form of writing to the standard file
+  descriptors. Commands can interact with each other via these file descriptors,
+  which make sense for interactive cli usage (oneliners). But for scripts, if
+  the commands share the same environment, it is more elegant to have them
+  interact with each other via variables.
+- Given the previous point, for scripts, avoid creating unnecessary sub-shells.
+  For example, prefer `while ..; do ..; done < <(command)` over
+  `command | while ..; do ..; done`.
 - Use `#!/usr/bin/env bash`
 - Error handling: `die()` or `emit` functions with levels (i|e|w|f)
 - Functions: kebab-case naming `function-name`
@@ -39,7 +45,23 @@
 - Prefer bashisms over POSIX. We like bash, and we're not afraid of using its
   features. For example, use `[[` instead of `[` or `test`. Do not quote
   variables in `[[` expressions, and so on.
-- Prefer long-form options for commands where available (e.g., --raw-output over -r)
+- Prefer long-form options for commands where available (e.g., --raw-output over
+  -r)
+
+#### `jq` scripts
+
+You can have sophisticated logic with pure `jq` scripts, with the help of
+`Bash`. Consider this construct:
+
+```jq
+#!/usr/bin/env -S bash --
+#
+# In `jq` comments can be continued with \. So the following line will be ignored by jq, but not by Bash.
+# \
+exec jq [OPTIONS] --from-file "$0" "$@"
+
+# And so here you can add pure jq. For an example of this use case, see ~/bin/get-next-sink
+```
 
 ### Chezmoi Templates
 
