@@ -25,14 +25,14 @@ MONITORS="$(hyprctl monitors -j | jq 'sort_by(.name)')"
 FOCUSED="$(jq --raw-output '.[] | select(.focused == true).name' <<<"$MONITORS" | tee /tmp/focused)"
 
 get-next-monitor() {
-    jq --arg monitor "$1" --raw-output 'map(.name) as $monitors | ($monitors | index($monitor)) as $index | $monitors[($index + 1) % ($monitors | length)]' <<<"$MONITORS"
+    MONITOR="$(jq --arg monitor "$1" --raw-output 'map(.name) as $monitors | ($monitors | index($monitor)) as $index | $monitors[($index + 1) % ($monitors | length)]' <<<"$MONITORS")"
 }
 
-m="$(get-next-monitor "$FOCUSED")"
+get-next-monitor "$FOCUSED"
 for ((i = 0; i < $(jq 'length' <<<"$MONITORS"); i++)); do
-    hyprctl dispatch focusmonitor "$m"
+    hyprctl dispatch focusmonitor "$MONITOR"
     hyprctl dispatch exec -- "${CMD[@]}"
-    m="$(get-next-monitor "$m")"
+    get-next-monitor "$MONITOR"
 done
 
 {{- end -}}
