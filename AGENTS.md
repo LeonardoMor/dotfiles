@@ -50,8 +50,8 @@ into the editor. Testing is done manually.
 
 #### `jq` scripts
 
-You can have sophisticated logic with pure `jq` scripts, with the help of
-`Bash`. Consider this construct:
+- You can have sophisticated logic with pure `jq` scripts, with the help of
+  `Bash`. Consider this construct:
 
 ```jq
 #!/usr/bin/env -S bash --
@@ -62,6 +62,10 @@ exec jq [OPTIONS] --from-file "$0" "$@"
 
 # And so here you can add pure jq. For an example of this use case, see ~/bin/get-next-sink
 ```
+
+- When filtering an array into a new array where each element is the
+  corresponding filtered element of the original array, prefer `map(filter)`
+  over `[.[] | filter]`.
 
 ### Chezmoi Templates
 
@@ -74,6 +78,8 @@ exec jq [OPTIONS] --from-file "$0" "$@"
 - Data handling: `.chezmoidata` files cannot be templates. Set dynamic machine
   data in `.chezmoi.toml.tmpl` data section. Read dynamic environment data using
   `output`, `fromJson`, `fromYaml`, etc.
+- To get what a template resolves to use `chezmoi execute-template --file FILE`.
+  Replace `FILE` with the actual template file name.
 - Reference: https://chezmoi.io
 
 ### General

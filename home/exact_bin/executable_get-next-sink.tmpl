@@ -1,18 +1,35 @@
 {{- if eq .chezmoi.hostname "infinity" -}}
 #!/usr/bin/env -S bash --
-# 
-# Get next sink
-# Usage:
-# 	pw-dump | get-next-sink
+#
+# Get next available sink
+# Filters out sinks with unavailable routes (e.g., disconnected HDMI/headphone jack)
+# Usage: pw-dump | get-next-sink
 # \
 exec jq --arg default_sink_name "$(pactl get-default-sink)" --from-file "$0" "$@"
 
+(
+    map(
+        select(.type == "PipeWire:Interface:Device") |
+        {
+            key: (.id | tostring),
+            value: ((.info.params.EnumRoute // []) | map(select(.direction == "Output") | {key: (.devices[0] | tostring), value: .available}) | from_entries)
+        }
+    ) | from_entries
+) as $routes |
+
 map(
-    select(.type == "PipeWire:Interface:Node" and .info.props["media.class"] == "Audio/Sink")
-    	| {id: .id, name: .info.props["node.name"]}
-) | sort_by(.name) as $sinks
-    | $sinks | map(.name) | index($default_sink_name) as $index
-    | $sinks[($index + 1) % ($sinks | length)].id
+    select(.type == "PipeWire:Interface:Node" and .info.props["media.class"] == "Audio/Sink") |
+    .info.props as $p |
+    {
+        id: .id,
+        name: $p["node.name"],
+        available: ($routes[$p["device.id"] | tostring][$p["card.profile.device"] | tostring] // "unknown")
+    } |
+    select(.available != "no")
+) | sort_by(.name) as $sinks |
+
+$sinks | map(.name) | index($default_sink_name) as $index |
+$sinks[($index + 1) % ($sinks | length)].id
 {{- end -}}
 
 {{/*
