@@ -2,6 +2,7 @@
 .config/nvim/*lock.json
 .config/nvim/LICENSE
 .config/obsidian/Profiles/default/workspace.json
+.config/quickshell/AGENTS.md
 .config/tmux/plugins
 .ssh/known_hosts*
 
