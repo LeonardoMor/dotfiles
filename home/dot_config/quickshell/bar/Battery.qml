@@ -15,9 +15,9 @@ RowLayout {
 
   RowLayout {
     spacing: 0
+    visible: UPower.displayDevice.isLaptopBattery && (!C.Config.settings.bar.battery.hideOnFull ? true : UPower.displayDevice.percentage < 0.99)
       
     CW.FontIcon {
-      visible: UPower.displayDevice.isLaptopBattery && (!C.Config.settings.bar.battery.hideOnFull ? true : UPower.displayDevice.percentage < 0.99)
       Layout.topMargin: 0.5
       Layout.alignment: Qt.AlignVCenter
       color: root.color
@@ -44,7 +44,7 @@ RowLayout {
     CW.FontIcon {
       Layout.alignment: Qt.AlignVCenter
       Layout.topMargin: 0.5
-      color: root.color
+      color: C.Config.theme.on_background
       iconSize: 15
       text: "memory"
     }
@@ -54,7 +54,7 @@ RowLayout {
       Layout.fillHeight: true
       Layout.leftMargin: 2
       text: `${Math.round(S.SystemState.cpu)}%`
-      color: root.color
+      color: C.Config.theme.on_background
     }
   }
 
@@ -65,7 +65,7 @@ RowLayout {
     CW.FontIcon {
       Layout.alignment: Qt.AlignVCenter
       Layout.topMargin: 0.5
-      color: root.color
+      color: C.Config.theme.on_background
       iconSize: 15
       text: "menu"
     }
@@ -75,7 +75,7 @@ RowLayout {
       Layout.fillHeight: true
       Layout.leftMargin: 2
       text: `${Math.round(S.SystemState.ram)}%`
-      color: root.color
+      color: C.Config.theme.on_background
     }
   }
 }
