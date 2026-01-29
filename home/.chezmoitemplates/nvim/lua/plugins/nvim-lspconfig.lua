@@ -203,8 +203,12 @@
                     },
                 },
                 dockerls = {},
-                {{- else if eq .chezmoi.os "linux" }}
+                {{- if eq .chezmoi.os "linux" }}
                 hyprls = {},
+                qmlls = {
+                    cmd = { 'qmlls6' }
+                },
+                {{- end }}
                 {{- else }}
                 powershell_es = {},
                 {{- end }}
