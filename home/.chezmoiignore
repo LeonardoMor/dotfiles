@@ -3,6 +3,7 @@
 .config/nvim/LICENSE
 .config/obsidian/Profiles/default/workspace.json
 .config/quickshell/AGENTS.md
+.config/quickshell/.qmlls.ini
 .config/tmux/plugins
 .ssh/known_hosts*
 

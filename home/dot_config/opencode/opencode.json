@@ -34,5 +34,11 @@
         "input_paste": "ctrl+v",
         "input_submit": "enter",
         "input_newline": "shift+enter,ctrl+j"
+    },
+    "lsp": {
+        "qml": {
+            "command": ["qmlls6"],
+            "extensions": [".qml"]
+        }
     }
 }
