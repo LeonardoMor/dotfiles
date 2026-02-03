@@ -64,6 +64,8 @@ vim.o.incsearch = true
 vim.o.colorcolumn = '80'
 
 -- Set the clipboard correctly
-if vim.env.SSH_CONNECTION then
+if vim.env.TMUX then
+  vim.g.clipboard = 'tmux'
+elseif vim.env.SSH_CONNECTION then
   vim.g.clipboard = 'osc52'
 end
