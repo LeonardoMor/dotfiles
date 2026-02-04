@@ -23,7 +23,7 @@ Singleton {
 
   function disconnect(ssid) {
     // FIXME: this will break with named stations I think...
-    pendingNmcliCommands = [["nmcli", "c", "down", ssid], ...pendingNmcliCommands];
+    pendingNmcliCommands = [["nmcli", "connection", "down", ssid], ...pendingNmcliCommands];
   }
 
   function connect(ssid) {
@@ -99,7 +99,7 @@ Singleton {
     id: nmcliListProc
     running: false
 
-    command: ["nmcli", "--terse", "-f", "IN-USE,BSSID,SSID,MODE,CHAN,RATE,SIGNAL,BARS,SECURITY,FREQ", "dev", "wifi", "list"]
+    command: ["nmcli", "--terse", "--fields", "IN-USE,BSSID,SSID,MODE,CHAN,RATE,SIGNAL,BARS,SECURITY,FREQ", "device", "wifi", "list"]
 
     stdout: SplitParser {
       splitMarker: ""
