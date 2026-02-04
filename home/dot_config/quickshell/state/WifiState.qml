@@ -21,6 +21,8 @@ Singleton {
 
   property bool wifiScanning: false
 
+  property var knownNetworks: []
+
   function disconnect(ssid) {
     // FIXME: this will break with named stations I think...
     pendingNmcliCommands = [["nmcli", "connection", "down", ssid], ...pendingNmcliCommands];
@@ -42,7 +44,7 @@ Singleton {
   }
 
   function refreshWifi() {
-    if (nmcliListProc.running)
+    if (knownNetworksProc.running || nmcliListProc.running)
       return;
 
     if (!wifiEnabled) {
@@ -50,7 +52,7 @@ Singleton {
       return;
     }
 
-    nmcliListProc.running = true;
+    knownNetworksProc.running = true;
     wifiScanning = true;
   }
 
@@ -128,15 +130,16 @@ Singleton {
 
           // console.log(lineParsed)
 
-          s.active = lineParsed[0] == "*";
-          s.ssid = lineParsed[2];
-          s.security = lineParsed[8];
-          s.bars = 4 - (lineParsed[7].match(/\_/g) || []).length;
-          s.bssid = lineParsed[1];
-          s.points = 1;
-          s.freq = Math.round(parseInt(lineParsed[9].substr(0, lineParsed[9].length - 3)) / 100.0) / 10.0
+           s.active = lineParsed[0] == "*";
+           s.ssid = lineParsed[2];
+           s.security = lineParsed[8];
+           s.bars = 4 - (lineParsed[7].match(/\_/g) || []).length;
+           s.bssid = lineParsed[1];
+           s.points = 1;
+           s.freq = Math.round(parseInt(lineParsed[9].substr(0, lineParsed[9].length - 3)) / 100.0) / 10.0
+           s.known = knownNetworks.includes(s.ssid)
 
-          if (s.ssid == "")
+           if (s.ssid == "")
             continue; // hidden station
 
           if (stationFromSSID(s.ssid) != null) {
@@ -174,8 +177,7 @@ Singleton {
     id: nmcliListTimer
     running: wifiEnabled
     onTriggered: {
-      if (!nmcliListProc.running)
-        nmcliListProc.running = true;
+      refreshWifi();
     }
   }
 
@@ -210,6 +212,27 @@ Singleton {
       splitMarker: ""
       onRead: data => {
         wifiEnabled = data.indexOf("enabled") != -1;
+      }
+    }
+  }
+
+  Process {
+    id: knownNetworksProc
+    running: false
+    command: ["nmcli", "--terse", "--fields", "NAME,TYPE", "connection", "show"]
+
+    stdout: SplitParser {
+      splitMarker: ""
+      onRead: data => {
+        const lines = data.split("\n")
+        const networks = []
+        for (const line of lines) {
+          const parts = line.split(":")
+          if (parts.length >= 2 && parts[1] === "802-11-wireless")
+            networks.push(parts[0])
+        }
+        knownNetworks = networks
+        nmcliListProc.running = true
       }
     }
   }
