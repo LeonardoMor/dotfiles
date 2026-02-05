@@ -4,6 +4,7 @@
 .config/obsidian/Profiles/default/workspace.json
 .config/quickshell/AGENTS.md
 .config/quickshell/.qmlls.ini
+.config/quickshell/test.log
 .config/tmux/plugins
 .ssh/known_hosts*
 
