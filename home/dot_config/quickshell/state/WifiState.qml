@@ -23,13 +23,21 @@ Singleton {
 
   property var knownNetworks: []
 
+  property bool connecting: false
+  property bool disconnecting: false
+
   function disconnect(ssid) {
-    // FIXME: this will break with named stations I think...
-    pendingNmcliCommands = [["nmcli", "connection", "down", ssid], ...pendingNmcliCommands];
+    if (connecting || disconnecting) return
+    disconnecting = true
+    disconnectProc.command = ["nmcli", "connection", "down", ssid]
+    disconnectProc.running = true
   }
 
   function connect(ssid) {
-    pendingNmcliCommands = [["nmcli", "--ask", "device", "wifi", "connect", ssid], ...pendingNmcliCommands];
+    if (connecting || disconnecting) return
+    connecting = true
+    connectProc.command = ["nmcli", "device", "wifi", "connect", ssid]
+    connectProc.running = true
   }
 
   function setWifiEnabled(on) {
@@ -225,6 +233,52 @@ Singleton {
         }
         knownNetworks = networks
         nmcliListProc.running = true
+      }
+    }
+  }
+
+  Process {
+    id: connectProc
+    running: false
+
+    stdout: SplitParser {
+      splitMarker: ""
+      onRead: data => {
+        if (data.indexOf("successfully activated") !== -1) {
+          connecting = false
+          refreshWifi()
+        }
+      }
+    }
+
+    stderr: SplitParser {
+      splitMarker: ""
+      onRead: data => {
+        console.log("wifi connect error: " + data)
+        connecting = false
+      }
+    }
+  }
+
+  Process {
+    id: disconnectProc
+    running: false
+
+    stdout: SplitParser {
+      splitMarker: ""
+      onRead: data => {
+        if (data.indexOf("successfully deactivated") !== -1) {
+          disconnecting = false
+          refreshWifi()
+        }
+      }
+    }
+
+    stderr: SplitParser {
+      splitMarker: ""
+      onRead: data => {
+        console.log("wifi disconnect error: " + data)
+        disconnecting = false
       }
     }
   }

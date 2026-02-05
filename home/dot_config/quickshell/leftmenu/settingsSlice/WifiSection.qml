@@ -35,6 +35,7 @@ BaseListSection {
     width: ListView.view.width
     station: orderedStations[index]
     onClicked: {
+      if (S.WifiState.connecting || S.WifiState.disconnecting) return
       if (selectedStation == orderedStations[index].bssid)
         selectedStation = "[[VAXRY_WAS_HERE]]";
       else

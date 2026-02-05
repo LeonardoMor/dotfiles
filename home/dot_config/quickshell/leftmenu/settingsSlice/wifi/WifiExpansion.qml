@@ -13,6 +13,8 @@ Rectangle {
   property string ssid: ""
   property bool active: false
 
+  property bool busy: S.WifiState.connecting || S.WifiState.disconnecting
+
   color: active ? Qt.darker(C.Config.theme.primary, 1.8) : C.Config.applySecondaryOpacity(Qt.lighter(C.Config.theme.surface_container, 1.8))
   radius: 6
 
@@ -40,9 +42,10 @@ Rectangle {
     WrapperMouseArea {
       id: ma
 
+      enabled: !root.busy
       hoverEnabled: true
 
-      Layout.preferredWidth: 90
+      Layout.preferredWidth: 110
       Layout.preferredHeight: 30
       Layout.bottomMargin: 12
 
@@ -58,6 +61,7 @@ Rectangle {
       Rectangle {
         anchors.fill: parent
         radius: 6
+        opacity: root.busy ? 0.5 : 1.0
 
         color: C.Config.applySecondaryOpacity(ma.containsMouse ? Qt.lighter(C.Config.theme.background, 1.5) : C.Config.theme.background)
 
@@ -71,7 +75,11 @@ Rectangle {
 
         CW.StyledText {
           anchors.centerIn: parent
-          text: root.active ? "Disconnect" : "Connect"
+          text: {
+            if (S.WifiState.connecting) return "Connecting..."
+            if (S.WifiState.disconnecting) return "Disconnecting..."
+            return root.active ? "Disconnect" : "Connect"
+          }
         }
       }
     }
