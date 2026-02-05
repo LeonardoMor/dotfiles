@@ -85,6 +85,13 @@ Singleton {
     return null;
   }
 
+  function sortStations(station, stations) {
+    const sorted = [...stations].sort((a, b) => b.bars - a.bars);
+    if (!station) return sorted;
+    const filtered = sorted.filter(s => s.ssid !== station.ssid);
+    return [station, ...filtered];
+  }
+
   Process {
     id: updateNmcliProc
     running: false
@@ -117,7 +124,6 @@ Singleton {
 
         const lines = data.split("\n");
         wifiStations = [];
-        let activeStation = null;
         for (let line of lines) {
           const lineParsed = splitEscaped(line);
 
@@ -153,17 +159,8 @@ Singleton {
           wifiStations = [s, ...wifiStations];
         }
 
-        for (let i = 0; i < wifiStations.length; ++i) {
-          if (wifiStations[i].active) {
-            activeStation = wifiStations[i];
-            wifiStations.splice(i, 1);
-            break;
-          }
-        }
-
-        if (activeStation != null)
-          wifiStations = [...wifiStations, activeStation];
-        wifiStations = wifiStations.reverse();
+        const activeStation = wifiStations.find(s => s.active) || null
+        wifiStations = sortStations(activeStation, wifiStations)
       }
     }
   }

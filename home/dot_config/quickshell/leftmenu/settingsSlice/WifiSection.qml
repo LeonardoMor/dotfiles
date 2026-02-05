@@ -12,6 +12,13 @@ BaseListSection {
   id: root
   property string selectedStation: "[[VAXRY_WAS_HERE]]"
 
+  property var orderedStations: {
+    const stations = S.WifiState.wifiStations.filter(x => x.ssid != "")
+    const selected = stations.find(s => s.bssid === selectedStation)
+    if (!selected) return stations
+    return S.WifiState.sortStations(selected, stations)
+  }
+
   header: CW.ValueSwitch {
     Layout.fillWidth: true
     Layout.leftMargin: 5
@@ -22,18 +29,18 @@ BaseListSection {
     onToggled: S.WifiState.setWifiEnabled(!S.WifiState.wifiEnabled)
   }
 
-  model: S.WifiState.wifiStations.filter(x => { return x.ssid != "" })
+  model: orderedStations
   delegate: W.WifiStation {
     required property int index
     width: ListView.view.width
-    station: S.WifiState.wifiStations[index]
+    station: orderedStations[index]
     onClicked: {
-      if (selectedStation == S.WifiState.wifiStations[index].bssid)
+      if (selectedStation == orderedStations[index].bssid)
         selectedStation = "[[VAXRY_WAS_HERE]]";
       else
-        selectedStation = S.WifiState.wifiStations[index].bssid;
+        selectedStation = orderedStations[index].bssid;
     }
-    open: selectedStation == S.WifiState.wifiStations[index].bssid
+    open: selectedStation == orderedStations[index].bssid
   }
 
   footerIcon: "refresh"
