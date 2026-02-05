@@ -121,26 +121,21 @@ Singleton {
         for (let line of lines) {
           const lineParsed = splitEscaped(line);
 
-          if (lineParsed.length < 8)
-            continue;
-          if (lineParsed[0].indexOf("IN-USE") != -1)
+          if (lineParsed.length < 8 || lineParsed[0].indexOf("IN-USE") != -1 || !lineParsed[2])
             continue;
 
           let s = {};
 
           // console.log(lineParsed)
 
-           s.active = lineParsed[0] == "*";
-           s.ssid = lineParsed[2];
-           s.security = lineParsed[8];
-           s.bars = 4 - (lineParsed[7].match(/\_/g) || []).length;
-           s.bssid = lineParsed[1];
-           s.points = 1;
-           s.freq = Math.round(parseInt(lineParsed[9].substr(0, lineParsed[9].length - 3)) / 100.0) / 10.0
-           s.known = knownNetworks.includes(s.ssid)
-
-           if (s.ssid == "")
-            continue; // hidden station
+          s.active = lineParsed[0] == "*";
+          s.ssid = lineParsed[2];
+          s.security = lineParsed[8];
+          s.bars = 4 - (lineParsed[7].match(/\_/g) || []).length;
+          s.bssid = lineParsed[1];
+          s.points = 1;
+          s.freq = Math.round(parseInt(lineParsed[9].substr(0, lineParsed[9].length - 3)) / 100.0) / 10.0
+          s.known = knownNetworks.includes(s.ssid)
 
           if (stationFromSSID(s.ssid) != null) {
             for (let i = 0; i < wifiStations.length; ++i) {
