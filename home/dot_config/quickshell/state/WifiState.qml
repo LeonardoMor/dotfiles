@@ -25,6 +25,7 @@ Singleton {
 
   property bool connecting: false
   property bool disconnecting: false
+  property int retryCount: 0
 
   function disconnect(ssid) {
     if (connecting || disconnecting) return
@@ -123,10 +124,19 @@ Singleton {
 
     command: ["nmcli", "--terse", "--fields", "IN-USE,BSSID,SSID,MODE,CHAN,RATE,SIGNAL,BARS,SECURITY,FREQ", "device", "wifi", "list"]
 
+    onExited: {
+      if (wifiEnabled && wifiStations.length === 0 && retryCount < 7) {
+        retryCount++
+        retryScanTimer.restart()
+      } else {
+        retryCount = 0
+        wifiScanning = false
+      }
+    }
+
     stdout: SplitParser {
       splitMarker: ""
       onRead: data => {
-
         wifiScanning = false;
 
         // FIXME: this will still change quite often due to signal. Maybe only compare the things we get.
@@ -181,9 +191,13 @@ Singleton {
   Timer {
     id: nmcliListTimer
     running: wifiEnabled
-    onTriggered: {
-      refreshWifi();
-    }
+    onTriggered: refreshWifi()
+  }
+
+  Timer {
+    id: retryScanTimer
+    interval: 1000
+    onTriggered: refreshWifi()
   }
 
   Timer {
