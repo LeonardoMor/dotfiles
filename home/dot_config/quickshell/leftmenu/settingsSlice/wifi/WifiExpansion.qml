@@ -14,6 +14,12 @@ Rectangle {
   property bool active: false
 
   property bool busy: S.WifiState.connecting || S.WifiState.disconnecting
+  property bool known: false
+  property bool forgetting: false
+
+  onKnownChanged: {
+    if (!known) forgetting = false
+  }
 
   color: active ? Qt.darker(C.Config.theme.primary, 1.8) : C.Config.applySecondaryOpacity(Qt.lighter(C.Config.theme.surface_container, 1.8))
   radius: 6
@@ -39,46 +45,153 @@ Rectangle {
       }
     }
 
-    WrapperMouseArea {
-      id: ma
-
-      enabled: !root.busy
-      hoverEnabled: true
-
-      Layout.preferredWidth: 110
-      Layout.preferredHeight: 30
-      Layout.bottomMargin: 12
-
+    RowLayout {
       Layout.alignment: Qt.AlignRight
+      Layout.bottomMargin: 12
+      spacing: 6
 
-      onClicked: {
-        if (active)
-          S.WifiState.disconnect(root.ssid);
-        else
-          S.WifiState.connect(root.ssid);
-      }
+      RowLayout {
+        visible: !root.forgetting
+        spacing: 6
 
-      Rectangle {
-        anchors.fill: parent
-        radius: 6
-        opacity: root.busy ? 0.5 : 1.0
+        WrapperMouseArea {
+          id: forgetMa
 
-        color: C.Config.applySecondaryOpacity(ma.containsMouse ? Qt.lighter(C.Config.theme.background, 1.5) : C.Config.theme.background)
+          visible: root.known
+          enabled: !root.busy
+          hoverEnabled: true
 
-        Behavior on color {
-          ColorAnimation {
-            duration: 400
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: C.Globals.anim_CURVE_SMOOTH_SLIDE
+          Layout.preferredWidth: 70
+          Layout.preferredHeight: 30
+
+          onClicked: root.forgetting = true
+
+          Rectangle {
+            anchors.fill: parent
+            radius: 6
+            opacity: root.busy ? 0.5 : 1.0
+            color: C.Config.applySecondaryOpacity(forgetMa.containsMouse ? Qt.lighter(C.Config.theme.background, 1.5) : C.Config.theme.background)
+
+            Behavior on color {
+              ColorAnimation {
+                duration: 400
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: C.Globals.anim_CURVE_SMOOTH_SLIDE
+              }
+            }
+
+            CW.StyledText {
+              anchors.centerIn: parent
+              text: "Forget"
+            }
           }
         }
 
+        WrapperMouseArea {
+          id: ma
+
+          enabled: !root.busy
+          hoverEnabled: true
+
+          Layout.preferredWidth: 110
+          Layout.preferredHeight: 30
+
+          onClicked: {
+            if (active)
+              S.WifiState.disconnect(root.ssid);
+            else
+              S.WifiState.connect(root.ssid);
+          }
+
+          Rectangle {
+            anchors.fill: parent
+            radius: 6
+            opacity: root.busy ? 0.5 : 1.0
+            color: C.Config.applySecondaryOpacity(ma.containsMouse ? Qt.lighter(C.Config.theme.background, 1.5) : C.Config.theme.background)
+
+            Behavior on color {
+              ColorAnimation {
+                duration: 400
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: C.Globals.anim_CURVE_SMOOTH_SLIDE
+              }
+            }
+
+            CW.StyledText {
+              anchors.centerIn: parent
+              text: {
+                if (S.WifiState.connecting) return "Connecting..."
+                if (S.WifiState.disconnecting) return "Disconnecting..."
+                return root.active ? "Disconnect" : "Connect"
+              }
+            }
+          }
+        }
+      }
+
+      RowLayout {
+        visible: root.forgetting
+        spacing: 6
+
         CW.StyledText {
-          anchors.centerIn: parent
-          text: {
-            if (S.WifiState.connecting) return "Connecting..."
-            if (S.WifiState.disconnecting) return "Disconnecting..."
-            return root.active ? "Disconnect" : "Connect"
+          text: "Forget?"
+        }
+
+        WrapperMouseArea {
+          id: yesMa
+
+          hoverEnabled: true
+          Layout.preferredWidth: 50
+          Layout.preferredHeight: 30
+
+          onClicked: S.WifiState.forget(root.ssid)
+
+          Rectangle {
+            anchors.fill: parent
+            radius: 6
+            color: C.Config.applySecondaryOpacity(yesMa.containsMouse ? Qt.lighter(C.Config.theme.background, 1.5) : C.Config.theme.background)
+
+            Behavior on color {
+              ColorAnimation {
+                duration: 400
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: C.Globals.anim_CURVE_SMOOTH_SLIDE
+              }
+            }
+
+            CW.StyledText {
+              anchors.centerIn: parent
+              text: "Yes"
+            }
+          }
+        }
+
+        WrapperMouseArea {
+          id: noMa
+
+          hoverEnabled: true
+          Layout.preferredWidth: 50
+          Layout.preferredHeight: 30
+
+          onClicked: root.forgetting = false
+
+          Rectangle {
+            anchors.fill: parent
+            radius: 6
+            color: C.Config.applySecondaryOpacity(noMa.containsMouse ? Qt.lighter(C.Config.theme.background, 1.5) : C.Config.theme.background)
+
+            Behavior on color {
+              ColorAnimation {
+                duration: 400
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: C.Globals.anim_CURVE_SMOOTH_SLIDE
+              }
+            }
+
+            CW.StyledText {
+              anchors.centerIn: parent
+              text: "No"
+            }
           }
         }
       }

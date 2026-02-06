@@ -54,6 +54,7 @@ WrapperMouseArea {
       opacity: open ? 1 : 0
       active: station.active
       ssid: station.ssid
+      known: station.known
       Layout.preferredHeight: open ? implicitHeight : 0
 
       Behavior on opacity {

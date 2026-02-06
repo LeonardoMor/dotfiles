@@ -40,6 +40,11 @@ Singleton {
     connectProc.running = true
   }
 
+  function forget(ssid) {
+    forgetProc.command = ["nmcli", "connection", "delete", ssid]
+    forgetProc.running = true
+  }
+
   function setWifiEnabled(on) {
     if (on == wifiEnabled)
       return;
@@ -279,6 +284,25 @@ Singleton {
       onRead: data => {
         console.log("wifi disconnect error: " + data)
         disconnecting = false
+      }
+    }
+  }
+
+  Process {
+    id: forgetProc
+    running: false
+
+    stdout: SplitParser {
+      splitMarker: ""
+      onRead: data => {
+        refreshWifi()
+      }
+    }
+
+    stderr: SplitParser {
+      splitMarker: ""
+      onRead: data => {
+        console.log("wifi forget error: " + data)
       }
     }
   }
