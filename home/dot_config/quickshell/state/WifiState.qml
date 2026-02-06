@@ -5,7 +5,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
-import "../config" as C
+
 
 Singleton {
   id: root
@@ -26,6 +26,8 @@ Singleton {
   property bool connecting: false
   property bool disconnecting: false
   property int retryCount: 0
+  property string connectError: ""
+  property string connectingSsid: ""
 
   function disconnect(ssid) {
     if (connecting || disconnecting) return
@@ -34,10 +36,12 @@ Singleton {
     disconnectProc.running = true
   }
 
-  function connect(ssid) {
+  function connect(ssid, password) {
     if (connecting || disconnecting) return
     connecting = true
-    connectProc.command = ["nmcli", "device", "wifi", "connect", ssid]
+    connectError = ""
+    connectingSsid = ssid
+    connectProc.command = ["nmcli", "device", "wifi", "connect", ssid, ...(password ? ["password", password] : [])]
     connectProc.running = true
   }
 
@@ -125,30 +129,30 @@ Singleton {
     command: ["nmcli", "--terse", "--fields", "IN-USE,BSSID,SSID,MODE,CHAN,RATE,SIGNAL,BARS,SECURITY,FREQ", "device", "wifi", "list"]
 
     onExited: {
-      if (wifiEnabled && wifiStations.length === 0 && retryCount < 7) {
-        retryCount++
+      if (root.wifiEnabled && root.wifiStations.length === 0 && root.retryCount < 7) {
+        root.retryCount++
         retryScanTimer.restart()
       } else {
-        retryCount = 0
-        wifiScanning = false
+        root.retryCount = 0
+        root.wifiScanning = false
       }
     }
 
     stdout: SplitParser {
       splitMarker: ""
       onRead: data => {
-        wifiScanning = false;
+        root.wifiScanning = false;
 
         // FIXME: this will still change quite often due to signal. Maybe only compare the things we get.
-        if (lastWifiScanResult == data)
+        if (root.lastWifiScanResult == data)
           return;
 
-        lastWifiScanResult = data;
+        root.lastWifiScanResult = data;
 
         const lines = data.split("\n");
-        wifiStations = [];
+        root.wifiStations = [];
         for (let line of lines) {
-          const lineParsed = splitEscaped(line);
+          const lineParsed = root.splitEscaped(line);
 
           if (lineParsed.length < 8 || lineParsed[0].indexOf("IN-USE") != -1 || !lineParsed[2])
             continue;
@@ -164,60 +168,60 @@ Singleton {
           s.bssid = lineParsed[1];
           s.points = 1;
           s.freq = Math.round(parseInt(lineParsed[9].substr(0, lineParsed[9].length - 3)) / 100.0) / 10.0
-          s.known = knownNetworks.includes(s.ssid)
+          s.known = root.knownNetworks.includes(s.ssid)
 
-          if (stationFromSSID(s.ssid) != null) {
-            for (let i = 0; i < wifiStations.length; ++i) {
-              if (wifiStations[i].ssid == s.ssid) {
-                wifiStations[i].points++;
-                wifiStations[i].active = wifiStations[i].active || s.active;
-                wifiStations[i].bars = Math.max(wifiStations[i].bars, s.bars);
-                wifiStations[i].freq = Math.max(wifiStations[i].freq, s.freq);
+          if (root.stationFromSSID(s.ssid) != null) {
+            for (let i = 0; i < root.wifiStations.length; ++i) {
+              if (root.wifiStations[i].ssid == s.ssid) {
+                root.wifiStations[i].points++;
+                root.wifiStations[i].active = root.wifiStations[i].active || s.active;
+                root.wifiStations[i].bars = Math.max(root.wifiStations[i].bars, s.bars);
+                root.wifiStations[i].freq = Math.max(root.wifiStations[i].freq, s.freq);
                 break;
               }
             }
             continue;
           }
 
-          wifiStations = [s, ...wifiStations];
+          root.wifiStations = [s, ...root.wifiStations];
         }
 
-        const activeStation = wifiStations.find(s => s.active) || null
-        wifiStations = sortStations(activeStation, wifiStations)
+        const activeStation = root.wifiStations.find(s => s.active) || null
+        root.wifiStations = root.sortStations(activeStation, root.wifiStations)
       }
     }
   }
 
   Timer {
     id: nmcliListTimer
-    running: wifiEnabled
-    onTriggered: refreshWifi()
+    running: root.wifiEnabled
+    onTriggered: root.refreshWifi()
   }
 
   Timer {
     id: retryScanTimer
     interval: 1000
-    onTriggered: refreshWifi()
+    onTriggered: root.refreshWifi()
   }
 
   Timer {
     id: updateNmcliTimer
     repeat: true
-    running: pendingNmcliCommands.length > 0
+    running: root.pendingNmcliCommands.length > 0
     interval: 100
 
     onTriggered: {
       if (updateNmcliProc.running)
         return;
 
-      updateNmcliProc.command = pendingNmcliCommands[0];
+      updateNmcliProc.command = root.pendingNmcliCommands[0];
       updateNmcliProc.running = true;
 
-      pendingNmcliCommands = pendingNmcliCommands.slice(1);
+      root.pendingNmcliCommands = root.pendingNmcliCommands.slice(1);
 
-      if (pendingNmcliCommands.length == 0 && pendingNmcliScan) {
-        pendingNmcliScan = false;
-        refreshWifi();
+      if (root.pendingNmcliCommands.length == 0 && root.pendingNmcliScan) {
+        root.pendingNmcliScan = false;
+        root.refreshWifi();
       }
     }
   }
@@ -230,7 +234,7 @@ Singleton {
     stdout: SplitParser {
       splitMarker: ""
       onRead: data => {
-        wifiEnabled = data.indexOf("enabled") != -1;
+        root.wifiEnabled = data.indexOf("enabled") != -1;
       }
     }
   }
@@ -250,7 +254,7 @@ Singleton {
           if (parts.length >= 2 && parts[1] === "802-11-wireless")
             networks.push(parts[0])
         }
-        knownNetworks = networks
+        root.knownNetworks = networks
         nmcliListProc.running = true
       }
     }
@@ -264,8 +268,8 @@ Singleton {
       splitMarker: ""
       onRead: data => {
         if (data.indexOf("successfully activated") !== -1) {
-          connecting = false
-          refreshWifi()
+          root.connecting = false
+          root.refreshWifi()
         }
       }
     }
@@ -274,7 +278,22 @@ Singleton {
       splitMarker: ""
       onRead: data => {
         console.log("wifi connect error: " + data)
-        connecting = false
+        root.connectError = "Connection failed"
+        deleteFailedProfileProc.command = ["nmcli", "connection", "delete", root.connectingSsid]
+        deleteFailedProfileProc.running = true
+        root.connecting = false
+      }
+    }
+  }
+
+  Process {
+    id: deleteFailedProfileProc
+    running: false
+
+    stderr: SplitParser {
+      splitMarker: ""
+      onRead: data => {
+        console.log("wifi delete failed profile error: " + data)
       }
     }
   }
@@ -287,8 +306,8 @@ Singleton {
       splitMarker: ""
       onRead: data => {
         if (data.indexOf("successfully deactivated") !== -1) {
-          disconnecting = false
-          refreshWifi()
+          root.disconnecting = false
+          root.refreshWifi()
         }
       }
     }
@@ -297,7 +316,7 @@ Singleton {
       splitMarker: ""
       onRead: data => {
         console.log("wifi disconnect error: " + data)
-        disconnecting = false
+        root.disconnecting = false
       }
     }
   }
@@ -309,7 +328,7 @@ Singleton {
     stdout: SplitParser {
       splitMarker: ""
       onRead: data => {
-        refreshWifi()
+        root.refreshWifi()
       }
     }
 
