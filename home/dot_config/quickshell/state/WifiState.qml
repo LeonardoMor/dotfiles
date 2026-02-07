@@ -28,6 +28,7 @@ Singleton {
   property int retryCount: 0
   property string connectError: ""
   property string connectingSsid: ""
+  property bool connectAutoconnect: true
 
   function disconnect(ssid) {
     if (connecting || disconnecting) return
@@ -36,11 +37,12 @@ Singleton {
     disconnectProc.running = true
   }
 
-  function connect(ssid, password) {
+  function connect(ssid, password, autoconnect) {
     if (connecting || disconnecting) return
     connecting = true
     connectError = ""
     connectingSsid = ssid
+    connectAutoconnect = autoconnect !== false
     connectProc.command = ["nmcli", "device", "wifi", "connect", ssid, ...(password ? ["password", password] : [])]
     connectProc.running = true
   }
@@ -269,6 +271,10 @@ Singleton {
       onRead: data => {
         if (data.indexOf("successfully activated") !== -1) {
           root.connecting = false
+          if (!root.connectAutoconnect) {
+            disableAutoconnectProc.command = ["nmcli", "connection", "modify", root.connectingSsid, "connection.autoconnect", "no"]
+            disableAutoconnectProc.running = true
+          }
           root.refreshWifi()
         }
       }
@@ -294,6 +300,18 @@ Singleton {
       splitMarker: ""
       onRead: data => {
         console.log("wifi delete failed profile error: " + data)
+      }
+    }
+  }
+
+  Process {
+    id: disableAutoconnectProc
+    running: false
+
+    stderr: SplitParser {
+      splitMarker: ""
+      onRead: data => {
+        console.log("wifi disable autoconnect error: " + data)
       }
     }
   }

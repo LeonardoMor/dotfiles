@@ -55,11 +55,11 @@ Rectangle {
     }
 
     Repeater {
-      model: lines
+      model: root.lines
 
       CW.StyledText {
         required property int index;
-        text: lines[index]
+        text: root.lines[index]
       }
     }
 
@@ -115,7 +115,7 @@ Rectangle {
           Layout.preferredHeight: 30
 
           onClicked: {
-            if (active)
+            if (root.active)
               S.WifiState.disconnect(root.ssid)
             else if (root.needsPassword)
               root.enteringPassword = true
@@ -257,8 +257,25 @@ Rectangle {
 
             Keys.onReturnPressed: {
               if (text.length > 0)
-                S.WifiState.connect(root.ssid, text)
+                S.WifiState.connect(root.ssid, text, autoconnectSwitch.checked)
             }
+          }
+        }
+
+        RowLayout {
+          spacing: 6
+
+          CW.StyledSwitch {
+            id: autoconnectSwitch
+            checked: true
+            implicitHeight: 14
+            implicitWidth: 26
+            switchHandlePadding: 2
+            switchHandlePaddingUnchecked: 3
+          }
+
+          CW.StyledText {
+            text: "Connect automatically"
           }
         }
 
@@ -305,7 +322,7 @@ Rectangle {
             Layout.preferredWidth: 110
             Layout.preferredHeight: 30
 
-            onClicked: S.WifiState.connect(root.ssid, passwordField.text)
+            onClicked: S.WifiState.connect(root.ssid, passwordField.text, autoconnectSwitch.checked)
 
             Rectangle {
               anchors.fill: parent
