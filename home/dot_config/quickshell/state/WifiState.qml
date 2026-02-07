@@ -266,28 +266,25 @@ Singleton {
     id: connectProc
     running: false
 
-    stdout: SplitParser {
-      splitMarker: ""
-      onRead: data => {
-        if (data.indexOf("successfully activated") !== -1) {
-          root.connecting = false
-          if (!root.connectAutoconnect) {
-            disableAutoconnectProc.command = ["nmcli", "connection", "modify", root.connectingSsid, "connection.autoconnect", "no"]
-            disableAutoconnectProc.running = true
-          }
-          root.refreshWifi()
-        }
-      }
-    }
-
     stderr: SplitParser {
       splitMarker: ""
       onRead: data => {
         console.log("wifi connect error: " + data)
+      }
+    }
+
+    onExited: (exitCode) => {
+      root.connecting = false
+      if (exitCode === 0) {
+        if (!root.connectAutoconnect) {
+          disableAutoconnectProc.command = ["nmcli", "connection", "modify", root.connectingSsid, "connection.autoconnect", "no"]
+          disableAutoconnectProc.running = true
+        }
+        root.refreshWifi()
+      } else {
         root.connectError = "Connection failed"
         deleteFailedProfileProc.command = ["nmcli", "connection", "delete", root.connectingSsid]
         deleteFailedProfileProc.running = true
-        root.connecting = false
       }
     }
   }
