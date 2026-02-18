@@ -14,7 +14,7 @@ Rectangle {
   property string ssid: ""
   property bool active: false
 
-  property bool busy: S.WifiState.connecting || S.WifiState.disconnecting
+  property bool busy: S.WifiState.connecting || S.WifiState.disconnecting || S.WifiState.togglingWifi
   property bool known: false
   property bool forgetting: false
   property string security: ""

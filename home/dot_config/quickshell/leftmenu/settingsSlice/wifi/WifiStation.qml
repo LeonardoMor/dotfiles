@@ -13,10 +13,23 @@ WrapperMouseArea {
   property var station: {
     "ssid": "Vaxry was here",
     "security": "None",
-    "bars": 4,
-    "active": false
+    "strength": 75,
+    "active": false,
+    "bssid": "",
+    "frequency": 0,
+    "known": false
   }
   property bool open: false
+
+  readonly property string signalLabel: {
+    if (station.strength >= 75)
+      return "Very Good"
+    if (station.strength >= 50)
+      return "Good"
+    if (station.strength >= 25)
+      return "Average"
+    return "Poor"
+  }
 
   hoverEnabled: true
 
@@ -29,14 +42,14 @@ WrapperMouseArea {
 
     DeviceElement {
       Layout.fillWidth: true
-      label: station.ssid
-      active: station.active
-      additionalIcon: station.bars == 4 ? "network_wifi" : (station.bars == 3 ? "network_wifi_3_bar" : (station.bars == 2 ? "network_wifi_2_bar" : "network_wifi_1_bar"))
+      label: root.station.ssid
+      active: root.station.active
+      additionalIcon: root.station.strength >= 75 ? "network_wifi" : (root.station.strength >= 50 ? "network_wifi_3_bar" : (root.station.strength >= 25 ? "network_wifi_2_bar" : "network_wifi_1_bar"))
       hovered: root.containsMouse
     }
 
     Item {
-      Layout.preferredHeight: open ? 6 : -1
+      Layout.preferredHeight: root.open ? 6 : -1
 
       Behavior on Layout.preferredHeight {
         NumberAnimation {
@@ -49,14 +62,14 @@ WrapperMouseArea {
 
     WifiExpansion {
       Layout.fillWidth: true
-      lines: [station.ssid + ", " + station.bssid, "Freq: " + station.freq + "GHz", "Security: " + station.security, "Wifi Points: " + station.points, "Signal: " + (station.bars == 4 ? "Very Good" : (station.bars == 3 ? "Good" : (station.bars == 2 ? "Average" : "Poor")))]
+      lines: [root.station.ssid + ", " + root.station.bssid, "Freq: " + root.station.frequency + "GHz", "Security: " + root.station.security, "Signal: " + root.signalLabel]
       visible: opacity != 0
-      opacity: open ? 1 : 0
-      active: station.active
-      ssid: station.ssid
-      known: station.known
-      security: station.security
-      Layout.preferredHeight: open ? implicitHeight : 0
+      opacity: root.open ? 1 : 0
+      active: root.station.active
+      ssid: root.station.ssid
+      known: root.station.known
+      security: root.station.security
+      Layout.preferredHeight: root.open ? implicitHeight : 0
 
       Behavior on opacity {
         NumberAnimation {

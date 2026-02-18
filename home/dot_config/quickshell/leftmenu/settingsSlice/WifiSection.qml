@@ -1,7 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell.Widgets
 import QtQuick.Controls
+import Quickshell
+import Quickshell.Widgets
 
 import "../../config" as C
 import "../../state" as S
@@ -10,14 +11,7 @@ import "./wifi" as W
 
 BaseListSection {
   id: root
-  property string selectedStation: "[[VAXRY_WAS_HERE]]"
-
-  property var orderedStations: {
-    const stations = S.WifiState.wifiStations.filter(x => x.ssid != "")
-    const selected = stations.find(s => s.bssid === selectedStation)
-    if (!selected) return stations
-    return S.WifiState.sortStations(selected, stations)
-  }
+  property string selectedStation: ''
 
   header: CW.ValueSwitch {
     Layout.fillWidth: true
@@ -26,22 +20,37 @@ BaseListSection {
     label: "Wifi"
     bold: true
     checked: S.WifiState.wifiEnabled
-    onToggled: S.WifiState.setWifiEnabled(!S.WifiState.wifiEnabled)
+    onToggled: {
+      if (S.WifiState.togglingWifi) {
+        checked = Qt.binding(() => S.WifiState.wifiEnabled)
+        return
+      }
+      S.WifiState.setWifiEnabled(!S.WifiState.wifiEnabled)
+    }
   }
 
-  model: orderedStations
+  model: ScriptModel {
+    values: [...S.WifiState.networks].filter(n => n.ssid != '').sort((a, b) => {
+      if (root.selectedStation === a.ssid)
+        return -1
+      if (root.selectedStation === b.ssid)
+        return 1
+      if (a.active !== b.active)
+        return b.active - a.active
+      return b.strength - a.strength
+    })
+  }
   delegate: W.WifiStation {
-    required property int index
     width: ListView.view.width
-    station: orderedStations[index]
+    station: modelData
     onClicked: {
-      if (S.WifiState.connecting || S.WifiState.disconnecting) return
-      if (selectedStation == orderedStations[index].bssid)
-        selectedStation = "[[VAXRY_WAS_HERE]]";
+      if (S.WifiState.connecting || S.WifiState.disconnecting || S.WifiState.togglingWifi) return
+      if (root.selectedStation == modelData.ssid)
+        root.selectedStation = ''
       else
-        selectedStation = orderedStations[index].bssid;
+        root.selectedStation = modelData.ssid
     }
-    open: selectedStation == orderedStations[index].bssid
+    open: root.selectedStation == modelData.ssid
   }
 
   footerIcon: "refresh"
