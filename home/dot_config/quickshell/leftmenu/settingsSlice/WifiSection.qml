@@ -31,10 +31,6 @@ BaseListSection {
 
   model: ScriptModel {
     values: [...S.WifiState.networks].filter(n => n.ssid != '').sort((a, b) => {
-      if (root.selectedStation === a.ssid)
-        return -1
-      if (root.selectedStation === b.ssid)
-        return 1
       if (a.active !== b.active)
         return b.active - a.active
       return b.strength - a.strength
