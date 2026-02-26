@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+source=/usr/share/applications/steam.desktop
+[[ -f $source ]] || exit 0
+sed 's|^Exec=/usr/bin/steam %U$|Exec=prime-run /usr/bin/steam %U|' "$source"
