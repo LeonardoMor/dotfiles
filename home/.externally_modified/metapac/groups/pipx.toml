@@ -1,4 +1,0 @@
-pipx = { packages = [
-    "markitdown",
-    "vdf2json",
-] }

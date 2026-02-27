@@ -3,42 +3,32 @@
 
 NAME="$(basename "$0")"
 
+source -p ~/bin/utils
+
 help() {
     cat <<EOF
 Usage:
-    $NAME [COMMAND] [ARGUMENT...]
+    $NAME SUBCOMMAND [OPTIONS] [ARGUMENT...]
 
-Commands:
-    upgrade|--update|-u
-        Sync package state declared in metapac groups.
-    --help|-h
-        Show this help and exit.
-    <anything else>
-        Passed through to metapac as-is.
+Subcommands:
+    help
+        Show this help message and exit.
+    install
+        Install one or more packages with a specific backend.
+    uninstall
+        Uninstall one or more packages with a specific backend.
+    update|upgrade
+        Run metapac update-all.
 
 Examples:
-    $NAME upgrade
-    $NAME unmanaged
-    $NAME sync
+    $NAME help
+    $NAME install --backend paru ripgrep
+    $NAME uninstall -b pipx vdf2json
+    $NAME update
+
+Use '$NAME SUBCOMMAND [--help|-h]' for specific help.
 EOF
 }
-
-case ${1:-} in
-    --help|-h)
-        help
-        ;;
-    --update|-u|upgrade)
-        shift
-        metapac sync "$@"
-        ;;
-    "")
-        help
-        exit 1
-        ;;
-    *)
-        metapac "$@"
-        ;;
-esac
 
 {{- end -}}
 {{/*

@@ -411,3 +411,15 @@ arch = { packages = [
   "zathura-pdf-mupdf",
   "zen-browser-bin",
 ] }
+
+npm = { packages = [
+    "corepack",
+    "npm",
+    "prettier",
+    "prettier-plugin-awk",
+] }
+
+pipx = { packages = [
+    "markitdown",
+    "vdf2json",
+] }
