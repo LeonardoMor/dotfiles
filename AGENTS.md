@@ -2,8 +2,14 @@
 
 ## Build/Lint/Test Commands
 
-Building will be done manually via `chezmoi` commands. Linting is integrated
-into the editor. Testing is done manually.
+Building will be done manually via `chezmoi` commands. If no LSP are activated,
+run:
+
+```bash
+opencode debug lsp diagnostics FILE
+```
+
+where `FILE` is an absolute path to a file that was modified.
 
 ## Code Style Guidelines
 
@@ -45,6 +51,7 @@ into the editor. Testing is done manually.
 - Prefer bashisms over POSIX. We like bash, and we're not afraid of using its
   features. For example, use `[[` instead of `[` or `test`. Do not quote
   variables in `[[` expressions, and so on.
+- For numerical comparisons, prefer `((..))` over `[[ .. ]]]`.
 - Prefer long-form options for commands where available (e.g., --raw-output over
   -r)
 
@@ -82,10 +89,14 @@ exec jq [OPTIONS] --from-file "$0" "$@"
   Replace `FILE` with the actual template file name.
 - Reference: https://chezmoi.io
 
-### General
+### Version Control
 
 - Do not commit any changes unless explicitly requested
 - When told to commit, use semantic commit messages
+- Unless already tracked, keep `AGENTS.md` untracked
+
+### General
+
 - No comments unless essential
 - Follow existing patterns in each file type
 - Use absolute paths for file operations
