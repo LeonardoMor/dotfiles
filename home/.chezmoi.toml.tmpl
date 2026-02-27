@@ -45,35 +45,6 @@ email = {{ onepasswordRead "op://Private/personal_id_ed25519/add more/email" "my
 {{ end -}}
 {{ if eq $osid "darwin" -}}
 brewPrefix = "/opt/homebrew"
-packageManagers = { "brew" = { command = "brew", install = [
-  "install",
-  "--formula",
-], update = [
-  "update",
-], upgrade = [
-  "upgrade",
-] }, "cask" = { command = "brew", install = [
-  "install",
-  "--cask",
-  "--no-quarantine",
-], update = [
-  "update",
-], upgrade = [
-  "upgrade",
-  "--cask",
-] } }
-{{ end -}}
-{{ if eq .chezmoi.os "linux" -}}
-{{     if eq .chezmoi.osRelease.idLike "arch" -}}
-packageManagers = { "paru" = { command = "paru", install = [
-  "--sync",
-  "--refresh",
-  "--sysupgrade",
-  "--needed",
-  "--noconfirm",
-  "--skipreview",
-], update = [], upgrade = ["--sync", "--refresh", "--sysupgrade", "--skipreview"] } }
-{{     end -}}
 {{ end -}}
 {{ if ne .chezmoi.os "windows" -}}
 {{/*     XDG spec variables */ -}}

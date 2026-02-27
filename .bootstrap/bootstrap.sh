@@ -91,10 +91,8 @@ PREREQUISITES=(
 )
 
 install-meta-pm() {
-    # The selected one is mpm for now
-    is-installed mpm || _install mpm || {
-        is-installed pipx || _install pipx
-        pipx install mpm
+    is-installed metapac || _install metapac || {
+        emit f "Unable to install metapac with the selected package manager" 1
     }
 }
 

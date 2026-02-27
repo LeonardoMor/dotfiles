@@ -1,0 +1,6 @@
+npm = { packages = [
+    "corepack",
+    "npm",
+    "prettier",
+    "prettier-plugin-awk",
+] }

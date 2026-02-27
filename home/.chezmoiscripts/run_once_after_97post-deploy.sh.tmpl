@@ -73,9 +73,7 @@ else
 fi
 
 emit i "Installing other packages..."
-for m in "${OTHERMANAGERS[@]}"; do
-    mpm restore "$PACKAGESPREFIX/${m}.toml"
-done
+metapac sync
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl
