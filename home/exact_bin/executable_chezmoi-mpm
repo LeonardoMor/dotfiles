@@ -1,0 +1,256 @@
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import argparse
+import logging
+import os
+import platform
+import socket
+import subprocess
+import sys
+import tomllib
+from pathlib import Path
+
+import tomli_w
+
+NAME = Path(sys.argv[0]).name
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
+BACKEND_ALIASES = {
+    'pacman': 'arch',
+    'pamac': 'arch',
+    'paru': 'arch',
+    'pikaur': 'arch',
+    'yay': 'arch',
+    'cask': 'brew',
+}
+
+
+def detect_metapac_paths() -> tuple[Path, Path, Path]:
+    system = platform.system().lower()
+    if system == 'linux':
+        base = Path(os.environ.get('XDG_CONFIG_HOME', Path.home() / '.config')) / 'metapac'
+    elif system == 'darwin':
+        base = Path.home() / 'Library' / 'Application Support' / 'metapac'
+    elif system == 'windows':
+        appdata = os.environ.get('APPDATA')
+        if appdata:
+            base = Path(appdata) / 'metapac'
+        else:
+            base = Path.home() / 'AppData' / 'Roaming' / 'metapac'
+    else:
+        base = Path(os.environ.get('XDG_CONFIG_HOME', Path.home() / '.config')) / 'metapac'
+
+    config = base / 'config.toml'
+    groups = base / 'groups'
+    all_group = groups / 'all.toml'
+    return config, groups, all_group
+
+
+METAPAC_CONFIG_PATH, METAPAC_GROUPS_DIR, METAPAC_ALL_GROUP_PATH = detect_metapac_paths()
+
+
+def run(cmd: list[str], *, capture: bool = False) -> str:
+    proc = subprocess.run(cmd, check=False, text=True, capture_output=capture)
+    if proc.returncode != 0:
+        stderr = proc.stderr.strip() if proc.stderr else ''
+        stdout = proc.stdout.strip() if proc.stdout else ''
+        details = stderr or stdout or f'exit status {proc.returncode}'
+        logging.error("Command failed: %s\n%s", ' '.join(cmd), details)
+        raise SystemExit(1)
+    return proc.stdout.strip() if capture else ''
+
+
+def normalize_backend(raw_backend: str) -> str:
+    backend = raw_backend.strip().lower()
+    return BACKEND_ALIASES.get(backend, backend)
+
+
+def read_toml(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    return tomllib.loads(path.read_text(encoding='utf-8'))
+
+
+def write_toml(path: Path, data: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(tomli_w.dumps(data), encoding='utf-8')
+
+
+def enabled_backends_from_config() -> set[str]:
+    config = read_toml(METAPAC_CONFIG_PATH)
+    enabled = {str(x).lower() for x in config.get('enabled_backends', [])}
+
+    host = socket.gethostname()
+    per_host = config.get('hostname_enabled_backends', {})
+    if isinstance(per_host, dict):
+        enabled.update(str(x).lower() for x in per_host.get(host, []))
+
+    return enabled
+
+
+def ensure_backend_enabled(raw_backend: str) -> str:
+    backend = normalize_backend(raw_backend)
+    enabled = enabled_backends_from_config()
+
+    if backend not in enabled:
+        enabled_list = ', '.join(sorted(enabled)) if enabled else '<none>'
+        logging.error(
+            "Backend '%s' resolves to '%s', but it is not enabled. Enabled backends: %s. Update '%s' to include '%s' in enabled_backends.",
+            raw_backend,
+            backend,
+            enabled_list,
+            METAPAC_CONFIG_PATH,
+            backend,
+        )
+        raise SystemExit(1)
+
+    return backend
+
+
+def package_name(item: object) -> str | None:
+    if isinstance(item, str):
+        return item
+    if isinstance(item, dict):
+        name = item.get('name')
+        if isinstance(name, str):
+            return name
+    return None
+
+
+def update_group(backend: str, packages: list[str], *, install: bool) -> tuple[list[str], list[str]]:
+    group = read_toml(METAPAC_ALL_GROUP_PATH)
+
+    backend_data = group.get(backend)
+    if not isinstance(backend_data, dict):
+        backend_data = {}
+        group[backend] = backend_data
+
+    existing = backend_data.get('packages')
+    if not isinstance(existing, list):
+        existing = []
+
+    existing_names = {name for name in (package_name(x) for x in existing) if name is not None}
+    target = set(packages)
+
+    if install:
+        changed = sorted(target - existing_names)
+        unchanged = sorted(target & existing_names)
+        merged = list(existing)
+        for pkg in changed:
+            merged.append(pkg)
+        backend_data['packages'] = sorted(merged, key=lambda x: package_name(x) or '')
+    else:
+        changed = sorted(target & existing_names)
+        unchanged = sorted(target - existing_names)
+        backend_data['packages'] = [
+            item
+            for item in existing
+            if (name := package_name(item)) is None or name not in target
+        ]
+
+    write_toml(METAPAC_ALL_GROUP_PATH, group)
+
+    return changed, unchanged
+
+
+def maybe_commit_and_push(message: str) -> None:
+    branch = run(['chezmoi', 'git', '--', 'rev-parse', '--abbrev-ref', 'HEAD'], capture=True)
+    if branch != 'master':
+        logging.info("Current branch is '%s'. Skipping chezmoi git add/commit/push.", branch)
+        return
+
+    status = run(['chezmoi', 'git', '--', 'status', '--porcelain'], capture=True)
+    if not status.strip():
+        logging.info('No git changes detected. Skipping commit and push.')
+        return
+
+    run(['chezmoi', 'git', 'add', '.'])
+    run(['chezmoi', 'git', 'commit', '-m', message])
+    run(['chezmoi', 'git', 'push'])
+
+
+def cmd_help(parser: argparse.ArgumentParser, _args: argparse.Namespace) -> int:
+    parser.print_help()
+    return 0
+
+
+def cmd_install(args: argparse.Namespace) -> int:
+    backend = ensure_backend_enabled(args.backend)
+    changed, unchanged = update_group(backend, args.packages, install=True)
+    if changed:
+        logging.info("Added to [%s] in %s: %s", backend, METAPAC_ALL_GROUP_PATH, ', '.join(changed))
+    if unchanged:
+        logging.info("Already present in [%s]: %s", backend, ', '.join(unchanged))
+
+    run(['metapac', 'sync'])
+    message = f"chore(packages): install {','.join(args.packages)} in {backend} via chezmoi-mpm"
+    maybe_commit_and_push(message)
+    return 0
+
+
+def cmd_uninstall(args: argparse.Namespace) -> int:
+    backend = ensure_backend_enabled(args.backend)
+    removed, missing = update_group(backend, args.packages, install=False)
+    if removed:
+        logging.info("Removed from [%s] in %s: %s", backend, METAPAC_ALL_GROUP_PATH, ', '.join(removed))
+    if missing:
+        logging.info("Not present in [%s]: %s", backend, ', '.join(missing))
+
+    run(['metapac', 'clean'])
+    message = f"chore(packages): uninstall {','.join(args.packages)} from {backend} via chezmoi-mpm"
+    maybe_commit_and_push(message)
+    return 0
+
+
+def cmd_update(_args: argparse.Namespace) -> int:
+    run(['metapac', 'update-all'])
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog=NAME,
+        description='Manage metapac package groups and apply changes.',
+    )
+    subparsers = parser.add_subparsers(dest='subcommand')
+
+    help_parser = subparsers.add_parser('help', help='Show global help.')
+    help_parser.set_defaults(func=lambda args: cmd_help(parser, args))
+
+    install_parser = subparsers.add_parser('install', help='Add packages then run metapac sync.')
+    install_parser.add_argument('-b', '--backend', required=True, help='Backend name (for example: paru, arch, pipx, npm).')
+    install_parser.add_argument('packages', nargs='+', help='Package names to install.')
+    install_parser.set_defaults(func=cmd_install)
+
+    uninstall_parser = subparsers.add_parser('uninstall', help='Remove packages then run metapac clean.')
+    uninstall_parser.add_argument('-b', '--backend', required=True, help='Backend name (for example: paru, arch, pipx, npm).')
+    uninstall_parser.add_argument('packages', nargs='+', help='Package names to uninstall.')
+    uninstall_parser.set_defaults(func=cmd_uninstall)
+
+    update_parser = subparsers.add_parser('update', help='Run metapac update-all.')
+    update_parser.set_defaults(func=cmd_update)
+
+    upgrade_parser = subparsers.add_parser('upgrade', help='Alias for update.')
+    upgrade_parser.set_defaults(func=cmd_update)
+
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
+    if len(sys.argv) == 1:
+        parser.print_help()
+        return 0
+
+    args = parser.parse_args()
+    func = getattr(args, 'func', None)
+    if func is None:
+        parser.print_help()
+        return 1
+    return int(func(args) or 0)
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

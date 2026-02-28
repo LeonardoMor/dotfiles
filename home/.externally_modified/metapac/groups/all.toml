@@ -412,14 +412,6 @@ arch = { packages = [
   "zen-browser-bin",
 ] }
 
-npm = { packages = [
-    "corepack",
-    "npm",
-    "prettier",
-    "prettier-plugin-awk",
-] }
+npm = { packages = ["corepack", "npm", "prettier", "prettier-plugin-awk"] }
 
-pipx = { packages = [
-    "markitdown",
-    "vdf2json",
-] }
+pipx = { packages = ["markitdown", "vdf2json"] }
