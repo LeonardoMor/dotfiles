@@ -14,5 +14,6 @@
             ],
             "enabled": true
         }
-    }
+    },
+    "plugin": ["opencode-antigravity-auth@latest"]
 }
