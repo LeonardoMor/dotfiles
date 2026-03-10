@@ -38,6 +38,7 @@ arch = { packages = [
   "btrfs-progs",
   "bully",
   "chezmoi",
+  "chromium",
   "chwd",
   "cliphist",
   "cmatrix-git",
