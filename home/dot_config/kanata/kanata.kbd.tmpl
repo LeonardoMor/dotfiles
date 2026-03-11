@@ -22,8 +22,7 @@
   l (tap-hold $tap-time $hold-time l lalt)
   ; (tap-hold $tap-time $hold-time ; rsft)
 {{- if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "infinity") }}
-  caps-layer (tap-hold $tap-time $hold-time esc (layer-while-held caps-layer))
-  caps-layer-game (tap-hold $tap-time $hold-time esc (layer-while-held caps-layer-game))
+  switcher (tap-hold $tap-time $hold-time esc (layer-while-held switcher))
   to-game (layer-switch game)
   to-base (layer-switch base)
 {{- end }}
@@ -51,19 +50,15 @@
 )
 
 (deflayer base
-  @caps-layer @a @s @d @f _ @j @k @l @;
+  @switcher @a @s @d @f _ @j @k @l @;
 )
 
-(deflayer caps-layer
-  esc _ _ _ _ @to-game _ _ _ _
+(deflayer switcher
+  esc _ _ @to-base _ @to-game _ _ _ _
 )
 
 (deflayer game
-  @caps-layer-game a s d f g j k l ;
-)
-
-(deflayer caps-layer-game
-  esc _ _ _ _ @to-base _ _ _ _
+  @switcher a s d f g j k l ;
 )
 {{- else }}
 (defsrc
