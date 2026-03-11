@@ -70,6 +70,7 @@ arch = { packages = [
   "efitools",
   "egl-wayland",
   "ethtool",
+  "evtest",
   "exfatprogs",
   "expac",
   "ex-vi-compat",

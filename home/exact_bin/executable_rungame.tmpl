@@ -23,7 +23,6 @@ pre() {
     #            keyword general:border_size 1;\
     #            keyword decoration:rounding 0"
     #    fi
-    systemctl --user stop kanata.service
     hyprctl dispatch exec -- \
         qs ipc call notification setDnD true
 }
@@ -41,7 +40,6 @@ main() {
 }
 
 post() {
-    systemctl --user start kanata.service
     hyprctl reload
     hyprctl dispatch exec -- \
         qs ipc call notification setDnD false
