@@ -130,6 +130,7 @@ arch = { packages = [
   "jfsutils",
   "john",
   "kanata",
+  { name = "kanata-switcher", hooks = { after_sync = ["sh", "-lc", "systemctl --user daemon-reload; systemctl --user enable --now kanata-switcher.service"] } },
   "kitty",
   "kservice",
   "kvantum",
