@@ -1,6 +1,6 @@
 [cask]
   1password = "8.12.5"
-  1password-cli = "2.32.1"
+  1password-cli = "2.33.0"
   adobe-acrobat-reader = "25.001.21223"
   alacritty = "0.16.1"
   android-platform-tools = "36.0.2"
