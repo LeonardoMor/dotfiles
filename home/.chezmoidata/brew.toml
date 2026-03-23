@@ -33,7 +33,7 @@
   gh = "2.88.1"
   giflib = "6.1.2"
   git-filter-repo = "2.47.0"
-  glab = "1.89.0"
+  glab = "1.90.0"
   glib = "2.88.0"
   gmp = "6.3.0"
   gnu-getopt = "2.41.3"
