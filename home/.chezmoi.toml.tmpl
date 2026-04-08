@@ -33,10 +33,11 @@ commitMessageTemplate = {{ print "{{ promptString \"Commit message\" }}" | quote
 {{   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
 {{ end -}}
 {{ $workHost := "LMORACAS-M-D6L6" -}}
+{{- $name := promptStringOnce . "name" "Full name" -}}
 [data]
 osid = {{ $osid | quote }}
 workHost = {{ $workHost | quote }}
-name = "Leonardo Mora Castro"
+name = {{ $name | quote }}
 vaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
 {{ if eq .chezmoi.hostname $workHost -}}
 email = {{ onepasswordRead "op://Employee/workKey/add more/email" "cisco.1password.com" | quote }}
