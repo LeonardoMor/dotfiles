@@ -369,6 +369,7 @@ arch = { packages = [
   "tmux",
   "tokyonight-gtk-theme-git",
   "tree",
+  "tree-sitter-cli",
   "ttf-bitstream-vera",
   "ttf-dejavu",
   "ttf-fantasque-nerd",
