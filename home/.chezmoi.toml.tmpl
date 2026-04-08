@@ -62,18 +62,6 @@ packageManagers = { "brew" = { command = "brew", install = [
   "--cask",
 ] } }
 {{ end -}}
-{{ if eq .chezmoi.os "linux" -}}
-{{     if eq .chezmoi.osRelease.idLike "arch" -}}
-packageManagers = { "paru" = { command = "paru", install = [
-  "--sync",
-  "--refresh",
-  "--sysupgrade",
-  "--needed",
-  "--noconfirm",
-  "--skipreview",
-], update = [], upgrade = ["--sync", "--refresh", "--sysupgrade", "--skipreview"] } }
-{{     end -}}
-{{ end -}}
 {{ if ne .chezmoi.os "windows" -}}
 {{/*     XDG spec variables */ -}}
 xdgConfigHome = "{{ .chezmoi.homeDir }}/.config"

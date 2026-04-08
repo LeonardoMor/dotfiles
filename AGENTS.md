@@ -2,8 +2,14 @@
 
 ## Build/Lint/Test Commands
 
-Building will be done manually via `chezmoi` commands. Linting is integrated
-into the editor. Testing is done manually.
+Building will be done manually via `chezmoi` commands. If no LSP are activated,
+run:
+
+```bash
+opencode debug lsp diagnostics FILE
+```
+
+where `FILE` is an absolute path to a file that was modified.
 
 ## Code Style Guidelines
 
@@ -25,47 +31,53 @@ into the editor. Testing is done manually.
 
 - Prefer Bash. But when other tools are appropriate such as `sed`, `awk`, `jq`,
   use them.
-- In Bash, everything is a command. Commands return nothing but an exit code,
-  but normally produce side effects in the form of writing to the standard file
-  descriptors. Commands can interact with each other via these file descriptors,
-  which make sense for interactive cli usage (oneliners). But for scripts, if
-  the commands share the same environment, it is more elegant to have them
-  interact with each other via variables.
-- Given the previous point, for scripts, avoid creating unnecessary sub-shells.
-  For example, prefer `while ..; do ..; done < <(command)` over
-  `command | while ..; do ..; done`.
-- Use `#!/usr/bin/env bash`
-- Error handling: `die()` or `emit` functions with levels (i|e|w|f)
-- Functions: kebab-case naming `function-name`
-- Local variables: snake_case naming `local var_name`
-- Global variables: ALL_CAPS naming `GLOBAL_VAR_NAME`
-- Global constants: ALL_CAPS naming `GLOBAL_CONST_NAME`
-- 4-space indent
-- Prefer `command || action` over `if ! command; then action; fi`
-- Prefer bashisms over POSIX. We like bash, and we're not afraid of using its
-  features. For example, use `[[` instead of `[` or `test`. Do not quote
-  variables in `[[` expressions, and so on.
-- Prefer long-form options for commands where available (e.g., --raw-output over
-  -r)
 
-#### `jq` scripts
+#### Shared Utilities
 
-- You can have sophisticated logic with pure `jq` scripts, with the help of
-  `Bash`. Consider this construct:
+The shared utils library is defined in `~/.chezmoitemplates/utils` and rendered
+to `~/bin/utils.sh`. It provides the `emit()` logging function and
+`change-dir()`. Source it in scripts that run after chezmoi has deployed:
 
-```jq
-#!/usr/bin/env -S bash --
-#
-# In `jq` comments can be continued with \. So the following line will be ignored by jq, but not by Bash.
-# \
-exec jq [OPTIONS] --from-file "$0" "$@"
-
-# And so here you can add pure jq. For an example of this use case, see ~/bin/get-next-sink
+```bash
+source -p ~/bin utils.sh
 ```
 
-- When filtering an array into a new array where each element is the
-  corresponding filtered element of the original array, prefer `map(filter)`
-  over `[.[] | filter]`.
+In standalone scripts where chezmoi templates are not available (e.g.,
+`.bootstrap/bootstrap.sh`), duplicate `emit()` directly.
+
+#### Chezmoi Template Integration for Shell Scripts
+
+Every `.tmpl` shell script starts with a platform/host guard:
+
+```bash
+{{- if eq .chezmoi.hostname "infinity" -}}
+#!/usr/bin/env bash
+...
+{{- end -}}
+```
+
+Common guards:
+- `{{ if eq .chezmoi.os "linux" -}}` -- Linux only
+- `{{ if eq .chezmoi.os "darwin" -}}` -- macOS only
+- `{{ if ne .chezmoi.os "windows" -}}` -- non-Windows
+- `{{- if eq .chezmoi.hostname "infinity" -}}` -- specific host
+
+Every template file ends with a vim modeline in a chezmoi comment:
+
+```
+{{/*
+vim: filetype=sh.gotmpl
+*/}}
+```
+
+Use `sh.gotmpl` for shell scripts, `jq.gotmpl` for jq polyglots, `gotmpl` for
+pure templates.
+
+Access chezmoi data inside scripts:
+
+```bash
+VAULTSDIR={{ .vaultsDir | quote }}
+```
 
 ### Chezmoi Templates
 
@@ -82,10 +94,14 @@ exec jq [OPTIONS] --from-file "$0" "$@"
   Replace `FILE` with the actual template file name.
 - Reference: https://chezmoi.io
 
-### General
+### Version Control
 
 - Do not commit any changes unless explicitly requested
 - When told to commit, use semantic commit messages
+- Unless already tracked, keep `AGENTS.md` untracked
+
+### General
+
 - No comments unless essential
 - Follow existing patterns in each file type
 - Use absolute paths for file operations

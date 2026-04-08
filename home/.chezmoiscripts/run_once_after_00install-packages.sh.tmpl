@@ -1,10 +1,14 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
+{{ if eq .chezmoi.os "darwin" -}}
 {{ range $pm, $args := .packageManagers -}}
 xargs {{ $args.command }} {{ template "toShellArgs" $args.install }} <<EOF
 {{ index $ $pm | keys | sortAlpha | join "\n" }}
 EOF
+{{ end -}}
+{{ else -}}
+metapac sync
 {{ end -}}
 {{- end -}}
 {{- /*

@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "darwin" -}}
 PACKAGESPREFIX={{ joinPath .chezmoi.sourceDir ".chezmoidata" | quote }}
 
 MANAGERSjson="$(mpm --output-format json managers)"
@@ -7,6 +8,7 @@ mapfile -t MANAGERS < <(
 mapfile -t OTHERMANAGERS < <(
     jq --argjson excluded {{ keys .packageManagers | sortAlpha | toJson | squote }} --raw-output 'keys - $excluded | .[]' <<<"$MANAGERSjson"
 )
+{{ end -}}
 
 emit() {
     case "$1" in

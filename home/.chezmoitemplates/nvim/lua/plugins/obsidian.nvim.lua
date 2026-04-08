@@ -7,22 +7,23 @@
         ---@module 'obsidian'
         ---@type obsidian.config.ClientOpts
         opts = {
-            wiki_link_func = "use_alias_only",
             workspaces = utils.vaults,
             completion = {
                 blink = true,
                 min_chars = 2,
             },
             ui = { enable = false },
-            follow_url_func = function(url)
-                {{- if eq .chezmoi.os "darwin" }}
-                vim.fn.jobstart({"open", url})
-                {{- else if eq .chezmoi.os "linux" }}
-                vim.fn.jobstart({"xdg-open", url})
-                {{- else if eq .chezmoi.os "windows" }}
-                vim.fn.jobstart({"start", url})
-                {{- end }}
-            end,
+            link = {
+                style = function(opts)
+                    local header_or_block = ''
+                    if opts.anchor then
+                        header_or_block = string.format('#%s', opts.anchor.header)
+                    elseif opts.block then
+                        header_or_block = string.format('#%s', opts.block.id)
+                    end
+                    return string.format('[[%s%s]]', opts.label, header_or_block)
+                end,
+            },
             daily_notes = {
                 folder = "Inbox/Journal",
                 date_format = "%F",

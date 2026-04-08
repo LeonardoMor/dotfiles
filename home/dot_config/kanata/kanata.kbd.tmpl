@@ -16,6 +16,11 @@
   k (tap-hold $tap-time $hold-time k lmet)
   l (tap-hold $tap-time $hold-time l lalt)
   ; (tap-hold $tap-time $hold-time ; rsft)
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "infinity") }}
+  switcher (tap-hold $tap-time $hold-time esc (layer-while-held switcher))
+  to-game (layer-switch game)
+  to-base (layer-switch base)
+{{- end }}
 )
 
 {{ if eq .chezmoi.os "darwin" -}}
@@ -34,7 +39,23 @@
   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10   f11   f12
   esc _ _ _ _ _ _ _ _
 )
-{{- else -}}
+{{- else if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "infinity") }}
+(defsrc
+  caps a s d f g j k l ;
+)
+
+(deflayer base
+  @switcher @a @s @d @f _ @j @k @l @;
+)
+
+(deflayer switcher
+  esc _ _ @to-base _ @to-game _ _ _ _
+)
+
+(deflayer game
+  @switcher a s d f g j k l ;
+)
+{{- else }}
 (defsrc
   caps a s d f j k l ;
 )

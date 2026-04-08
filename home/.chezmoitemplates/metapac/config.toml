@@ -1,0 +1,21 @@
+enabled_backends = [
+{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.idLike "cachyos") (eq .chezmoi.osRelease.idLike "arch")) }}
+    "arch",
+{{- else if eq .chezmoi.os "darwin" }}
+    "brew",
+{{- end }}
+    "pipx",
+    "npm",
+]
+
+hostname_groups_enabled = false
+
+{{- if eq .chezmoi.os "linux" }}
+[arch]
+package_manager = "paru"
+{{- end }}
+
+{{- if eq .chezmoi.os "darwin" }}
+[brew]
+quarantine = false
+{{- end }}

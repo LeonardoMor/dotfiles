@@ -73,9 +73,13 @@ else
 fi
 
 emit i "Installing other packages..."
+{{ if eq .chezmoi.os "darwin" -}}
 for m in "${OTHERMANAGERS[@]}"; do
     mpm restore "$PACKAGESPREFIX/${m}.toml"
 done
+{{ else -}}
+metapac sync
+{{ end -}}
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl
