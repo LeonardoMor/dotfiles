@@ -1,0 +1,29 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+source ~/bin/utils.sh
+
+VENV=~/.local/share/pipx/venvs/markitdown
+PYTHON="$VENV/bin/python"
+SPEC='markitdown-mcp @ git+https://github.com/microsoft/markitdown.git#subdirectory=packages/markitdown-mcp'
+
+[[ -d $VENV ]] || {
+    emit i 'markitdown not installed via pipx, installing...'
+    pipx install markitdown || emit f 'Failed to install markitdown' 1
+}
+
+emit i 'Upgrading markitdown...'
+pipx upgrade markitdown || emit w 'pipx upgrade failed (may already be latest)'
+
+emit i 'Updating markitdown-mcp from GitHub...'
+"$PYTHON" -m pip install --no-deps --upgrade "$SPEC" || emit f 'Failed to install markitdown-mcp' 1
+
+emit i 'Updating mcp dependency...'
+"$PYTHON" -m pip install --upgrade mcp || emit f 'Failed to install mcp' 1
+
+emit i 'Done'
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}
