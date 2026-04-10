@@ -17,9 +17,13 @@ else
 fi
 
 [[ $(findmnt -no SOURCE /) =~ luks ]] && {
-    dasel --in toml --out toml --root \
-        '$root.initial_session.command = "start-hyprland";
-        $root.initial_session.user = "{{ .chezmoi.username }}";' <"$GREETD_CONFIG" |
+    dasel -i toml -o toml '$root.{
+        $root...,
+        "initial_session": {
+            "command": "start-hyprland",
+            "user": "{{ .chezmoi.username }}"
+        }
+    }' <"$GREETD_CONFIG" |
         sudo tee "$GREETD_CONFIG.tmp" >/dev/null
     if [[ -s ${GREETD_CONFIG}.tmp ]]; then
         sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
