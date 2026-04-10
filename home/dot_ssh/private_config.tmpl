@@ -1,3 +1,13 @@
+{{- if eq .chezmoi.hostname "infinity" }}
+Host rook-borg
+    Hostname rook
+    Port 2222
+    User borg
+    IdentityAgent none
+    IdentityFile ~/.ssh/borg_backup
+    IdentitiesOnly yes
+
+{{ end -}}
 Host *
 {{- if eq .chezmoi.os "linux" }}
     IdentityAgent ~/.1password/agent.sock
