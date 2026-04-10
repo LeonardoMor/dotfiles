@@ -40,5 +40,8 @@ grep -q pam_gnome_keyring "$GREETD_PAM" || {
 }
 
 # Hyprland Desktop Experience
-bash -c "$(curl -fsSL https://dl.hypr.land/desktop/install.sh)"
+if ! [[ -f ~/.local/share/hyprland-de/token ]] \
+    || ! compgen -G "/run/user/$(id -u)/quickshell/by-id/*/log.qslog" >/dev/null; then
+    bash -c "$(curl -fsSL https://dl.hypr.land/desktop/install.sh)"
+fi
 {{- end -}}
