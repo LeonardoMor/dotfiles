@@ -1,0 +1,40 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+# Configure greetd
+GREETD_CONFIG="/etc/greetd/config.toml"
+
+hyprcmd='agreety --cmd start-hyprland' dasel --in toml --out toml --root \
+    'if (default_session.command != $hyprcmd) {
+        default_session.command = $hyprcmd
+    } else {
+        $root
+    }' <"$GREETD_CONFIG" | sudo tee "$GREETD_CONFIG.tmp" >/dev/null
+if [[ -s ${GREETD_CONFIG}.tmp ]]; then
+    sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
+else
+    sudo rm -f "$GREETD_CONFIG.tmp"
+fi
+
+[[ $(findmnt -no SOURCE /) =~ luks ]] && {
+    dasel --in toml --out toml --root \
+        '$root.initial_session.command = "start-hyprland";
+        $root.initial_session.user = "{{ .chezmoi.username }}";' <"$GREETD_CONFIG" |
+        sudo tee "$GREETD_CONFIG.tmp" >/dev/null
+    if [[ -s ${GREETD_CONFIG}.tmp ]]; then
+        sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
+    else
+        sudo rm -f "$GREETD_CONFIG.tmp"
+    fi
+}
+
+# Configure PAM to unlock gnome-keyring on login
+GREETD_PAM="/etc/pam.d/greetd"
+grep -q pam_gnome_keyring "$GREETD_PAM" || {
+    sudo sed -i '/^auth.*include.*system-local-login/a auth       optional     pam_gnome_keyring.so' "$GREETD_PAM"
+    sudo sed -i '/^session.*include.*system-local-login/a session    optional     pam_gnome_keyring.so auto_start' "$GREETD_PAM"
+}
+
+# Hyprland Desktop Experience
+bash -c "$(curl -fsSL https://dl.hypr.land/desktop/install.sh)"
+{{- end -}}

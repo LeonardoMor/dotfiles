@@ -1,6 +1,8 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
+source -p ~ .profile
+
 {{ if eq .chezmoi.os "darwin" -}}
 {{ range $pm, $args := .packageManagers -}}
 xargs {{ $args.command }} {{ template "toShellArgs" $args.install }} <<EOF
@@ -8,7 +10,7 @@ xargs {{ $args.command }} {{ template "toShellArgs" $args.install }} <<EOF
 EOF
 {{ end -}}
 {{ else -}}
-metapac sync
+metapac sync --no-confirm || metapac sync --no-confirm || metapac sync --no-confirm
 {{ end -}}
 {{- end -}}
 {{- /*

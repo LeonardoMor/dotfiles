@@ -1,0 +1,20 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+sudo ufw allow 53317/udp comment 'LocalSend'
+sudo ufw allow 53317/tcp comment 'LocalSend'
+sudo ufw allow 22/tcp comment 'SSH'
+sudo ufw allow 4096/tcp comment 'OpenCode'
+sudo ufw allow in on docker0 to any port 53 comment 'Docker DNS'
+
+# Turn on the firewall
+sudo ufw enable
+sudo ufw reload
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

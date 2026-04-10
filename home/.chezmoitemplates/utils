@@ -10,6 +10,8 @@ mapfile -t OTHERMANAGERS < <(
 )
 {{ end -}}
 
+declare -l OS
+
 emit() {
     case "$1" in
         i) printf 'INFO: %s\n' "$2" >&2 ;;
@@ -23,6 +25,43 @@ emit() {
 
 change-dir() {
     cd "$1" || emit f "Failed to change $1" 1
+}
+
+set-INSTALL() {
+    local opt OPTIND OPTARG
+    while getopts 'p:' opt; do
+        case "$opt" in
+            p)
+                INSTALL="${OPTARG}/"
+                ;;
+            *)
+                emit i "set-INSTALL: wrong option"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    INSTALL+="$1"
+    shift
+    [[ ${1-} == "--" ]] && shift
+    ARGS=("$@")
+}
+
+set-system-package-manager() {
+    OS="$(uname)"
+    case "$OS" in
+        linux) OS="$(grep -E '^ID_LIKE' /etc/os-release | cut -d'=' -f2)" ;;
+    esac
+
+    case "$OS" in
+        arch) set-INSTALL paru -- --sync --refresh --sysupgrade --needed --noconfirm ;;
+        darwin) set-INSTALL -p "/opt/homebrew/bin" -- brew install ;;
+        *) emit i "Unsupported OS" 1 ;;
+    esac
+}
+
+_install() {
+    "$INSTALL" "${ARGS[@]}" "$@"
 }
 
 {{- /*

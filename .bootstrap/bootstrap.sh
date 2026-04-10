@@ -4,15 +4,35 @@
 # This is a pre-requisite, pure bash script. In particular, templating syntax
 # is not available here
 
+declare -l OS
+FINAL_STAGE="$(mktemp)"
+
+cleanup() {
+    rm -f "$FINAL_STAGE"
+}
+
+trap cleanup EXIT
+
 emit() {
+    local rc=0
     case "$1" in
-        i) printf 'INFO: %s\n' "$2" >&2 ;;
-        e) printf 'ERROR: %s\n' "$2" >&2 ;;
-        w) printf 'WARNING: %s\n' "$2" >&2 ;;
-        f) printf 'FATAL: %s\n' "$2" >&2 ;;
+        i) printf '\nINFO: %s\n\n' "$2" >&2 ;;
+        w)
+            printf '\nWARNING: %s\n\n' "$2" >&2
+            rc=1
+            ;;
+        e)
+            printf '\nERROR: %s\n\n' "$2" >&2
+            rc=1
+            ;;
+        f)
+            printf '\nFATAL: %s\n\n' "$2" >&2
+            rc=1
+            ;;
         *) emit e "Invalid option or format" ;;
     esac
     [[ -z $3 ]] || exit "$3"
+    return "$rc"
 }
 
 change-dir() {
@@ -20,23 +40,23 @@ change-dir() {
 }
 
 is-installed() {
-    command -v "$1" || emit w "$1 not is installed"
+    command -v "$1" >/dev/null 2>&1 || emit w "$1 is not installed"
 }
 
 install-system-package-manager() {
-    emit -i "Installing $1"
+    emit i "Installing $1"
     case "$1" in
         brew)
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             ;;
         paru)
             (
-                change_dir "$HOME"
+                change-dir "$HOME"
                 sudo pacman --sync --sysupgrade
                 sudo pacman --sync --needed base-devel
                 git clone https://aur.archlinux.org/paru.git
                 sudo mv paru /opt
-                change_dir /opt/paru
+                change-dir /opt/paru
                 makepkg -si
             )
             ;;
@@ -61,21 +81,26 @@ set-INSTALL() {
     is-installed "$1" || install-system-package-manager "$1"
     INSTALL+="$1"
     shift
+    [[ ${1-} == "--" ]] && shift
     ARGS=("$@")
 }
 
-set-system-package-manager() {
-    local uname_out
-    uname_out="$(uname)"
-    case "$uname_out" in
-        Darwin) OS="${uname_out,,}" ;;
-        Linux) OS="$(grep -E '^ID_LIKE' /etc/os-release | cut -d'=' -f2)" OS="${OS,,}" ;;
-        *) emit i "Unsupported OS" 1 ;;
+set-system-managers() {
+    OS="$(uname)"
+    case "$OS" in
+        linux) OS="$(grep -E '^ID_LIKE' /etc/os-release | cut -d'=' -f2)" ;;
     esac
 
     case "$OS" in
-        arch) set-INSTALL paru -- --sync --refresh --sysupgrade --needed --noconfirm ;;
-        darwin) set-INSTALL -p "/opt/homebrew/bin" -- brew install ;;
+        arch)
+            set-INSTALL paru -- --sync --refresh --sysupgrade --needed --noconfirm
+            METAPM=metapac
+            ;;
+        darwin)
+            set-INSTALL -p "/opt/homebrew/bin" -- brew install
+            METAPM=meta-package-manager
+            ;;
+        *) emit i "Unsupported OS" 1 ;;
     esac
 }
 
@@ -83,25 +108,17 @@ _install() {
     "$INSTALL" "${ARGS[@]}" "$@"
 }
 
+# Entry point
+set-system-managers
 PREREQUISITES=(
     1password
     1password-cli
     chezmoi
-    pipx
+    "$METAPM"
 )
 
-install-meta-pm() {
-    is-installed metapac || _install metapac || {
-        emit f "Unable to install metapac with the selected package manager" 1
-    }
-}
-
-# Entry point
-set-system-package-manager
 _install "${PREREQUISITES[@]}"
-install-meta-pm
 
-export OP_ACCOUNT=my.1password.com
-eval "$(op signin)"
-
-chezmoi init --apply LeonardoMor
+grep export <<<"$(op account add --signin </dev/tty)" >"$FINAL_STAGE"
+echo "chezmoi init --apply --branch ${BRANCH:-master} LeonardoMor </dev/tty" >>"$FINAL_STAGE"
+bash -x "$FINAL_STAGE"

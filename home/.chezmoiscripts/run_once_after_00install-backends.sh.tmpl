@@ -1,0 +1,20 @@
+{{- if ne .osid "windows" -}}
+#!/usr/bin/env bash
+
+source -p ~/bin utils.sh
+
+set-system-package-manager
+_install python-pipx nvm
+source -p ~ .profile
+
+# Install node
+emit i 'Installing node Iron...'
+if nvm install --lts=iron; then
+    nvm use --lts=iron || emit e "Failed using node Iron"
+else
+    emit e "Failed to install node Iron"
+fi
+{{- end -}}
+{{- /*
+vim: filetype=sh.gotmpl
+*/ -}}

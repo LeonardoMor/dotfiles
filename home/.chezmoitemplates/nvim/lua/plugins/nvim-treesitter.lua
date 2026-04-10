@@ -29,6 +29,7 @@
                 'markdown',
                 'vim',
                 'vimdoc',
+                'xml',
             }
             local alreadyInstalled = require('nvim-treesitter.config').get_installed()
             local parsersToInstall = vim.iter(ensureInstalled)
