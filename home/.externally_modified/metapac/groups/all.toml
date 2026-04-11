@@ -132,6 +132,7 @@ packages = [
   "sbctl",
   "scdoc",
   "scopebuddy-git",
+  "seahorse",
   "slurp",
   "starship",
   "strace",
