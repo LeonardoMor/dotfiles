@@ -1,6 +1,11 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
+# Usage:
+#   In Steam launch options, put
+#
+#   rungame %command%
+
 set -x
 
 FIXEDWRAPPERS=(
