@@ -36,9 +36,11 @@ SCB_DEBUG=1
 # $command will contain everything steam expanded %command% into
 # 
 SCB_GAMESCOPE_ARGS="--backend sdl --force-grab-cursor --mangoapp"
-if hyprctl -j monitors | jq --exit-status '.[] | select(.model == "AW2725D")' > /dev/null 2>&1; then
-    SCB_GAMESCOPE_ARGS+=" --nested-width 2560 --nested-height 1440 --nested-refresh 280 --adaptive-sync"
-else
-    SCB_AUTO_RES=1
-    SCB_AUTO_VRR=1
-fi
+{{ if eq .monitorProfile "alienware" -}}
+SCB_GAMESCOPE_ARGS+=" --nested-width 2560 --nested-height 1440 --nested-refresh 280 --adaptive-sync"
+{{ else -}}
+SCB_AUTO_RES=1
+SCB_AUTO_VRR=1
+{{ end -}}
+{{- /* vim: filetype=sh.gotmpl
+*/ -}}

@@ -37,11 +37,16 @@ prompt = true
 {{ end -}}
 {{ $workHost := "LMORACAS-M-D6L6" -}}
 {{- $name := promptStringOnce . "name" "Full name" -}}
+{{- $monitorProfile := "none" -}}
+{{ if eq .chezmoi.os "linux" -}}
+{{-   $monitorProfile = promptChoiceOnce . "monitorProfile" "External monitor profile" (list "none" "alienware" "asus-vg248") -}}
+{{ end -}}
 [data]
 osid = {{ $osid | quote }}
 workHost = {{ $workHost | quote }}
 name = {{ $name | quote }}
 vaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
+monitorProfile = {{ $monitorProfile | quote }}
 {{ if eq .chezmoi.hostname $workHost -}}
 email = {{ onepasswordRead "op://Employee/workKey/add more/email" "cisco" | quote }}
 {{ else -}}
