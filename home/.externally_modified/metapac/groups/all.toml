@@ -114,6 +114,7 @@ packages = [
   "nvm",
   "obsidian",
   "octopi",
+  "onlyoffice",
   "opencl-nvidia",
   "opencode",
   "opendesktop-fonts",
