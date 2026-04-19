@@ -30,6 +30,7 @@ bin
 !.config/starship.toml
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
+.config/discord
 .local
 bin/get-next-sink
 bin/launch-or-focus
