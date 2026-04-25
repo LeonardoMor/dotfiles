@@ -2,11 +2,11 @@
 # lines starting with # are ignored
 # Conf files matching the games Steam AppID stored in ~/.conf/scopebuddy/AppID/ will be sourced after
 # ~/.config/scopebuddy/scb.conf or whichever file you specify with SCB_CONF=someotherfile.conf env var in the launch options.
-# 
+#
 # Example for always exporting specific environment variables for gamescope
 #export XKB_DEFAULT_LAYOUT=no
 #export MANGOHUD_CONFIG=preset=2
-export PROTON_USE_NTSYNC=1 
+export PROTON_USE_NTSYNC=1
 #
 # Example for providing default gamescope arguments through scopebuddy if no arguments are given to the scopebuddy script, this does not need to be exported.
 # To not use this default set of arguments, just launch scb with SCB_NOSCOPE=1 or just add any gamescope argument before the '-- %command%' then this variable will be ignored
@@ -34,13 +34,22 @@ SCB_DEBUG=1
 # $SCB_NOSCOPE will be set to 1 if we are running in no gamescope mode
 # $SCB_GAMEMODE will be set to 1 if we are running inside steam gamemode (which means SCB_NOSCOPE will also be set to 1 due to nested gamescope not working in gamemode)
 # $command will contain everything steam expanded %command% into
-# 
-SCB_GAMESCOPE_ARGS="--backend sdl --force-grab-cursor --mangoapp"
-{{ if eq .monitorProfile "alienware" -}}
-SCB_GAMESCOPE_ARGS+=" --nested-width 2560 --nested-height 1440 --nested-refresh 280 --adaptive-sync"
-{{ else -}}
-SCB_AUTO_RES=1
-SCB_AUTO_VRR=1
-{{ end -}}
+#
+SCB_GAMESCOPE_ARGS="--backend sdl --force-grab-cursor --mangoapp --adaptive-sync"
+{{ if ne .monitorProfile "none" -}}
+preferred_monitor="$(hyprctl -j monitors all 2>/dev/null \
+    | jq --compact-output --arg model {{ .monitorModel | quote }} \
+        'map(select(.model == $model and .disabled == false)) | first // empty')"
+if [[ -n $preferred_monitor ]]; then
+    preferred_output="$(jq --raw-output '.name' <<<"$preferred_monitor")"
+    preferred_width="$(jq --raw-output '.width' <<<"$preferred_monitor")"
+    preferred_height="$(jq --raw-output '.height' <<<"$preferred_monitor")"
+    preferred_refresh="$(jq --raw-output '.refreshRate | round' <<<"$preferred_monitor")"
+    SCB_GAMESCOPE_ARGS+=" --prefer-output $preferred_output"
+    SCB_GAMESCOPE_ARGS+=" --output-width $preferred_width --output-height $preferred_height"
+    SCB_GAMESCOPE_ARGS+=" --nested-width $preferred_width --nested-height $preferred_height"
+    SCB_GAMESCOPE_ARGS+=" --nested-refresh $preferred_refresh"
+fi
+{{- end }}
 {{- /* vim: filetype=sh.gotmpl
 */ -}}

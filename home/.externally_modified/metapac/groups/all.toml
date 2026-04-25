@@ -106,7 +106,6 @@ packages = [
   "nmap",
   "noto-color-emoji-fontconfig",
   "noto-fonts-extra",
-  "ntfs-3g",
   "ntp",
   "nvidia-prime",
   "nvidia-settings",
@@ -114,7 +113,6 @@ packages = [
   "nvm",
   "obsidian",
   "octopi",
-  "onlyoffice",
   "opencl-nvidia",
   "opencode",
   "opendesktop-fonts",
@@ -173,6 +171,103 @@ packages = [
   "zathura",
   "zathura-pdf-mupdf",
   "zen-browser-bin",
+
+  # Hyprland dependencies
+  "aquamarine",
+  "egl-wayland",
+  "gtk4-layer-shell",
+  "hyprcursor",
+  "hyprgraphics",
+  "hyprland-guiutils",
+  "hyprland-qt-support",
+  "hyprlang",
+  "hyprtoolkit",
+  "hyprutils",
+  "hyprwayland-scanner",
+  "hyprwire",
+  "libadwaita",
+  "rtkit",
+  "seatd",
+  "wayland-protocols",
+  "xdg-desktop-portal",
+  "xorg-xwayland",
+
+  # Ghostty dependencies
+  "ghostty-shell-integration",
+  "ghostty-terminfo",
+
+  # Neovim dependencies
+  "libluv",
+  "libutf8proc",
+  "libvterm",
+  "lua51-lpeg",
+  "luajit",
+  "msgpack-c",
+  "tree-sitter",
+  "tree-sitter-c",
+  "tree-sitter-lua",
+  "tree-sitter-markdown",
+  "tree-sitter-query",
+  "tree-sitter-vim",
+  "tree-sitter-vimdoc",
+  "unibilium",
+
+  # Virtualization (QEMU/libvirt)
+  "fuse-common",
+  "fuse2",
+  "fuse3",
+  "libvirt-glib",
+  "libvirt-python",
+  "numactl",
+  "virt-install",
+  "virtiofsd",
+
+  # Qt6/KDE dependencies
+  "clang21",
+  "compiler-rt21",
+  "kio",
+  "kio-extras",
+  "llvm21",
+  "llvm21-libs",
+  "poppler-qt6",
+  "pyside6",
+  "qt-sudo",
+  "qt6-wayland",
+  "shiboken6",
+
+  # Docker dependencies
+  "containerd",
+  "runc",
+
+  # Other dependencies
+  "borg",
+  "electron39",
+  "elfutils",
+  "greetd-agreety",
+  "libzip",
+  "python-cryptography",
+  "python-dbus",
+  "python-evdev",
+  "python-numpy",
+  "python-pillow",
+  "python-requests",
+  "python-yaml",
+
+  # Optional packages
+  "cmake",
+  "linux-cachyos-lts-nvidia-open",
+  "onlyoffice-bin",
+  "python-pipx",
+  "vpl-gpu-rt",
+
+  { name = "openrazer-daemon", hooks = { after_sync = [
+    "sh",
+    "-lc",
+    "grep -q plugdev /etc/group || sudo groupadd plugdev; sudo gpasswd -a $USER plugdev; grep -q openrazer /etc/group || sudo groupadd openrazer; sudo gpasswd -a $USER openrazer; systemctl --user enable openrazer-daemon.service",
+  ] } },
+  "openrazer-driver-dkms",
+  "polychromatic",
+  "wlr-randr",
 ]
 
 [npm]

@@ -15,16 +15,9 @@ workspace = 7, monitor:desc:{{ $extMonitor }}, persistent:true
 {{ end -}}
 # Window rules - assign applications to specific workspaces
 windowrule {
-    name = tag-games
+    name = game-settings
     match:initial_class = ^(steam_app_\d+)|(.*marvel.*)|(cyberpunk2077.exe)|(gamescope)$
     match:title = negative:^(?i)(.*(Launcher|NetEase Game Security).*)$
-
-    tag = +game
-}
-
-windowrule {
-    name = game-settings
-    match:tag = game
 
     fullscreen = on
     immediate = on

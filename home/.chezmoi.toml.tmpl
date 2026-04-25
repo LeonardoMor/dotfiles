@@ -41,12 +41,16 @@ prompt = true
 {{ if eq .chezmoi.os "linux" -}}
 {{-   $monitorProfile = promptChoiceOnce . "monitorProfile" "External monitor profile" (list "none" "alienware" "asus-vg248") -}}
 {{ end -}}
+{{- $monitorModel := "" -}}
+{{- if eq $monitorProfile "alienware" -}}{{ $monitorModel = "AW2725D" }}{{ end -}}
+{{- if eq $monitorProfile "asus-vg248" -}}{{ $monitorModel = "VG248" }}{{ end -}}
 [data]
 osid = {{ $osid | quote }}
 workHost = {{ $workHost | quote }}
 name = {{ $name | quote }}
 vaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
 monitorProfile = {{ $monitorProfile | quote }}
+monitorModel = {{ $monitorModel | quote }}
 {{ if eq .chezmoi.hostname $workHost -}}
 email = {{ onepasswordRead "op://Employee/workKey/add more/email" "cisco" | quote }}
 {{ else -}}
