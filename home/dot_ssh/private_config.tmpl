@@ -22,4 +22,10 @@ Match exec "/usr/local/bin/sft resolve -q  %h"
 
 Match exec "p0 ssh-resolve -q %h 2>/dev/null"
     StrictHostKeyChecking accept-new
+
+Host infinity,infinity.local
+    HostName infinity.local
+    User leo
+    UserKnownHostsFile /dev/null
+    StrictHostKeyChecking no
 {{- end }}
