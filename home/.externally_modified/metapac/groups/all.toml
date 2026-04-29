@@ -61,6 +61,7 @@ packages = [
   "hyprpaper",
   "hyprpicker",
   "hyprpolkitagent",
+  "hyprsaver",
   "hyprsunset",
   "intel-media-driver",
   "intel-oneapi-common",

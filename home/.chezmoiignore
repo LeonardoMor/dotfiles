@@ -34,9 +34,7 @@ bin
 .local
 bin/get-next-sink
 bin/launch-or-focus
-  bin/screensaver
- bin/screensaver-cmd
- bin/layoutshoutout
+bin/layoutshoutout
 bin/rungame
 
 gtkrc-2.0.mine
