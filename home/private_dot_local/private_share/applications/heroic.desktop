@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Heroic Games Launcher
-Exec=/opt/Heroic/heroic --enable-features=UseOzonePlatform,WaylandWindowDecorations,WebRTCPipeWireCapturer --ozone-platform-hint=auto --use-gl=desktop %U
+Exec=/opt/Heroic/heroic --enable-features=UseOzonePlatform,WaylandWindowDecorations,WebRTCPipeWireCapturer --ozone-platform=wayland --use-gl=desktop %U
 Terminal=false
 Type=Application
 Icon=heroic
