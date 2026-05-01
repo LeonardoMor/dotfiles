@@ -273,6 +273,8 @@ packages = [
   "openrazer-driver-dkms",
   "polychromatic",
   "wlr-randr",
+  "cups-pk-helper",
+  "kimageformats",
 ]
 
 [npm]
