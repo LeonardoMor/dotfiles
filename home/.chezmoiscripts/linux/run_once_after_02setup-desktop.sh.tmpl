@@ -39,9 +39,46 @@ grep -q pam_gnome_keyring "$GREETD_PAM" || {
     sudo sed -i '/^session.*include.*system-local-login/a session    optional     pam_gnome_keyring.so' "$GREETD_PAM"
 }
 
-# Hyprland Desktop Experience
-if ! [[ -f ~/.local/share/hyprland-de/token ]] \
-    || ! compgen -G "/run/user/$(id -u)/quickshell/by-id/*/log.qslog" >/dev/null; then
-    bash -c "$(curl -fsSL https://dl.hypr.land/desktop/install.sh)"
+# DankMaterialShell — install via dankinstall (headless)
+DMS_SENTINEL=~/.local/share/danklinux/installed
+if [[ ! -f $DMS_SENTINEL ]]; then
+    arch=$(uname -m)
+    case $arch in
+    x86_64) dl_arch=amd64 ;;
+    aarch64) dl_arch=arm64 ;;
+    *)
+        echo "Unsupported arch: $arch" >&2
+        exit 1
+        ;;
+    esac
+
+    tmp=$(mktemp -d)
+    trap 'rm -rf "$tmp"' EXIT
+
+    base="https://github.com/AvengeMedia/DankMaterialShell/releases/latest/download"
+    curl -fsSL "$base/dankinstall-${dl_arch}.gz" -o "$tmp/dankinstall.gz"
+    curl -fsSL "$base/dankinstall-${dl_arch}.gz.sha256" -o "$tmp/dankinstall.gz.sha256"
+
+    expected=$(awk '{print $1}' "$tmp/dankinstall.gz.sha256")
+    actual=$(sha256sum "$tmp/dankinstall.gz" | awk '{print $1}')
+    if [[ $expected != "$actual" ]]; then
+        echo "dankinstall checksum mismatch" >&2
+        exit 1
+    fi
+
+    gunzip "$tmp/dankinstall.gz"
+    chmod +x "$tmp/dankinstall"
+
+    # Cache sudo so the installer's privileged steps don't prompt mid-run.
+    sudo -v
+
+    "$tmp/dankinstall" \
+        -c hyprland \
+        -t ghostty \
+        --include-deps dms-greeter \
+        -y
+
+    mkdir -p "$(dirname "$DMS_SENTINEL")"
+    touch "$DMS_SENTINEL"
 fi
 {{- end -}}
