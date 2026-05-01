@@ -15,7 +15,6 @@ packages = [
   "bats-file",
   "bc",
   "blesh-git",
-  "blueman",
   "breeze",
   "breezy",
   "brightnessctl",
