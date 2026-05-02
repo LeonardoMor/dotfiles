@@ -54,7 +54,6 @@ packages = [
   ] } },
   "greetd-dms-greeter-git",
   "grim",
-  "grimblast-git",
   "gtk-engine-murrine",
   "gum",
   "heroic-games-launcher-bin",
