@@ -1,47 +1,11 @@
 {{- if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
-# Configure greetd
-GREETD_CONFIG="/etc/greetd/config.toml"
-
-hyprcmd='agreety --cmd start-hyprland' dasel --in toml --out toml --root \
-    'if (default_session.command != $hyprcmd) {
-        default_session.command = $hyprcmd
-    } else {
-        $root
-    }' <"$GREETD_CONFIG" | sudo tee "$GREETD_CONFIG.tmp" >/dev/null
-if [[ -s ${GREETD_CONFIG}.tmp ]]; then
-    sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
-else
-    sudo rm -f "$GREETD_CONFIG.tmp"
-fi
-
-[[ $(findmnt -no SOURCE /) =~ luks ]] && {
-    dasel -i toml -o toml '$root.{
-        $root...,
-        "initial_session": {
-            "command": "start-hyprland",
-            "user": "{{ .chezmoi.username }}"
-        }
-    }' <"$GREETD_CONFIG" |
-        sudo tee "$GREETD_CONFIG.tmp" >/dev/null
-    if [[ -s ${GREETD_CONFIG}.tmp ]]; then
-        sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
-    else
-        sudo rm -f "$GREETD_CONFIG.tmp"
-    fi
-}
-
-# Configure PAM to unlock gnome-keyring on login
-GREETD_PAM="/etc/pam.d/greetd"
-grep -q pam_gnome_keyring "$GREETD_PAM" || {
-    sudo sed -i '/^auth.*include.*system-local-login/a auth       optional     pam_gnome_keyring.so' "$GREETD_PAM"
-    sudo sed -i '/^session.*include.*system-local-login/a session    optional     pam_gnome_keyring.so' "$GREETD_PAM"
-}
+set -euo pipefail
 
 # DankMaterialShell — install via dankinstall (headless)
 DMS_SENTINEL=~/.local/share/danklinux/installed
-if [[ ! -f $DMS_SENTINEL ]]; then
+[[ -f $DMS_SENTINEL ]] || {
     arch=$(uname -m)
     case $arch in
     x86_64) dl_arch=amd64 ;;
@@ -80,5 +44,76 @@ if [[ ! -f $DMS_SENTINEL ]]; then
 
     mkdir -p "$(dirname "$DMS_SENTINEL")"
     touch "$DMS_SENTINEL"
-fi
+}
+
+# Configure greetd via DMS
+DMS_GREETER_SENTINEL=~/.local/share/danklinux/greeter-installed
+[[ -f $DMS_GREETER_SENTINEL ]] || {
+    sudo -v
+    dms greeter install
+    mkdir -p "$(dirname "$DMS_GREETER_SENTINEL")"
+    sudo tee /etc/greetd/hypr.conf > /dev/null << 'EOF'
+env = DMS_RUN_GREETER,1
+
+misc {
+    disable_hyprland_logo = true
+}
+EOF
+
+    GREETD_CONFIG=/etc/greetd/config.toml
+    sudo install -d /etc/greetd
+    [[ -f $GREETD_CONFIG ]] || sudo tee "$GREETD_CONFIG" >/dev/null << 'EOF'
+[terminal]
+vt = ""
+
+[default_session]
+command = ""
+user = "greeter"
+EOF
+
+    dmscmd='dms-greeter --command hyprland --config /etc/greetd/hypr.conf --remember-last-session true --remember-last-user true' \
+        dasel --in toml --out toml --root \
+        'if (terminal.vt != 1) {
+            terminal.vt = 1
+        } elseif (default_session.command != $dmscmd) {
+            default_session.command = $dmscmd
+        } elseif (default_session.user != "greeter") {
+            default_session.user = "greeter"
+        } else {
+            $root
+        }' <"$GREETD_CONFIG" | sudo tee "$GREETD_CONFIG.tmp" >/dev/null
+
+    if [[ -s ${GREETD_CONFIG}.tmp ]]; then
+        sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
+    else
+        sudo rm -f "$GREETD_CONFIG.tmp"
+    fi
+
+    touch "$DMS_GREETER_SENTINEL"
+}
+
+# TODO: decide whether to preserve the old LUKS initial_session behavior.
+# GREETD_CONFIG="/etc/greetd/config.toml"
+# [[ $(findmnt -no SOURCE /) =~ luks ]] && {
+#     dasel -i toml -o toml '$root.{
+#         $root...,
+#         "initial_session": {
+#             "command": "start-hyprland",
+#             "user": "{{ .chezmoi.username }}"
+#         }
+#     }' <"$GREETD_CONFIG" |
+#         sudo tee "$GREETD_CONFIG.tmp" >/dev/null
+#     if [[ -s ${GREETD_CONFIG}.tmp ]]; then
+#         sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
+#     else
+#         sudo rm -f "$GREETD_CONFIG.tmp"
+#     fi
+# }
+
+# Configure PAM to unlock gnome-keyring on login
+GREETD_PAM="/etc/pam.d/greetd"
+grep -q pam_gnome_keyring "$GREETD_PAM" || {
+    sudo sed -i '/^auth.*include.*system-local-login/a auth       optional     pam_gnome_keyring.so' "$GREETD_PAM"
+    sudo sed -i '/^session.*include.*system-local-login/a session    optional     pam_gnome_keyring.so' "$GREETD_PAM"
+}
 {{- end -}}
