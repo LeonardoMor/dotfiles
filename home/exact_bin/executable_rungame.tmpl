@@ -13,6 +13,10 @@ FIXEDWRAPPERS=(
     prime-run
 )
 
+getDnD() {
+    dms ipc notifications getDoNotDisturb 2>/dev/null
+}
+
 pre() {
     #    local hyprgamemode
     #    hyprgamemode="$(hyprctl -j getoption animations:enabled | jq -r '.set')"
@@ -28,8 +32,8 @@ pre() {
     #            keyword general:border_size 1;\
     #            keyword decoration:rounding 0"
     #    fi
-    hyprctl dispatch exec -- \
-        qs ipc call notification setDnD true
+    PREDND="$(getDnD)"
+    eval "$PREDND" || dms ipc notifications toggleDoNotDisturb
 }
 
 main() {
@@ -46,8 +50,7 @@ main() {
 
 post() {
     hyprctl reload
-    hyprctl dispatch exec -- \
-        qs ipc call notification setDnD false
+    [[ $PREDND == $(getDnD) ]] || dms ipc notifications toggleDoNotDisturb
 }
 
 pre

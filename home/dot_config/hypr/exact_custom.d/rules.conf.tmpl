@@ -1,0 +1,63 @@
+{{- $extMonitor := "" -}}
+{{- if eq .monitorProfile "alienware" -}}
+{{-   $extMonitor = "Dell Inc. AW2725D" -}}
+{{- else if eq .monitorProfile "asus-vg248" -}}
+{{-   $extMonitor = "ASUSTek COMPUTER INC VG248" -}}
+{{- end -}}
+{{ if ne $extMonitor "" -}}
+# Workspace rules - define where workspaces are created
+workspace = 2, monitor:desc:{{ $extMonitor }}
+workspace = 3, monitor:desc:{{ $extMonitor }}
+workspace = 4, monitor:desc:{{ $extMonitor }}
+workspace = 5, gapsin:0, gapsout:0, decorate:false, rounding:false, monitor:desc:{{ $extMonitor }}
+workspace = 7, monitor:desc:{{ $extMonitor }}, persistent:true
+
+{{ end -}}
+# Window rules - assign applications to specific workspaces
+windowrule {
+    name = game-settings
+    match:initial_class = ^(steam_app_\d+)|(.*marvel.*)|(cyberpunk2077.exe)|(gamescope)$
+    match:title = negative:^(?i)(.*(Launcher|NetEase Game Security).*)$
+
+    fullscreen = on
+    immediate = on
+    workspace = 5
+}
+
+windowrule {
+    name = steam-workspace
+    match:initial_class = steam
+
+    workspace = 4
+}
+
+windowrule {
+    name = discord-workspace
+    match:initial_class = discord
+
+    workspace = 2
+}
+
+windowrule {
+    name = browser-workspace
+    match:initial_class = zen
+
+    workspace = 3
+}
+
+windowrule {
+    name = coding-workspace
+    match:initial_class = com.mitchellh.ghostty
+
+    workspace = 7
+}
+
+windowrule {
+    name = Waydroid
+    match:initial_class = Waydroid
+
+    workspace = 6
+    fullscreen = on
+}
+{{- /* vim: filetype=hyprlang.gotmpl
+*/ -}}
