@@ -13,8 +13,19 @@ FIXEDWRAPPERS=(
     prime-run
 )
 
-getDnD() {
-    dms ipc notifications getDoNotDisturb 2>/dev/null
+hyprexec() {
+    hyprctl dispatch exec -- "$@"
+}
+
+calculate-current-DnD() {
+    local status_holder="$1" retries=10
+    : >"$status_holder"
+    hyprexec DNDSTATUS="$status_holder" DnD get
+    until [[ -s $status_holder || $retries == 0 ]]; do
+        sleep 1
+        ((retries--))
+    done
+    [[ -s $status_holder ]]
 }
 
 pre() {
@@ -32,8 +43,11 @@ pre() {
     #            keyword general:border_size 1;\
     #            keyword decoration:rounding 0"
     #    fi
-    PREDND="$(getDnD)"
-    eval "$PREDND" || dms ipc notifications toggleDoNotDisturb
+    PRE_STATUS_HOLDER="$(mktemp /tmp/DnD.pre.XXX)"
+    if calculate-current-DnD "$PRE_STATUS_HOLDER"; then
+        PREDND="$(<"$PRE_STATUS_HOLDER")"
+        [[ $PREDND == true ]] || hyprexec dms ipc notifications toggleDoNotDisturb
+    fi
 }
 
 main() {
@@ -49,8 +63,13 @@ main() {
 }
 
 post() {
+    local post_status_holder
     hyprctl reload
-    [[ $PREDND == $(getDnD) ]] || dms ipc notifications toggleDoNotDisturb
+    post_status_holder="$(mktemp /tmp/DnD.post.XXX)"
+    if [[ $PREDND ]] && calculate-current-DnD "$post_status_holder"; then
+        [[ $PREDND == "$(<"$post_status_holder")" ]] || hyprexec dms ipc notifications toggleDoNotDisturb
+    fi
+    rm -vf "$PRE_STATUS_HOLDER" "$post_status_holder"
 }
 
 pre
