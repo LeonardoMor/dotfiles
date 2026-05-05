@@ -53,7 +53,6 @@ packages = [
     "sudo systemctl enable greetd.service",
   ] } },
   "greetd-dms-greeter-git",
-  "grim",
   "gtk-engine-murrine",
   "gum",
   "heroic-games-launcher-bin",
