@@ -140,12 +140,12 @@ border_width = 1
 # See https://github.com/y3owk1n/neru/blob/main/docs/CONFIGURATION.md#recursive-grid-mode-recommended
 [recursive_grid]
 enabled = true
-grid_cols = 6               # Number of columns (>= 1)
-grid_rows = 3               # Number of rows (>= 1)
-keys = "qweuioasdjklzxcm,." # Cell selection keys (must be grid_cols * grid_rows chars)
-min_size_width = 25         # Stop subdividing below this width (px)
-min_size_height = 25        # Stop subdividing below this height (px)
-max_depth = 10              # Maximum recursion levels (1–20)
+grid_cols = 5                      # Number of columns (>= 1)
+grid_rows = 5                      # Number of rows (>= 1)
+keys = "yuiophjkl;nm,./asdfgzxcvb" # Cell selection keys (must be grid_cols * grid_rows chars)
+min_size_width = 25                # Stop subdividing below this width (px)
+min_size_height = 25               # Stop subdividing below this height (px)
+max_depth = 10                     # Maximum recursion levels (1–20)
 
 [recursive_grid.animation]
 enabled = false   # Opt in to native depth transition animation on supported platforms
