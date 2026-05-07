@@ -51,6 +51,7 @@ Library
 !.config/ghostty
 !.config/git
 !.config/kanata
+!.config/neru
 !.config/obsidian
 !.config/pip
 !.config/starship.toml
