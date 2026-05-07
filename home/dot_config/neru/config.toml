@@ -155,6 +155,7 @@ duration_ms = 180 # Recursive-grid animation duration in milliseconds
 "Escape" = "idle"
 "`" = "toggle-cursor-follow-selection"
 "Space" = ["action left_click", "idle"]
+"T" = ["action left_click", "action sleep 50ms", "action left_click", "idle"]
 "R" = ["action right_click", "idle"]
 "Shift+R" = "action reset"
 "Backspace" = "action backspace"
