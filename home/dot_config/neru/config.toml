@@ -154,10 +154,10 @@ duration_ms = 180 # Recursive-grid animation duration in milliseconds
 [recursive_grid.hotkeys]
 "Escape" = "idle"
 "`" = "toggle-cursor-follow-selection"
-"Space" = "action reset"
+"Space" = ["action left_click", "idle"]
+"R" = ["action right_click", "idle"]
+"Shift+R" = "action reset"
 "Backspace" = "action backspace"
-"Shift+L" = "action left_click"
-"Shift+R" = "action right_click"
 "Shift+M" = "action middle_click"
 "Shift+I" = "action mouse_down"
 "Shift+U" = "action mouse_up"
@@ -196,6 +196,8 @@ scroll_step_full = 1000000 # Pixels for gg/G (top/bottom)
 
 [scroll.hotkeys]
 "Escape" = "idle"
+"Space" = ["action left_click", "idle"]
+"R" = ["action right_click", "idle"]
 "k" = "action scroll_up"
 "j" = "action scroll_down"
 "h" = "action scroll_left"
@@ -206,8 +208,6 @@ scroll_step_full = 1000000 # Pixels for gg/G (top/bottom)
 "PageUp" = "action page_up"
 "d" = "action page_down"
 "PageDown" = "action page_down"
-"Shift+L" = "action left_click"
-"Shift+R" = "action right_click"
 "Shift+M" = "action middle_click"
 "Shift+I" = "action mouse_down"
 "Shift+U" = "action mouse_up"
