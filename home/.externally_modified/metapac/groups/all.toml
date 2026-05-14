@@ -269,6 +269,7 @@ packages = [
   "wlr-randr",
   "cups-pk-helper",
   "kimageformats",
+  "wireshark-cli",
 ]
 
 [npm]
