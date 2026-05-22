@@ -1,9 +1,8 @@
 {
-  "BACKGROUND_COLOR": "#2c2d32",
   "openH264Enabled": true,
+  "BACKGROUND_COLOR": "#2c2d32",
   "offloadAdmControls": true,
   "chromiumSwitches": {},
   "IS_MAXIMIZED": true,
-  "IS_MINIMIZED": false,
-  "SKIP_HOST_UPDATE": true
+  "IS_MINIMIZED": false
 }
