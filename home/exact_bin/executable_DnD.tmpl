@@ -1,0 +1,23 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+: "${DNDSTATUS:="/tmp/DnD.status"}"
+
+_get() {
+    dms ipc notifications getDoNotDisturb | tee "$DNDSTATUS"
+}
+
+main() {
+    local action="$1"
+    case "$action" in
+        get) _get ;;
+        *) printf 'Usage:\n\tDnD get\n' ;;
+    esac
+}
+
+main "$@"
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

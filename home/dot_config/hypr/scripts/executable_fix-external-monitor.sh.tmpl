@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.hostname "infinity" -}}
+#!/usr/bin/env bash
+
+EXT_MONITOR="$(hyprctl -j monitors all | jq --raw-output 'map(select(.name | startswith("eDP") | not)) | first | .name')"
+
+[[ $EXT_MONITOR ]] || exit 0
+
+sleep 3
+hyprctl dispatch dpms off "$EXT_MONITOR" || exit $?
+sleep 1
+hyprctl dispatch dpms on "$EXT_MONITOR" || exit $?
+{{- end -}}
+{{/*
+vim: filetype=sh.gotmpl
+*/}}
