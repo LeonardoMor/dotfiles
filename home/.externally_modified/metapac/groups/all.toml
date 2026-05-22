@@ -270,6 +270,7 @@ packages = [
   "cups-pk-helper",
   "kimageformats",
   "wireshark-cli",
+  "vlc",
 ]
 
 [npm]
