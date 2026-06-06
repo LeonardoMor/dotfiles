@@ -1,11 +1,13 @@
 {{- if eq .chezmoi.hostname "infinity" }}
 Host rook-borg
-    Hostname rook
+    Hostname 192.168.100.144
     Port 2222
     User borg
     IdentityAgent none
     IdentityFile ~/.ssh/borg_backup
     IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+    HostKeyAlias rook-borg
 
 {{ end -}}
 Host *
