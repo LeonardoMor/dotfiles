@@ -4,5 +4,13 @@
   "offloadAdmControls": true,
   "chromiumSwitches": {},
   "IS_MAXIMIZED": true,
-  "IS_MINIMIZED": false
+  "IS_MINIMIZED": false,
+  "WINDOW_BOUNDS": {
+    "x": 1606,
+    "y": 46,
+    "width": 1908,
+    "height": 1028
+  },
+  "DESKTOP_TTI_DNSTCP_WARMUP": true,
+  "DESKTOP_TTI_UPDATE_BACKOFF_MAX_MS": 20000
 }
