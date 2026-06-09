@@ -7,9 +7,9 @@
   "IS_MINIMIZED": false,
   "WINDOW_BOUNDS": {
     "x": 1606,
-    "y": 46,
+    "y": 50,
     "width": 1908,
-    "height": 1028
+    "height": 1024
   },
   "DESKTOP_TTI_DNSTCP_WARMUP": true,
   "DESKTOP_TTI_UPDATE_BACKOFF_MAX_MS": 20000
