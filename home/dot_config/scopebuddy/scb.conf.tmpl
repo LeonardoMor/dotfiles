@@ -40,7 +40,7 @@ SCB_GAMESCOPE_ARGS="--backend sdl --force-grab-cursor --mangoapp"
 preferred_monitor="$(hyprctl -j monitors all 2>/dev/null |
     jq --compact-output --arg model {{ .monitorModel | quote }} \
     'map(select(.model == $model and .disabled == false)) | first // empty')"
-if [[ -n $preferred_monitor ]]; then
+[[ -z $preferred_monitor ]] || {
     preferred_output="$(jq --raw-output '.name' <<<"$preferred_monitor")"
     preferred_width="$(jq --raw-output '.width' <<<"$preferred_monitor")"
     preferred_height="$(jq --raw-output '.height' <<<"$preferred_monitor")"
@@ -49,7 +49,7 @@ if [[ -n $preferred_monitor ]]; then
     SCB_GAMESCOPE_ARGS+=" --output-width $preferred_width --output-height $preferred_height"
     SCB_GAMESCOPE_ARGS+=" --nested-width $preferred_width --nested-height $preferred_height"
     SCB_GAMESCOPE_ARGS+=" --nested-refresh $preferred_refresh"
-fi
+}
 {{- end }}
 {{- /* vim: filetype=sh.gotmpl
 */ -}}
