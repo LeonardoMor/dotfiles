@@ -10,12 +10,38 @@ git --version >/dev/null 2>&1 || {
 VAULTS=(
     Splunk_Cloud_Support
     Meta_Work
-    {{ if ne .chezmoi.hostname .workHost -}} Codice {{- end }}
+    {{ if and (ne .chezmoi.hostname .workHost) (ne .chezmoi.hostname "infinity") -}} Codice {{- end }}
 )
 
 VAULTSDIR={{ .vaultsDir | quote }}
+{{ if eq .chezmoi.hostname "infinity" }}
+CODICE_FSTAB_LINE='192.168.100.144:/mnt/user/Codice  /mnt/Codice  nfs4  rw,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=600,x-systemd.mount-timeout=30,hard,noatime,nconnect=4,timeo=600,retrans=2  0  0'
+
+setup-codice() {
+    if ! grep --fixed-strings --line-regexp --quiet "$CODICE_FSTAB_LINE" /etc/fstab; then
+        printf '%s\n' "$CODICE_FSTAB_LINE" | sudo tee --append /etc/fstab >/dev/null
+        sudo systemctl daemon-reload
+    fi
+
+    [[ -d /mnt/Codice ]] || sudo mkdir /mnt/Codice
+    sudo chown -R leo:leo /mnt/Codice
+
+    if [[ -L $VAULTSDIR/Codice ]]; then
+        [[ $(readlink "$VAULTSDIR/Codice") == /mnt/Codice ]] || ln --symbolic --force --no-dereference /mnt/Codice "$VAULTSDIR/Codice"
+    elif [[ -e $VAULTSDIR/Codice ]]; then
+        emit w "$VAULTSDIR/Codice already exists and is not a symlink. Skipping Codice link setup"
+    else
+        ln --symbolic /mnt/Codice "$VAULTSDIR/Codice"
+    fi
+
+    sudo systemctl start mnt-Codice.mount
+}
+{{ end }}
 
 [[ -d $VAULTSDIR ]] || mkdir -p "$VAULTSDIR"
+{{ if eq .chezmoi.hostname "infinity" }}
+setup-codice
+{{ end }}
 
 for vault in "${VAULTS[@]}"; do
     (

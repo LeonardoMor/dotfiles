@@ -46,6 +46,10 @@
 {{- else if eq .chezmoi.os "darwin" }}
 	helper = !/opt/homebrew/bin/gh auth git-credential
 {{ end }}
+{{- if eq .chezmoi.hostname "infinity" }}
+[safe]
+	directory = /mnt/Codice
+{{ end }}
 {{- else }}
 [credential]
 	helper = manager
