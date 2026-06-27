@@ -140,6 +140,7 @@ packages = [
   "telegram-desktop",
   "tmux",
   "tokyonight-gtk-theme-git",
+  "traceroute",
   "tree",
   "tree-sitter-cli",
   "ttf-fantasque-nerd",
