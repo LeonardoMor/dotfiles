@@ -1,0 +1,40 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+LOG_DIR=${XDG_STATE_HOME:-$HOME/.local/state}
+LOG_FILE=$LOG_DIR/game-mode-session.log
+
+log-message() {
+    mkdir -p "$LOG_DIR" || return 0
+    printf 'INFO: steamos-session-select %s: %s\n' "$(date --iso-8601=seconds)" "$*" >>"$LOG_FILE"
+}
+
+switch-to-greeter() {
+    log-message 'Switch to Desktop requested; stopping Steam/game-mode session to return to greeter'
+
+    systemd-run --user --collect --unit=game-mode-return-to-greeter --on-active=1s \
+        /usr/bin/bash -c 'steam -shutdown >/dev/null 2>&1 || true; pkill --exact --signal TERM steam >/dev/null 2>&1 || true; pkill --exact --signal TERM gamescope >/dev/null 2>&1 || true' \
+        >/dev/null 2>&1 || {
+        steam -shutdown >/dev/null 2>&1 || true
+        pkill --exact --signal TERM steam >/dev/null 2>&1 || true
+        pkill --exact --signal TERM gamescope >/dev/null 2>&1 || true
+    }
+}
+
+main() {
+    case ${1:-} in
+        desktop|plasma|plasma.desktop|persistent|oneshot|gamescope|gamescope-session.desktop)
+            switch-to-greeter
+            ;;
+        *)
+            log-message "Ignoring unsupported session selection: ${*:-<none>}"
+            ;;
+    esac
+}
+
+main "$@"
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

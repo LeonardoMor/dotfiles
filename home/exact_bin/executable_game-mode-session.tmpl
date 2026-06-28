@@ -1,0 +1,212 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+LOG_DIR=${XDG_STATE_HOME:-$HOME/.local/state}
+LOG_FILE=$LOG_DIR/game-mode-session.log
+NVIDIA_PCI_ID='10de:27e0'
+NVIDIA_BUS_ID='0000:01:00.0'
+
+CONNECTOR=
+CONNECTOR_CARD=
+CONNECTOR_BUS_ID=
+PERFORMANCE_TMP_DIR=
+
+GAME_MODE_STEAM_ARGS=(-steamdeck -steamos3)
+GAME_MODE_GAMESCOPE_ARGS=(--force-composition)
+
+emit() {
+    case $1 in
+        i) printf 'INFO: %s\n' "$2" >&2 ;;
+        w) printf 'WARNING: %s\n' "$2" >&2 ;;
+        e) printf 'ERROR: %s\n' "$2" >&2 ;;
+        f) printf 'FATAL: %s\n' "$2" >&2 ;;
+        *) emit e 'Invalid log level' ;;
+    esac
+
+    [[ -z ${3:-} ]] || exit "$3"
+}
+
+setup-logging() {
+    mkdir -p "$LOG_DIR" || emit f "Unable to create log directory: $LOG_DIR" 1
+    exec >>"$LOG_FILE" 2>&1
+    emit i "=== game-mode-session $(date --iso-8601=seconds) ==="
+}
+
+load-config() {
+    [[ -r /etc/game-mode-session.conf ]] || return 0
+    # shellcheck source=/dev/null
+    source /etc/game-mode-session.conf
+}
+
+connector-name-from-status() {
+    local status_file=$1 connector_dir connector_full
+
+    connector_dir=${status_file%/status}
+    connector_full=${connector_dir##*/}
+    printf '%s\n' "${connector_full#*-}"
+}
+
+connector-card-from-status() {
+    local status_file=$1 connector_dir connector_full
+
+    connector_dir=${status_file%/status}
+    connector_full=${connector_dir##*/}
+    printf '%s\n' "${connector_full%%-*}"
+}
+
+connector-bus-id-from-card() {
+    local card=$1 device_path
+
+    device_path=$(readlink --canonicalize "/sys/class/drm/$card/device") || return 1
+    printf '%s\n' "${device_path##*/}"
+}
+
+set-CONNECTOR-from-status() {
+    local status_file=$1
+
+    CONNECTOR=$(connector-name-from-status "$status_file") || return 1
+    CONNECTOR_CARD=$(connector-card-from-status "$status_file") || return 1
+    CONNECTOR_BUS_ID=$(connector-bus-id-from-card "$CONNECTOR_CARD") || CONNECTOR_BUS_ID=
+}
+
+find-connected-connector() {
+    local status_file
+
+    for status_file in "$@"; do
+        [[ -e $status_file ]] || continue
+        [[ $(<"$status_file") == connected ]] || continue
+        set-CONNECTOR-from-status "$status_file" && return 0
+    done
+
+    return 1
+}
+
+choose-connector() {
+    if [[ -n ${GAME_MODE_CONNECTOR:-} ]]; then
+        CONNECTOR=$GAME_MODE_CONNECTOR
+        CONNECTOR_CARD=
+        CONNECTOR_BUS_ID=
+        return 0
+    fi
+
+    find-connected-connector /sys/class/drm/card1-DP-*/status /sys/class/drm/card1-HDMI-A-*/status ||
+        find-connected-connector /sys/class/drm/card*-DP-*/status /sys/class/drm/card*-HDMI-A-*/status ||
+        find-connected-connector /sys/class/drm/card*-eDP-*/status /sys/class/drm/card*-LVDS-*/status || {
+        emit f 'No connected DRM connector found' 1
+    }
+}
+
+export-session-env() {
+    export XDG_CURRENT_DESKTOP=gamescope
+    export DESKTOP_SESSION=game-mode
+    # Steam may call helpers such as steamos-session-select from Big Picture.
+    # Put our chezmoi-managed shims ahead of system paths so "Switch to Desktop"
+    # exits this standalone gamescope session and returns to the greeter.
+    export PATH=$HOME/bin:$HOME/.local/bin:$PATH
+
+    # Force Steam and games launched through it onto the NVIDIA dGPU. This keeps
+    # the standalone gamescope session on the external NVIDIA-connected monitor
+    # instead of falling back to the Intel iGPU/internal panel.
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __VK_LAYER_NV_optimus=NVIDIA_only
+    export VK_LOADER_DRIVERS_SELECT='*nvidia*'
+
+    # SteamOS-style gamescope feature contract. These make Steam expose and use
+    # Game Mode controls that are otherwise inert in a minimal custom session.
+    # The MangoApp flags back the Performance Overlay slider, and the dynamic
+    # limiter flag backs Steam's per-game frame-limit controls.
+    export STEAM_MANGOAPP_PRESETS_SUPPORTED=1
+    export STEAM_USE_MANGOAPP=1
+    export STEAM_DISABLE_MANGOAPP_ATOM_WORKAROUND=1
+    export STEAM_MANGOAPP_HORIZONTAL_SUPPORTED=1
+    export STEAM_GAMESCOPE_DYNAMIC_FPSLIMITER=1
+    export STEAM_GAMESCOPE_NIS_SUPPORTED=1
+    export STEAM_GAMESCOPE_FANCY_SCALING_SUPPORT=1
+
+    # Without these, Steam receives volume keys and draws the volume slider, but
+    # does not actually change PipeWire/Pulse volume in this custom session.
+    export STEAM_ENABLE_VOLUME_HANDLER=1
+    export STEAM_DISABLE_AUDIO_DEVICE_SWITCHING=1
+
+    # Miscellaneous SteamOS compatibility exported by distro gamescope sessions.
+    # Keep runtime URL opens inside Steam and avoid SDL clients minimizing on
+    # focus changes while gamescope/Steam swap focus between UI and games.
+    export SRT_URLOPEN_PREFER_STEAM=1
+    export SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS=0
+    export vk_xwayland_wait_ready=false
+}
+
+setup-performance-overlay() {
+    local runtime_dir=${XDG_RUNTIME_DIR:-/tmp}
+
+    # Steam's Performance Overlay slider controls MangoApp/MangoHud through a
+    # SteamOS gamescope session contract. Create the same per-session files a
+    # distro session would provide, starting hidden until Steam selects a preset.
+    PERFORMANCE_TMP_DIR=$(mktemp --directory --tmpdir="$runtime_dir" game-mode-performance.XXXXXXXX) || {
+        emit f 'Unable to create performance overlay runtime directory' 1
+    }
+
+    export MANGOHUD_CONFIGFILE=$PERFORMANCE_TMP_DIR/mangohud.conf
+    printf 'no_display\n' >"$MANGOHUD_CONFIGFILE" || {
+        emit f "Unable to initialize MangoHud config: $MANGOHUD_CONFIGFILE" 1
+    }
+
+    # Steam writes frame-limit choices here; gamescope watches it when dynamic
+    # limiter support is advertised above.
+    export GAMESCOPE_LIMITER_FILE=$PERFORMANCE_TMP_DIR/limiter
+    : >"$GAMESCOPE_LIMITER_FILE" || {
+        emit f "Unable to initialize Gamescope limiter file: $GAMESCOPE_LIMITER_FILE" 1
+    }
+
+    # gamescope writes frame/presentation stats to this FIFO for MangoApp.
+    export GAMESCOPE_STATS=$PERFORMANCE_TMP_DIR/stats.pipe
+    mkfifo "$GAMESCOPE_STATS" || {
+        emit f "Unable to initialize Gamescope stats pipe: $GAMESCOPE_STATS" 1
+    }
+}
+
+build-gamescope-command() {
+    local -n cmd_ref=$1
+
+    cmd_ref=(
+        gamescope
+        --fullscreen
+        --steam
+        --mangoapp
+        --stats-path "$GAMESCOPE_STATS"
+        --prefer-output "$CONNECTOR"
+    )
+
+    if [[ $CONNECTOR_BUS_ID == "$NVIDIA_BUS_ID" ]]; then
+        cmd_ref+=(--prefer-vk-device "$NVIDIA_PCI_ID")
+    else
+        emit w "Selected connector is not on NVIDIA; omitting gamescope --prefer-vk-device"
+    fi
+
+    cmd_ref+=("${GAME_MODE_GAMESCOPE_ARGS[@]}")
+    cmd_ref+=(-- steam "${GAME_MODE_STEAM_ARGS[@]}")
+}
+
+main() {
+    local -a cmd
+
+    setup-logging
+    load-config
+    choose-connector
+    export-session-env
+    setup-performance-overlay
+    build-gamescope-command cmd
+
+    emit i "Selected connector: $CONNECTOR card=$CONNECTOR_CARD bus=$CONNECTOR_BUS_ID"
+    emit i "Performance overlay runtime: $PERFORMANCE_TMP_DIR"
+    emit i "Launching: ${cmd[*]}"
+    exec "${cmd[@]}"
+}
+
+main "$@"
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

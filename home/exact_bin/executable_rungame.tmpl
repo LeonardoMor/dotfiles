@@ -1,75 +1,92 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
-# Usage:
-#   In Steam launch options, put
-#
+# Usage in Steam launch options:
 #   rungame %command%
 
-set -x
+PRE_STATUS_HOLDER=
+PREDND=
 
-FIXEDWRAPPERS=(
+FIXED_WRAPPERS=(
     game-performance
     prime-run
 )
+
+emit() {
+    case $1 in
+        i) printf 'INFO: %s\n' "$2" >&2 ;;
+        w) printf 'WARNING: %s\n' "$2" >&2 ;;
+        e) printf 'ERROR: %s\n' "$2" >&2 ;;
+        f) printf 'FATAL: %s\n' "$2" >&2 ;;
+        *) emit e 'Invalid log level' ;;
+    esac
+
+    [[ -z ${3:-} ]] || exit "$3"
+}
+
+in-hyprland() {
+    [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]
+}
 
 hyprexec() {
     hyprctl dispatch exec -- "$@"
 }
 
 calculate-current-DnD() {
-    local status_holder="$1" retries=10
-    : >"$status_holder"
-    hyprexec DNDSTATUS="$status_holder" DnD get
+    local status_holder=$1 retries=10
+
+    : >"$status_holder" || return 1
+    hyprexec DNDSTATUS="$status_holder" DnD get || return 1
+
     until [[ -s $status_holder || $retries == 0 ]]; do
         sleep 1
         ((retries--))
     done
+
     [[ -s $status_holder ]]
 }
 
 pre() {
-    #    local hyprgamemode
-    #    hyprgamemode="$(hyprctl -j getoption animations:enabled | jq -r '.set')"
-    #    if $hyprgamemode; then
-    #        hyprctl --batch "\
-    #            keyword animations:enabled 0; \
-    #            keyword animation borderangle,0: \
-    #            keyword decoration:shadow:enabled 0;\
-    #            keyword decoration:blur:enabled 0;\
-    #            keyword decoration:fullscreen_opacity 1;\
-    #            keyword general:gaps_in 0;\
-    #            keyword general:gaps_out 0;\
-    #            keyword general:border_size 1;\
-    #            keyword decoration:rounding 0"
-    #    fi
-    PRE_STATUS_HOLDER="$(mktemp /tmp/DnD.pre.XXX)"
-    if calculate-current-DnD "$PRE_STATUS_HOLDER"; then
-        PREDND="$(<"$PRE_STATUS_HOLDER")"
-        [[ $PREDND == true ]] || hyprexec dms ipc notifications toggleDoNotDisturb
+    in-hyprland || return 0
+
+    PRE_STATUS_HOLDER=$(mktemp /tmp/DnD.pre.XXX) || {
+        emit w 'Unable to create DnD state holder'
+        return 0
+    }
+
+    calculate-current-DnD "$PRE_STATUS_HOLDER" || return 0
+    PREDND=$(<"$PRE_STATUS_HOLDER")
+    [[ $PREDND == true ]] || hyprexec dms ipc notifications toggleDoNotDisturb
+}
+
+post() {
+    local post_status_holder=
+
+    if in-hyprland; then
+        hyprctl reload || emit w 'Hyprland reload failed'
+        post_status_holder=$(mktemp /tmp/DnD.post.XXX) || post_status_holder=
+
+        if [[ -n $PREDND && -n $post_status_holder ]] && calculate-current-DnD "$post_status_holder"; then
+            [[ $PREDND == "$(<"$post_status_holder")" ]] || hyprexec dms ipc notifications toggleDoNotDisturb
+        fi
     fi
+
+    [[ -z $PRE_STATUS_HOLDER ]] || rm -f "$PRE_STATUS_HOLDER"
+    [[ -z $post_status_holder ]] || rm -f "$post_status_holder"
 }
 
 main() {
+    local -a cmd=("${FIXED_WRAPPERS[@]}")
+
     trap post EXIT INT TERM
 
-    local -a cmd=("${FIXEDWRAPPERS[@]}")
     cmd+=(
         scopebuddy
         --
         "$@"
     )
-    "${cmd[@]}"
-}
 
-post() {
-    local post_status_holder
-    hyprctl reload
-    post_status_holder="$(mktemp /tmp/DnD.post.XXX)"
-    if [[ $PREDND ]] && calculate-current-DnD "$post_status_holder"; then
-        [[ $PREDND == "$(<"$post_status_holder")" ]] || hyprexec dms ipc notifications toggleDoNotDisturb
-    fi
-    rm -vf "$PRE_STATUS_HOLDER" "$post_status_holder"
+    "${cmd[@]}"
 }
 
 pre
