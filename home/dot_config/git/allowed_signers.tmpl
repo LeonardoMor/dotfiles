@@ -1,0 +1,1 @@
+{{ .email }} {{ if eq .chezmoi.hostname .workHost }}{{ onepasswordRead "op://Employee/workKey/public key" "cisco" }}{{ else }}{{ onepasswordRead "op://Private/personal_id_ed25519/public key" "my" }}{{ end }}
