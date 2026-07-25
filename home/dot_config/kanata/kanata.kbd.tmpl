@@ -18,6 +18,7 @@
   ; (tap-hold $tap-time $hold-time ; rsft)
 {{- if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "infinity") }}
   switcher (tap-hold $tap-time $hold-time esc (layer-while-held switcher))
+  game-switcher (tap-hold $tap-time $hold-time caps (layer-while-held switcher))
   to-game (layer-switch game)
   to-base (layer-switch base)
 {{- end }}
@@ -53,7 +54,7 @@
 )
 
 (deflayer game
-  @switcher a s d f g j k l ;
+  @game-switcher a s d f g j k l ;
 )
 {{- else }}
 (defsrc
