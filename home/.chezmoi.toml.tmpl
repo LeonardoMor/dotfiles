@@ -39,7 +39,7 @@ prompt = true
 {{- $name := promptStringOnce . "name" "Full name" -}}
 {{- $monitorProfile := "none" -}}
 {{ if eq .chezmoi.os "linux" -}}
-{{-   $monitorProfile = promptChoiceOnce . "monitorProfile" "External monitor profile" (list "none" "alienware" "asus-vg248") -}}
+{{-   $monitorProfile = promptChoice "External monitor profile" (list "none" "alienware" "asus-vg248") -}}
 {{ end -}}
 {{- $monitorModel := "" -}}
 {{- if eq $monitorProfile "alienware" -}}{{ $monitorModel = "AW2725D" }}{{ end -}}
