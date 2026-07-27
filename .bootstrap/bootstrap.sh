@@ -4,7 +4,7 @@
 # This is a pre-requisite, pure bash script. In particular, templating syntax
 # is not available here
 
-declare -l OS
+OS=
 FINAL_STAGE="$(mktemp)"
 
 cleanup() {
@@ -14,25 +14,20 @@ cleanup() {
 trap cleanup EXIT
 
 emit() {
-    local rc=0
-    case "$1" in
-        i) printf '\nINFO: %s\n\n' "$2" >&2 ;;
-        w)
-            printf '\nWARNING: %s\n\n' "$2" >&2
-            rc=1
+    local level=${1:-} message=${2:-} exit_code=${3:-}
+
+    case $level in
+        i) printf 'INFO: %s\n' "$message" >&2 ;;
+        w) printf 'WARNING: %s\n' "$message" >&2 ;;
+        e) printf 'ERROR: %s\n' "$message" >&2 ;;
+        f) printf 'FATAL: %s\n' "$message" >&2 ;;
+        *)
+            printf 'ERROR: Invalid log level: %s\n' "$level" >&2
+            return 2
             ;;
-        e)
-            printf '\nERROR: %s\n\n' "$2" >&2
-            rc=1
-            ;;
-        f)
-            printf '\nFATAL: %s\n\n' "$2" >&2
-            rc=1
-            ;;
-        *) emit e "Invalid option or format" ;;
     esac
-    [[ -z $3 ]] || exit "$3"
-    return "$rc"
+
+    [[ -z $exit_code ]] || exit "$exit_code"
 }
 
 change-dir() {
@@ -40,7 +35,10 @@ change-dir() {
 }
 
 is-installed() {
-    command -v "$1" >/dev/null 2>&1 || emit w "$1 is not installed"
+    command -v "$1" >/dev/null 2>&1 || {
+        emit w "$1 is not installed"
+        return 1
+    }
 }
 
 install-system-package-manager() {
@@ -88,7 +86,8 @@ set-INSTALL() {
 set-system-managers() {
     OS="$(uname)"
     case "$OS" in
-        linux) OS="$(grep -E '^ID_LIKE' /etc/os-release | cut -d'=' -f2)" ;;
+        Darwin) OS=darwin ;;
+        Linux) OS="$(grep -E '^ID_LIKE' /etc/os-release | cut -d'=' -f2)" ;;
     esac
 
     case "$OS" in

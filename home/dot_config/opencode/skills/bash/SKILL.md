@@ -147,24 +147,36 @@ indirect expansion, or proper quoting.
 
 ### Logging Function Pattern
 
-Define a leveled logging function that optionally exits:
+Chezmoi-managed scripts deployed to `~/bin` should source the shared utilities:
+
+```bash
+source -p ~/bin utils.sh || exit 1
+```
+
+Standalone prerequisites that run before a successful `chezmoi apply` must embed the canonical implementation:
 
 ```bash
 emit() {
-    case "$1" in
-        i) printf 'INFO: %s\n' "$2" >&2 ;;
-        e) printf 'ERROR: %s\n' "$2" >&2 ;;
-        w) printf 'WARNING: %s\n' "$2" >&2 ;;
-        f) printf 'FATAL: %s\n' "$2" >&2 ;;
-        *) emit e "Invalid log level" ;;
+    local level=${1:-} message=${2:-} exit_code=${3:-}
+
+    case $level in
+        i) printf 'INFO: %s\n' "$message" >&2 ;;
+        w) printf 'WARNING: %s\n' "$message" >&2 ;;
+        e) printf 'ERROR: %s\n' "$message" >&2 ;;
+        f) printf 'FATAL: %s\n' "$message" >&2 ;;
+        *)
+            printf 'ERROR: Invalid log level: %s\n' "$level" >&2
+            return 2
+            ;;
     esac
-    [[ -z $3 ]] || exit "$3"
+
+    [[ -z $exit_code ]] || exit "$exit_code"
 }
 ```
 
-- All output to stderr
-- Optional 3rd argument triggers `exit` with that code
-- Recursive self-call on invalid level
+- All output goes to stderr.
+- The optional third argument exits with that code.
+- Invalid levels return `2` without recursive logging.
 
 ### Error Handling Patterns
 

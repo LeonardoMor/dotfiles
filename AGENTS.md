@@ -39,7 +39,7 @@ to `~/bin/utils.sh`. It provides the `emit()` logging function and
 `change-dir()`. Source it in scripts that run after chezmoi has deployed:
 
 ```bash
-source -p ~/bin utils.sh
+source -p ~/bin utils.sh || exit 1
 ```
 
 In standalone scripts where chezmoi templates are not available (e.g.,

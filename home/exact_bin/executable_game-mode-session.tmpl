@@ -1,6 +1,8 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
+source -p ~/bin utils.sh || exit 1
+
 LOG_DIR=${XDG_STATE_HOME:-$HOME/.local/state}
 LOG_FILE=$LOG_DIR/game-mode-session.log
 NVIDIA_PCI_ID='10de:27e0'
@@ -13,18 +15,6 @@ PERFORMANCE_TMP_DIR=
 
 GAME_MODE_STEAM_ARGS=(-steamdeck -steamos3)
 GAME_MODE_GAMESCOPE_ARGS=(--force-composition)
-
-emit() {
-    case $1 in
-        i) printf 'INFO: %s\n' "$2" >&2 ;;
-        w) printf 'WARNING: %s\n' "$2" >&2 ;;
-        e) printf 'ERROR: %s\n' "$2" >&2 ;;
-        f) printf 'FATAL: %s\n' "$2" >&2 ;;
-        *) emit e 'Invalid log level' ;;
-    esac
-
-    [[ -z ${3:-} ]] || exit "$3"
-}
 
 setup-logging() {
     mkdir -p "$LOG_DIR" || emit f "Unable to create log directory: $LOG_DIR" 1

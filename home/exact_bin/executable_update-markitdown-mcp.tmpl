@@ -1,7 +1,7 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-source ~/bin/utils.sh
+source -p ~/bin utils.sh || exit 1
 
 VENV=~/.local/share/pipx/venvs/markitdown
 PYTHON="$VENV/bin/python"
