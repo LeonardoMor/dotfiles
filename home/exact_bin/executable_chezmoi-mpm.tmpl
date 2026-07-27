@@ -6,12 +6,14 @@
 {{   $packageManagerOptionsString := $packageManagerOptions | join "|"   -}}
 #!/usr/bin/env bash
 
-source -p ~/bin utils.sh
+source -p ~/bin utils.sh || exit 1
 
 NAME="$(basename "$0")"
 TERMINATE=true
 TMPPACKAGES="/tmp/$(date +%s).packages.toml"
 OTHERPM=mpm
+PACKAGESPREFIX={{ joinPath .chezmoi.sourceDir ".chezmoidata" | quote }}
+MANAGERS=()
 
 help() {
     cat <<EOF
@@ -34,11 +36,21 @@ EOF
 }
 
 post() {
-    "$OTHERPM" cleanup
-    "$OTHERPM" backup --overwrite "$TMPPACKAGES"
+    local managers_json manager_ids manager
+
+    managers_json="$("$OTHERPM" --table-format json managers)" || emit f "Failed to query package managers with $OTHERPM" 1
+    manager_ids="$(jq --raw-output 'keys[]' <<<"$managers_json")" || emit f "Failed to parse package managers from $OTHERPM" 1
+
+    while IFS= read -r manager; do
+        [[ -z $manager ]] || MANAGERS+=("$manager")
+    done <<<"$manager_ids"
+    ((${#MANAGERS[@]} > 0)) || emit f "No package managers found" 1
+
+    "$OTHERPM" cleanup || emit f "Failed to clean up packages with $OTHERPM" 1
+    "$OTHERPM" backup --overwrite "$TMPPACKAGES" || emit f "Failed to back up packages with $OTHERPM" 1
 
     for m in "${MANAGERS[@]}"; do
-        qq --output toml "{$m}" "$TMPPACKAGES" >"$PACKAGESPREFIX/${m}.toml"
+        qq --output toml "{$m}" "$TMPPACKAGES" >"$PACKAGESPREFIX/${m}.toml" || emit f "Failed to record $m packages" 1
     done
 
     chezmoi git add .
@@ -49,7 +61,7 @@ post() {
 
 {{range $pm, $args := .packageManagers -}}
 _{{ $pm }}() {
-    {{ $args.command }} "$@"
+    {{ $args.command }} "$@" || emit f "Failed to run {{ $args.command }}" 1
     TERMINATE=false
 }
 
@@ -60,9 +72,9 @@ update() {
 {{- if $args.update -}}
 {{- block "indent" $args.command -}}
 {{ printf "    %s" . }}
-{{- end }} {{ includeTemplate "toShellArgs" $args.update }}
+{{- end }} {{ includeTemplate "toShellArgs" $args.update }} || emit f "Failed to update with {{ $args.command }}" 1
 {{ end -}}
-{{ template "indent" $args.command }} {{ template "toShellArgs" $args.upgrade }}
+{{ template "indent" $args.command }} {{ template "toShellArgs" $args.upgrade }} || emit f "Failed to upgrade with {{ $args.command }}" 1
 {{ end -}}
 {{- template "indent" "xargs mpm <<EOF" }}
 {{ range .packageManagers | keys | sortAlpha -}}
@@ -70,6 +82,7 @@ update() {
 {{ end -}}
 upgrade
 EOF
+    [[ ${PIPESTATUS[0]} -eq 0 ]] || emit f "Failed to upgrade with $OTHERPM" 1
     TERMINATE=false
 }
 
