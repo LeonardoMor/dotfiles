@@ -38,7 +38,7 @@ text = "#E8EEFF"
 [hotkeys]
 "Primary+Shift+Space" = "hints"
 "Primary+Shift+G" = "grid"
-"Primary+Shift+C" = "recursive_grid"
+"Primary+Alt+Shift+G" = "recursive_grid"
 "Primary+Shift+S" = "scroll"
 
 # Hint mode
