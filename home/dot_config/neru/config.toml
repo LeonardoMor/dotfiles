@@ -159,6 +159,7 @@ duration_ms = 180 # Recursive-grid animation duration in milliseconds
 "R" = ["action right_click", "idle"]
 "Shift+R" = "action reset"
 "Backspace" = "action backspace"
+"M" = "action move_monitor"
 "Shift+M" = "action middle_click"
 "Shift+D" = "action mouse_down"
 "Shift+U" = "action mouse_up"
