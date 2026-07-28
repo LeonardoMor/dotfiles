@@ -36,10 +36,9 @@ text = "#E8EEFF"
 # See https://github.com/y3owk1n/neru/blob/main/docs/CONFIGURATION.md#hotkeys
 # See https://github.com/y3owk1n/neru/blob/main/docs/CLI.md
 [hotkeys]
-"Primary+Shift+Space" = "hints"
-"Primary+Shift+G" = "grid"
+"Primary+Alt+Shift+Space" = "hints"
 "Primary+Alt+Shift+G" = "recursive_grid"
-"Primary+Shift+S" = "scroll"
+"Primary+Alt+Shift+S" = "scroll"
 
 # Hint mode
 # See https://github.com/y3owk1n/neru/blob/main/docs/CONFIGURATION.md#hint-mode
@@ -108,7 +107,7 @@ border_width = 1
 # Grid mode
 # See https://github.com/y3owk1n/neru/blob/main/docs/CONFIGURATION.md#grid-mode
 [grid]
-enabled = true
+enabled = false
 characters = "abcdefghijklmnpqrstuvwxyz"    # Primary grid labels
 sublayer_keys = "abcdefghijklmnpqrstuvwxyz" # Subgrid labels (fallback to characters)
 live_match_update = true                    # Highlight cells as you type
