@@ -6,7 +6,6 @@
 
 source -p ~/bin utils.sh || exit 1
 
-PRE_STATUS_HOLDER=
 PREDND=
 
 FIXED_WRAPPERS=(
@@ -18,57 +17,38 @@ in-hyprland() {
     [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]
 }
 
-hyprexec() {
-    hyprctl dispatch exec -- "$@"
-}
-
-calculate-current-DnD() {
-    local status_holder=$1 retries=10
-
-    : >"$status_holder" || return 1
-    hyprexec DNDSTATUS="$status_holder" DnD get || return 1
-
-    until [[ -s $status_holder || $retries == 0 ]]; do
-        sleep 1
-        ((retries--))
-    done
-
-    [[ -s $status_holder ]]
-}
-
 pre() {
     in-hyprland || return 0
 
-    PRE_STATUS_HOLDER=$(mktemp /tmp/DnD.pre.XXX) || {
-        emit w 'Unable to create DnD state holder'
+    PREDND=$(dms ipc notifications getDoNotDisturb) || {
+        emit w 'Unable to read do-not-disturb state'
+        PREDND=
         return 0
     }
 
-    calculate-current-DnD "$PRE_STATUS_HOLDER" || return 0
-    PREDND=$(<"$PRE_STATUS_HOLDER")
-    [[ $PREDND == true ]] || hyprexec dms ipc notifications toggleDoNotDisturb
+    [[ $PREDND == true ]] || dms ipc notifications toggleDoNotDisturb || {
+        emit w 'Unable to enable do-not-disturb'
+    }
 }
 
 post() {
-    local post_status_holder=
+    local post_dnd=
 
-    if in-hyprland; then
-        hyprctl reload || emit w 'Hyprland reload failed'
-        post_status_holder=$(mktemp /tmp/DnD.post.XXX) || post_status_holder=
+    in-hyprland || return 0
+    [[ -n $PREDND ]] || return 0
 
-        if [[ -n $PREDND && -n $post_status_holder ]] && calculate-current-DnD "$post_status_holder"; then
-            [[ $PREDND == "$(<"$post_status_holder")" ]] || hyprexec dms ipc notifications toggleDoNotDisturb
-        fi
-    fi
+    post_dnd=$(dms ipc notifications getDoNotDisturb) || {
+        emit w 'Unable to read do-not-disturb state'
+        return 0
+    }
 
-    [[ -z $PRE_STATUS_HOLDER ]] || rm -f "$PRE_STATUS_HOLDER"
-    [[ -z $post_status_holder ]] || rm -f "$post_status_holder"
+    [[ $PREDND == "$post_dnd" ]] || dms ipc notifications toggleDoNotDisturb || {
+        emit w 'Unable to restore do-not-disturb state'
+    }
 }
 
 main() {
     local -a cmd=("${FIXED_WRAPPERS[@]}")
-
-    trap post EXIT INT TERM
 
     cmd+=(
         scopebuddy
@@ -78,6 +58,10 @@ main() {
 
     "${cmd[@]}"
 }
+
+trap post EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 pre
 main "$@"

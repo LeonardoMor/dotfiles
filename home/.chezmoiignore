@@ -33,7 +33,6 @@ bin
 .config/discord
 .local
 bin/get-next-sink
-bin/launch-or-focus
 bin/layoutshoutout
 bin/rungame
 
