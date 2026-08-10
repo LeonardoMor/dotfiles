@@ -58,22 +58,22 @@ include_nc_hints = false
 include_stage_manager_hints = false
 detect_mission_control = false
 clickable_roles = [
-  "AXButton",
-  "AXComboBox",
-  "AXCheckBox",
-  "AXRadioButton",
-  "AXLink",
-  "AXPopUpButton",
-  "AXTextField",
-  "AXSlider",
-  "AXTabButton",
-  "AXSwitch",
-  "AXDisclosureTriangle",
-  "AXTextArea",
-  "AXMenuButton",
-  "AXMenuItem",
-  "AXCell",
-  "AXRow",
+  "button",
+  "combo_box",
+  "checkbox",
+  "radio",
+  "link",
+  "popup_button",
+  "text_field",
+  "slider",
+  "tab",
+  "switch",
+  "disclosure",
+  "text_area",
+  "menu_button",
+  "menu_item",
+  "cell",
+  "row",
 ]
 ignore_clickable_check = false
 
