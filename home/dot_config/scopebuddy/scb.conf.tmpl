@@ -1,3 +1,5 @@
+source "$SCB_CONFIGDIR/common.conf"
+
 # This is the config file that let's you assign defaults for gamescope when using the scopebuddy script
 # lines starting with # are ignored
 # Conf files matching the games Steam AppID stored in ~/.conf/scopebuddy/AppID/ will be sourced after
@@ -6,7 +8,6 @@
 # Example for always exporting specific environment variables for gamescope
 #export XKB_DEFAULT_LAYOUT=no
 #export MANGOHUD_CONFIG=preset=2
-export PROTON_ENABLE_WAYLAND=1 PROTON_DXVK_LOWLATENCY=1 PROTON_DLSS_UPGRADE=1
 #
 # Example for providing default gamescope arguments through scopebuddy if no arguments are given to the scopebuddy script, this does not need to be exported.
 # To not use this default set of arguments, just launch scb with SCB_NOSCOPE=1 or just add any gamescope argument before the '-- %command%' then this variable will be ignored
@@ -24,8 +25,6 @@ export PROTON_ENABLE_WAYLAND=1 PROTON_DXVK_LOWLATENCY=1 PROTON_DLSS_UPGRADE=1
 # gnome-randr will be used as fallback if gdctl test fails
 # To specify a custom gdctl build (must support 'gdctl show --format=json'):
 #export GDCTL_COMMAND="$HOME/.local/bin/gdctl-mr4708"
-# To debug scopebuddy output, uncomment the following line. After launching games, the executed cmd will be output to ~/.config/scopebuddy/scopebuddy.log
-SCB_DEBUG=1
 ###
 ## FOR ADVANCED USE INSIDE AN APPID CONFIG
 ###
