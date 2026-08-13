@@ -9,39 +9,48 @@ $cmd_duration\
 $line_break\
 $python\
 $character"""
+palette = "black_metal_venom"
+
+[palettes.black_metal_venom]
+accent = "#5f8787"
+danger = "#79241f"
+muted = "#888888"
+subtle = "#999999"
+text = "#c1c1c1"
+bright = "#f8f7f2"
 
 [directory]
 truncation_length = 2
-style = "blue"
+style = "text"
 
 [character]
-success_symbol = "[❯](purple)"
-error_symbol = "[❯](red)"
-vimcmd_symbol = "[❮](green)"
+success_symbol = "[❯](accent)"
+error_symbol = "[❯](bold danger)"
+vimcmd_symbol = "[❮](bright)"
 
 [git_branch]
 format = "[$branch]($style)"
-style = "bright-black"
+style = "muted"
 
 [git_status]
-format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
-style = "cyan"
-conflicted = "​"
-untracked = "​"
-modified = "​"
-staged = "​"
-renamed = "​"
-deleted = "​"
-stashed = "≡"
+format = "($conflicted$staged$modified$renamed$deleted$untracked$stashed$ahead_behind)"
+style = "accent"
+conflicted = "[~${count}](bold danger) "
+staged = "[+${count}](bold danger) "
+modified = "[!${count}](bold danger) "
+renamed = "[»${count}](bold danger) "
+deleted = "[✘${count}](bold danger) "
+untracked = "[?${count}](accent) "
+stashed = "[*${count}](accent) "
 
 [git_state]
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
-style = "bright-black"
+style = "muted"
 
 [cmd_duration]
 format = "[$duration]($style) "
-style = "yellow"
+style = "subtle"
 
 [python]
 format = "[$virtualenv]($style) "
-style = "bright-black"
+style = "muted"
