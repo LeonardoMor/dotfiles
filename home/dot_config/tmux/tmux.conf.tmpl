@@ -33,11 +33,9 @@ set -s set-clipboard on
 set -g @plugin 'tmux-plugins/tpm'
 
 # Theme options
-# set -g @plugin "janoamaral/tokyo-night-tmux"
-# set -g @tokyo-night-tmux_window_id_style none
-# set -g @tokyo-night-tmux_pane_id_style hsquare
-# set -g @tokyo-night-tmux_zoom_id_style dsquare
-source-file "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/tmux/tokyonight_night.tmux"
+set -g @plugin 'tinted-theming/tinted-tmux'
+set -g @tinted-color 'base16-black-metal-venom'
+set-environment -g TINTED_TMUX_OPTION_STATUSBAR 1
 
 # List of plugins
 set -g @plugin 'tmux-plugins/tmux-sensible'
