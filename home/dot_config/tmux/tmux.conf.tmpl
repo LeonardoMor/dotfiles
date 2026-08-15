@@ -35,7 +35,12 @@ set -g @plugin 'tmux-plugins/tpm'
 # Theme options
 set -g @plugin 'tinted-theming/tinted-tmux'
 set -g @tinted-color 'base16-black-metal-venom'
-set-environment -g TINTED_TMUX_OPTION_STATUSBAR 1
+set -g @plugin 'vaaleyard/tmux-dotbar'
+set -g @tmux-dotbar-bg '#000000'
+set -g @tmux-dotbar-fg '#444444'
+set -g @tmux-dotbar-fg-current '#c1c1c1'
+set -g @tmux-dotbar-fg-session '#999999'
+set -g @tmux-dotbar-fg-prefix '#5f8787'
 
 # List of plugins
 set -g @plugin 'tmux-plugins/tmux-sensible'
