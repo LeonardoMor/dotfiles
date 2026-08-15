@@ -44,7 +44,10 @@ if [[ -f ~/.bash_aliases ]]; then
 fi
 
 # fzf theme
-source "${XDG_DATA_HOME}/nvim/lazy/tokyonight.nvim/extras/fzf/tokyonight_night.sh"
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS-}"\
+' --color=bg+:#121212,bg:#000000,spinner:#aaaaaa,hl:#888888'\
+' --color=fg:#999999,header:#888888,info:#79241f,pointer:#aaaaaa'\
+' --color=marker:#aaaaaa,fg+:#999999,prompt:#79241f,hl+:#888888'
 
 # Enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
