@@ -1,4 +1,7 @@
 # Faces
+ble-import colorglass
+bleopt color_scheme=base16
+bleopt colorglass_base16_palette='BlackMetal(Venom)'
 ble-face auto_complete=fg=gray
 
 # Key bindings
