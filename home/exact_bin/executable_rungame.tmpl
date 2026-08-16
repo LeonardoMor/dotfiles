@@ -17,16 +17,63 @@ in-hyprland() {
     [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]
 }
 
+hypr-exec() {
+    local command=$1
+
+    [[ $command != *']]'* ]] || return 1
+    hyprctl dispatch "hl.dsp.exec_cmd([[$command]])" >/dev/null
+}
+
+query-dnd() {
+    local status_holder dnd retries=100
+
+    status_holder=$(mktemp /tmp/rungame-dnd.XXXXXX) || return 1
+    hypr-exec "dms ipc call notifications getDoNotDisturb > $status_holder" || {
+        rm -f "$status_holder"
+        return 1
+    }
+
+    until [[ -s $status_holder || $retries == 0 ]]; do
+        sleep 0.02
+        ((retries--))
+    done
+
+    dnd=$(<"$status_holder")
+    rm -f "$status_holder"
+    [[ $dnd == true || $dnd == false ]] || return 1
+    printf '%s\n' "$dnd"
+}
+
+toggle-dnd() {
+    local status_holder retries=100
+
+    status_holder=$(mktemp /tmp/rungame-dnd.XXXXXX) || return 1
+    hypr-exec "dms ipc call notifications toggleDoNotDisturb >/dev/null && printf done > $status_holder" || {
+        rm -f "$status_holder"
+        return 1
+    }
+
+    until [[ -s $status_holder || $retries == 0 ]]; do
+        sleep 0.02
+        ((retries--))
+    done
+
+    [[ -s $status_holder ]]
+    local status=$?
+    rm -f "$status_holder"
+    return "$status"
+}
+
 pre() {
     in-hyprland || return 0
 
-    PREDND=$(dms ipc notifications getDoNotDisturb) || {
+    PREDND=$(query-dnd) || {
         emit w 'Unable to read do-not-disturb state'
         PREDND=
         return 0
     }
 
-    [[ $PREDND == true ]] || dms ipc notifications toggleDoNotDisturb || {
+    [[ $PREDND == true ]] || toggle-dnd || {
         emit w 'Unable to enable do-not-disturb'
     }
 }
@@ -37,12 +84,12 @@ post() {
     in-hyprland || return 0
     [[ -n $PREDND ]] || return 0
 
-    post_dnd=$(dms ipc notifications getDoNotDisturb) || {
+    post_dnd=$(query-dnd) || {
         emit w 'Unable to read do-not-disturb state'
         return 0
     }
 
-    [[ $PREDND == "$post_dnd" ]] || dms ipc notifications toggleDoNotDisturb || {
+    [[ $PREDND == "$post_dnd" ]] || toggle-dnd || {
         emit w 'Unable to restore do-not-disturb state'
     }
 }
