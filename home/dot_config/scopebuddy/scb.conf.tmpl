@@ -34,7 +34,7 @@ source "$SCB_CONFIGDIR/common.conf"
 # $SCB_GAMEMODE will be set to 1 if we are running inside steam gamemode (which means SCB_NOSCOPE will also be set to 1 due to nested gamescope not working in gamemode)
 # $command will contain everything steam expanded %command% into
 #
-SCB_GAMESCOPE_ARGS="--backend sdl --force-grab-cursor --mangoapp"
+SCB_GAMESCOPE_ARGS="--backend wayland --force-grab-cursor --mangoapp"
 {{ if ne .monitorProfile "none" -}}
 preferred_monitor="$(hyprctl -j monitors all 2>/dev/null |
     jq --compact-output --arg model {{ .monitorModel | quote }} \
