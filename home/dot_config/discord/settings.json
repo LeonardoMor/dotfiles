@@ -1,9 +1,9 @@
 {
   "openH264Enabled": true,
-  "BACKGROUND_COLOR": "#2c2d32",
+  "BACKGROUND_COLOR": "#000000",
   "offloadAdmControls": true,
   "chromiumSwitches": {},
-  "IS_MAXIMIZED": false,
+  "IS_MAXIMIZED": true,
   "IS_MINIMIZED": false,
   "WINDOW_BOUNDS": {
     "x": 1606,
@@ -14,6 +14,6 @@
   "DESKTOP_TTI_DNSTCP_WARMUP": true,
   "DESKTOP_TTI_UPDATE_BACKOFF_MAX_MS": 20000,
   "DESKTOP_TTI_EARLY_UPDATE_CHECK": true,
-  "DESKTOP_TTI_REMOVE_V8_CACHE_CLEAR": true,
+  "DESKTOP_TTI_REMOVE_V8_CACHE_CLEAR": false,
   "DESKTOP_TTI_SPLASH_USE_WEBP": true
 }
