@@ -78,6 +78,32 @@ set-OUTPUT_PATH "$1"
 write-output "$OUTPUT_PATH"
 ```
 
+#### Positional Arguments vs Named Locals
+
+Use the raw positional argument when a small function references it once and its
+meaning is obvious from the function name or synopsis. Use a named local when
+the function references the argument more than once, transforms it, or has logic
+where a thematic name improves readability.
+
+```bash
+# Bad: unnecessary alias for a single, self-evident use
+is-installed() {
+    local tool="$1"
+    command -v "$tool" >/dev/null 2>&1
+}
+
+# Good: the positional argument is clear from the function name and synopsis
+is-installed() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Good: a named local clarifies repeated use and the transformation
+install-if-missing() {
+    local package="$1"
+    is-installed "$package" || brew install "$package"
+}
+```
+
 ### Block Statements
 
 `then` goes on the same line as `if`; `do` goes on the same line as
