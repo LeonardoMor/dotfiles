@@ -45,6 +45,7 @@ packages = [
   "ghostscript",
   "ghostty",
   "github-cli",
+  "git-lfs",
   "glow",
   "gnome-keyring",
   "go",
