@@ -8,12 +8,6 @@ function Refresh-Env {
 Refresh-Env
 
 try {
-    bat cache --build
-} catch {
-    Write-Host "Error: $_"
-}
-
-try {
     if (-not (gh auth status)) {
         gh auth login
     }

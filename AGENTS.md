@@ -106,3 +106,10 @@ VAULTSDIR={{ .vaultsDir | quote }}
 - Follow existing patterns in each file type
 - Use absolute paths for file operations
 - Store command arguments in array-like variables
+
+<!-- lean-ctx -->
+## lean-ctx
+
+lean-ctx is active — the MCP tools replace native equivalents.
+Full rules: LEAN-CTX.md (open on demand — do not auto-load).
+<!-- /lean-ctx -->

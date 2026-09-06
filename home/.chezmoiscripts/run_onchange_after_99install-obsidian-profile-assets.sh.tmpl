@@ -1,0 +1,45 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+set -o errexit -o nounset -o pipefail
+
+profile_dir=${XDG_CONFIG_HOME:-$HOME/.config}/obsidian/Profiles/default
+plugins=(
+  'attachment-management|trganda/obsidian-attachment-management'
+  'obsidian-git|Vinzent03/obsidian-git'
+  'obsidian-relative-line-numbers|nadavspi/obsidian-relative-line-numbers'
+  'settings-profiles|4Source/settings-profiles-obsidian-plugin'
+)
+
+install_asset() {
+  local url=$1 destination=$2 temporary
+  [[ -e $destination ]] && return
+
+  mkdir -p "${destination%/*}"
+  temporary=$(mktemp "${destination}.XXXXXX")
+  if ! curl --fail --location --silent --show-error "$url" --output "$temporary"; then
+    rm -f "$temporary"
+    return 1
+  fi
+  mv "$temporary" "$destination"
+}
+
+for plugin in "${plugins[@]}"; do
+  IFS='|' read -r id repository <<< "$plugin"
+  for asset in main.js manifest.json styles.css; do
+    install_asset \
+      "https://github.com/$repository/releases/latest/download/$asset" \
+      "$profile_dir/plugins/$id/$asset"
+  done
+done
+
+for asset in manifest.json theme.css; do
+  install_asset \
+    "https://raw.githubusercontent.com/tcmmichaelb139/obsidian-tokyonight/master/$asset" \
+    "$profile_dir/themes/Tokyo Night/$asset"
+done
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

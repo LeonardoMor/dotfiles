@@ -6,34 +6,6 @@ $ExtractFolder = Join-Path -Path $TempFolder -ChildPath "JetBrainsMonoFont"
 $FontsFolder = "$env:SystemRoot\Fonts"
 $RegistryPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
 
-function Show-Help
-{
-    Write-Output @"
-Install-JetBrainsMonoNerdFont.ps1 - Install the JetBrains Mono Nerd Font on Windows.
-
-Usage:
-    Run this script to download, extract, and install the JetBrains Mono Nerd Font.
-
-Options:
-    -h  Display this help message and exit.
-
-This script will:
-    1. Download the JetBrains Mono Nerd Font ZIP file.
-    2. Extract the font files to a temporary directory.
-    3. Install the font files to the Windows Fonts folder.
-    4. Register the fonts in the Windows registry.
-    5. Clean up temporary files.
-
-Make sure to run the script with administrator privileges.
-"@
-    exit
-}
-
-if ($args -contains "-h")
-{
-    Show-Help
-}
-
 function Test-FontInstalled
 {
     param (
