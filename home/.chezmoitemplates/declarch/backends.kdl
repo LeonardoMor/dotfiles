@@ -1,0 +1,81 @@
+// native intentionally maps shared package names to the platform package manager.
+backend "native" {
+{{- if eq .chezmoi.os "linux" }}
+    binary "paru"
+    list "{binary} -Q" {
+        format "whitespace"
+        name_col 0
+        version_col 1
+    }
+    install "{binary} -S --needed --asexplicit {packages}"
+    remove "{binary} -R {packages}"
+    upgrade "{binary} -Syu"
+    noconfirm "--noconfirm"
+{{- else }}
+    binary "{{ .brewPrefix }}/bin/brew"
+    list "{binary} list --formula --versions" {
+        format "whitespace"
+        name_col 0
+        version_col 1
+    }
+    install "{binary} install --formula {packages}"
+    remove "{binary} uninstall --formula {packages}"
+    update "{binary} update"
+    upgrade "{binary} upgrade --formula"
+    cache_clean "{binary} cleanup"
+{{- end }}
+}
+
+{{ if eq .chezmoi.os "darwin" -}}
+backend "cask" {
+    binary "{{ .brewPrefix }}/bin/brew"
+    list "{binary} list --cask --versions" {
+        format "whitespace"
+        name_col 0
+        version_col 1
+    }
+    install "{binary} install --cask {packages}"
+    remove "{binary} uninstall --cask {packages}"
+    upgrade "{binary} upgrade --cask"
+}
+
+backend "cargo" {
+    binary "cargo"
+    list "{binary} install --list" {
+        format "regex"
+        regex "^([^ ]+) v([^:]+):$"
+        name_group 1
+        version_group 2
+    }
+    install "{binary} install --locked {packages}"
+    remove "{binary} uninstall {packages}"
+}
+{{ end }}
+backend "npm" {
+    binary "npm"
+    env NPM_CONFIG_PREFIX="{{ .chezmoi.homeDir }}/.local"
+    list "{binary} list --global --depth=0 --json" {
+        format "json_object_keys"
+        json_path "dependencies"
+        version_key "version"
+    }
+    install "{binary} install --global {packages}"
+    remove "{binary} uninstall --global {packages}"
+    upgrade "{binary} update --global"
+}
+
+backend "pipx" {
+    binary "pipx"
+    list "{binary} list --json" {
+        format "json_object_keys"
+        json_path "venvs"
+        // pipx versions are nested; this backend tracks package presence.
+        version_key "version"
+    }
+    install "{binary} install {packages}"
+    remove "{binary} uninstall {packages}"
+    upgrade "{binary} upgrade-all"
+}
+{{/*
+vim: filetype=gotmpl
+*/}}

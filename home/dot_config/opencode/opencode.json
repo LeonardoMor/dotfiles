@@ -6,14 +6,5 @@
             "extensions": [".qml"]
         }
     },
-    "mcp": {
-        "markitdown": {
-            "type": "local",
-            "command": [
-                "/home/leo/.local/share/pipx/venvs/markitdown/bin/markitdown-mcp"
-            ],
-            "enabled": true
-        }
-    },
     "plugin": ["opencode-antigravity-auth@latest"]
 }

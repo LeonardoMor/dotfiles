@@ -1,0 +1,35 @@
+// Canonical desired packages; editable through Declarch modules.
+pkg {
+    cargo {
+        "prosemd-lsp"
+    }
+    cask {
+        "android-platform-tools"
+        "copilot-cli"
+        "gcloud-cli"
+        "visual-studio-code"
+    }
+    native {
+        "bats-core"
+        "bats-support"
+        "bfg"
+        "black"
+        "gh"
+        "git-filter-repo"
+        "glab"
+        "isort"
+        "lean-ctx"
+        "node"
+        "openjdk"
+        "pipx"
+        "pkgconf"
+        "ruby"
+        "rust"
+        "taplo"
+        "xcodegen"
+    }
+    npm {
+        "awk-language-server"
+        "vim-language-server"
+    }
+}

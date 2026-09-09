@@ -93,11 +93,9 @@ set-system-managers() {
     case "$OS" in
         arch)
             set-INSTALL paru -- --sync --refresh --sysupgrade --needed --noconfirm
-            METAPM=metapac
             ;;
         darwin)
             set-INSTALL -p "/opt/homebrew/bin" -- brew install
-            METAPM=meta-package-manager
             ;;
         *) emit i "Unsupported OS" 1 ;;
     esac
@@ -112,11 +110,13 @@ set-system-managers
 PREREQUISITES=(
     1password
     1password-cli
+    bash
+    git
     chezmoi
-    "$METAPM"
 )
 
-_install "${PREREQUISITES[@]}"
+_install "${PREREQUISITES[@]}" || exit 1
+[[ $OS != darwin ]] || export PATH="/opt/homebrew/bin:$PATH"
 
 grep export <<<"$(op account add --signin </dev/tty)" >"$FINAL_STAGE"
 echo "chezmoi init --apply --branch ${BRANCH:-master} LeonardoMor </dev/tty" >>"$FINAL_STAGE"

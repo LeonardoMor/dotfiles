@@ -1,0 +1,6 @@
+{{- if eq .chezmoi.os "linux" -}}
+{{ template "declarch/declarch.kdl" . }}
+{{- end -}}
+{{/*
+vim: filetype=gotmpl
+*/}}

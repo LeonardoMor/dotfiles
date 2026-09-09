@@ -1,3 +1,13 @@
 .config/hypr/scripts/fix-external-monitor.sh
 .config/opencode/skills/bash/SKILL.md
 .config/bat/themes/tokyonight_night.tmTheme
+{{ if ne .chezmoi.os "windows" -}}
+bin/chezmoi-mpm
+.config/metapac
+{{ end -}}
+{{ if eq .chezmoi.os "darwin" -}}
+Library/Application Support/mpm
+{{ end -}}
+{{ if eq .chezmoi.hostname "infinity" -}}
+bin/update-markitdown-mcp
+{{ end -}}

@@ -1,0 +1,38 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+
+source -p ~/bin utils.sh || exit 1
+USER_NAME=$(id -un) || exit 1
+
+ensure-group() {
+    getent group "$1" >/dev/null || sudo groupadd "$1" || return 1
+    local groups
+    groups=$(id -nG "$USER_NAME") || return 1
+    [[ " $groups " = *" $1 "* ]] || sudo usermod -aG "$1" "$USER_NAME"
+}
+
+if pacman -Qq greetd >/dev/null 2>&1; then
+    sudo systemctl enable greetd.service || exit 1
+fi
+if pacman -Qq kanata >/dev/null 2>&1; then
+    ensure-group input && ensure-group uinput || exit 1
+    printf '%s\n' 'KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"' | \
+        sudo tee /etc/udev/rules.d/99-input.rules >/dev/null || exit 1
+    sudo udevadm control --reload-rules && sudo udevadm trigger || exit 1
+    systemctl --user daemon-reload && systemctl --user enable kanata.service || exit 1
+fi
+if pacman -Qq libvirt >/dev/null 2>&1; then
+    ensure-group libvirt || exit 1
+    sudo systemctl enable --now libvirtd.service || exit 1
+fi
+if pacman -Qq kanata-switcher >/dev/null 2>&1; then
+    systemctl --user daemon-reload && systemctl --user enable --now kanata-switcher.service || exit 1
+fi
+if pacman -Qq openrazer-daemon >/dev/null 2>&1; then
+    ensure-group plugdev && ensure-group openrazer || exit 1
+    systemctl --user enable openrazer-daemon.service || exit 1
+fi
+{{- end }}
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

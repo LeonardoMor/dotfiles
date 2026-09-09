@@ -45,10 +45,14 @@ if [ -s {{ printf "%s/etc/bash_completion.d/nvm" $optnvm | quote }} ]; then
 fi
 
 prepend2PATH "{{ .brewPrefix }}/opt/gnu-getopt/bin"
+prepend2PATH "{{ .brewPrefix }}/opt/libxml2/bin"
 
 {{ else if eq .chezmoi.osRelease.idLike "arch" -}}
 source /usr/share/nvm/init-nvm.sh
 {{ end -}}
+
+# Declarch's npm backend uses a fixed user-global prefix, not the active nvm version.
+PATH="${HOME}/bin:${HOME}/.local/bin:${PATH}"
 
 export PATH
 {{- /*

@@ -9,7 +9,9 @@
                 'aerial',
                 'fugitive',
                 'lazy',
+                {{- if ne .chezmoi.os "linux" }}
                 'mason',
+                {{- end }}
                 'neo-tree',
                 'quickfix',
                 'trouble',

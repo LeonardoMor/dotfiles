@@ -140,69 +140,152 @@ So I've created bootstrap scripts that would:
 - install 1Password,
 - deploy the dotfiles and install the packages via `chezmoi`.
 
-Here is how things are expected to work. macOS goes first because (at least for
-this) it is an ideal situation.
+## Package management: Linux and macOS
 
-## macOS
+[Declarch](https://nixval.github.io/declarch/) owns desired package state. Chezmoi
+owns its configuration and platform routing. Windows remains on its existing
+winget manifest and scripts; it is not part of this migration.
 
-The bootstrap installs Homebrew and applies Chezmoi. Formula and cask desired
-state live in `.chezmoidata/brew.toml` and `.chezmoidata/cask.toml`.
+### Sources and generated paths
 
-## Manage packages declaratively with `metapac`
+`home/.chezmoitemplates/declarch/` contains the shared root/backend templates.
+Thin destination templates generate them at:
 
-See [metapac](https://github.com/ripytide/metapac).
+- Linux: `~/.config/declarch/`
+- macOS: `~/Library/Application Support/com.declarch.declarch/`
 
-`metapac` config is tracked with `chezmoi`. Later, if I have to, I'll track it
-as template to also use this system on Windows.
+The `modules` **directory** at either destination is a symlink to
+`home/.externally_modified/declarch/`. Those KDL files are the canonical,
+editable package lists, not generated snapshots. A directory link survives
+an editor's atomic replacement of individual module files; a file symlink may not.
 
-`metapac` groups are tracked with `chezmoi` as externally modifiable files.
+| Module | Intent |
+| --- | --- |
+| `base.kdl` | Shared everyday tools |
+| `coding.kdl` | Shared developer tools, language servers and formatters |
+| `coding-linux.kdl`, `coding-darwin.kdl` | Platform-specific developer packages/names |
+| `linux.kdl`, `darwin.kdl` | Platform-specific applications and utilities |
+| `cachyos.kdl` | Preserved CachyOS baseline; imported only on CachyOS |
 
-### Linux
+The local `native` backend maps to Paru on Arch/CachyOS and Homebrew formulae
+on macOS. Homebrew casks use `cask`; npm, pipx and macOS Cargo have separate
+backends. Other Linux distributions need their own native backend and lists.
 
-CachyOS for now, but with this system it'll be just as easy to deploy these
-dotfiles on other distros.
+The migration preserves the previously declared Linux dependencies and the
+Mac's tracked Brew inventory rather than guessing install reasons remotely.
+Old snapshot versions were observations, not pins; versioned formula **names**
+are preserved. `metapac`, `meta-package-manager`, `brew-file`, and infinity's
+`markitdown` are no longer desired packages. Existing installations are not
+automatically uninstalled. Infinity's markitdown updater and OpenCode MCP
+reference are retired so applying dotfiles does not reinstall it.
 
-The workflow is as follows:
+### Installation and first use
 
-#### Installing packages
-
-1. Run
-
-```bash
-metapac add --backend arch --group GROUP --package PACKAGE
-```
-
-This will add the package to the `GROUP` group.
-
-2. Run
-
-```bash
-chezmoi apply --verbose
-```
-
-There's a script in `.chezmoiscripts/linux` that will detect the change and run
-the `metapac sync`.
-
-#### Uninstalling packages
-
-First, run
+Fresh bootstrap provisions native backend prerequisites, then Declarch before
+the first package sync. On an existing checkout, install it explicitly from
+the repository root:
 
 ```bash
-metapac remove --backend arch --package PACKAGE
+bash .bootstrap/install-declarch.sh
 ```
 
-The second step is the same.
+Linux uses the upstream-recommended AUR `declarch-bin` package. At migration
+time its AUR version is 0.8.1-1, behind the 0.8.2 source release.
 
-Once you're happy with the changes, add and commit them:
+macOS 0.8.2 has a concrete upstream issue: `ProjectDirs::state_dir()` returns
+`None`, causing `System does not support state directory`. The installer builds
+the pinned `v0.8.2` tag with `.bootstrap/declarch-state-dir.patch`, using the
+platform-local data directory as the fallback. On macOS, `state.json` therefore
+lives alongside `declarch.kdl`. It installs the binary to `~/.local/bin` and
+requires Homebrew Rust plus Apple's command-line build tools. This patch should
+be retired once an upstream release fixes the lookup; do not replace the patched
+binary with an unpatched 0.8.2 release. The actual macOS config path above follows
+the source's bundle identifier, not the shorter example in the alpha docs.
+
+Review Chezmoi's diff before applying; its `run_once_after` package installer
+performs a real sync on first execution. For a configuration-only rollout before
+manual package checks, use `chezmoi apply --exclude scripts` and then start a new
+login shell. Check on **each real machine**:
 
 ```bash
-chezmoi git add .
-chezmoi git commit
+declarch info --doctor
+declarch lint --mode validate
+decl --dry-run sync --hooks
 ```
 
-### Windows
+After reviewing the plan, run `decl sync --hooks`. On infinity, the service hook
+preserves the former greetd, Kanata, libvirt, kanata-switcher and OpenRazer setup;
+it may request sudo. Membership changes may require logging in again. Native
+sync hooks also run when packages are already synchronized.
 
-Once setup, things should work in the same way as on Linux.
+### Daily workflow and commits
+
+Use `~/bin/decl` (available as `decl` after loading `.profile`):
+
+```bash
+decl install native:PACKAGE
+decl install native:PACKAGE --module coding
+decl edit coding
+decl sync --hooks
+update
+```
+
+The small `decl` wrapper forwards to the real `declarch`, defaults installs to
+the current platform module, and checks package-file changes after modifying
+operations—even when an operation fails after editing a manifest. Dry runs,
+diff previews and help do not commit. Native `post-sync`/`on-failure` hooks call
+the same helper; the wrapper covers install, edit and upgrade paths where
+upstream does not dispatch those hooks. Wrapped native hooks defer their commit
+until the outer command finishes. Calling `declarch` directly bypasses that
+extra coverage, and its sync hooks still require `--hooks`.
+
+Upstream does **not** honor `--dry-run` for `init`, `sync upgrade`, `sync cache` or
+the hidden `self-update`, and `edit --create` (`-c`)/`--auto-format` can write before
+checking preview flags. `decl` recognizes edit's `-p`/`-c` even in short-option
+clusters and rejects unsafe preview combinations before invoking Declarch. It also adds
+`--dry-run` to diff previews, since native `sync --diff --hooks` can execute hooks.
+For subcommands, place hook flags after the subcommand: `decl sync prune --hooks`
+or `decl sync update --hooks`, not `decl sync --hooks prune`. Native `switch`
+updates installed packages/state but not manifests; edit the desired module too.
+
+`chezmoi-declarch-commit` stages and commits **only changed KDL files** under the
+two canonical Declarch source directories. It handles additions/deletions,
+preserves unrelated staged files, honors Git signing, and never pushes. Failed
+commits remain visible and can be retried with `chezmoi-declarch-commit`; do not
+disable signing to hide a failure. Commits record desired configuration, not a
+claim that a failed package operation completed successfully.
+
+Use the predeclared module names above. To add a new module, create its canonical
+file and add its import to the central root template, then apply the root config.
+Do not edit the generated `declarch.kdl` or run `init`/`sync import` over it:
+upstream may write imports into that generated file, which Chezmoi would replace.
+State, caches and full installed-package exports are deliberately not committed.
+
+To remove a package, edit its module, inspect `decl --dry-run sync prune`, then
+run `decl sync prune` only after reviewing removals. Ordinary sync is additive;
+orphans are kept. Do not use `--prune-all`, force pruning, or unattended cleanup
+for the initial migration. Paru upgrades use full `-Syu`, never a partial
+`pacman -Sy` refresh.
+
+### Coding tooling ownership
+
+Linux/macOS coding lists provision native tools accessible outside Neovim.
+npm applications use `~/.local/bin` and a fixed per-command global prefix,
+independent of nvm's version-specific global directories; pipx and Cargo remain
+user-global isolated tools. The existing dedicated bootstrap still installs and
+selects Node Iron through nvm. Declarch uses the active `npm` on PATH rather than
+introducing a competing Linux Node installation. The Mac's pre-existing Homebrew
+`node` entry is preserved with the rest of its snapshot, not newly introduced.
+The old global `npm` self-upgrade entry is omitted; nvm provisions npm together
+with Node. Review npm engine requirements against that existing Node version
+when trying the new tools.
+
+Unix LSP setup uses executables on PATH, and broad Mason auto-installation is
+disabled. macOS keeps **only LemMinX** as a Mason exception because there is no
+Homebrew formula; Mason's PATH is appended so stale copies cannot shadow native
+tools. macOS `prosemd-lsp` uses its upstream Cargo package; its Apple Silicon
+build still needs validation on the Mac. Existing Mason copies are not deleted.
+Windows Mason settings remain unchanged.
 
 [chezmoi reference]: https://www.chezmoi.io/reference/
 [template]: htps://pkg.go.dev/text/template

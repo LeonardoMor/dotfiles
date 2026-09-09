@@ -1,0 +1,20 @@
+// Canonical desired packages; editable through Declarch modules.
+pkg {
+    native {
+        "asciinema"
+        "bash"
+        "bat"
+        "chezmoi"
+        "dos2unix"
+        "fastfetch"
+        "git"
+        "nmap"
+        "ripgrep"
+        "starship"
+        "tmux"
+        "tree"
+    }
+    pipx {
+        "vdf2json"
+    }
+}

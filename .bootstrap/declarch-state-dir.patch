@@ -1,0 +1,10 @@
+--- a/src/utils/paths.rs
++++ b/src/utils/paths.rs
+@@ -39,6 +39,3 @@
+     let proj = project_dirs()?;
+-    let state_dir = proj.state_dir().ok_or_else(|| {
+-        DeclarchError::PathError("System does not support state directory".to_string())
+-    })?;
+-    Ok(state_dir.to_path_buf())
++    Ok(proj.state_dir().unwrap_or_else(|| proj.data_local_dir()).to_path_buf())
+ }

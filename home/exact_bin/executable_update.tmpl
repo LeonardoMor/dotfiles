@@ -1,12 +1,15 @@
+{{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-~/bin/chezmoi-mpm upgrade
+~/bin/decl sync upgrade --no-sync || exit 1
+~/bin/decl sync --hooks || exit 1
 
 {{- if eq .osid "darwin" }}
 
 # Update ble.sh in macOS
 BLESH_PATH=~/.local/share/blesh
 bash "${BLESH_PATH}/ble.sh" --update
+{{- end }}
 {{- end }}
 
 {{- /*

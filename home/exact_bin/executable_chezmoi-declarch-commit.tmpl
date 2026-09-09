@@ -1,0 +1,43 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+source -p ~/bin utils.sh || exit 1
+
+# The outer wrapper waits for install rollback and late failures before committing.
+[[ ${DECLARCH_DEFER_COMMIT:-} = 1 ]] && exit 0
+
+SOURCE_DIR={{ .chezmoi.sourceDir | quote }}
+REPO=$(chezmoi git -- rev-parse --show-toplevel) || exit 1
+SOURCE_REPO=$(git -C "$SOURCE_DIR" rev-parse --show-toplevel) || exit 1
+[[ $REPO = "$SOURCE_REPO" ]] || emit e 'Chezmoi source repository changed; reapply the Declarch scripts first.' 1
+PREFIX=$(git -C "$SOURCE_DIR" rev-parse --show-prefix) || exit 1
+STATUS=$(mktemp) || exit 1
+trap 'rm -f -- "$STATUS"' EXIT
+
+for operation in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-merge rebase-apply sequencer; do
+    state=$(git -C "$REPO" rev-parse --git-path "$operation") || exit 1
+    [[ $state = /* ]] || state="$REPO/$state"
+    [[ ! -e $state ]] || emit e 'Finish the in-progress Git operation before committing package files.' 1
+done
+
+# Chezmoi sees an unchanged directory symlink; Git sees edits to its raw KDL targets.
+git -C "$REPO" status --porcelain=v1 -z --no-renames --untracked-files=all -- \
+    "${PREFIX}.externally_modified/declarch/" \
+    "${PREFIX}.chezmoitemplates/declarch/" >"$STATUS" || exit 1
+
+PATHS=()
+while IFS= read -r -d '' entry; do
+    path=${entry:3}
+    [[ $path = *.kdl ]] && PATHS+=("$path")
+done <"$STATUS"
+((${#PATHS[@]})) || exit 0
+
+git -C "$REPO" --literal-pathspecs add -A -- "${PATHS[@]}" || exit 1
+# --only prevents unrelated files already in the user's index entering this commit.
+git -C "$REPO" --literal-pathspecs commit --only \
+    -m 'chore(packages): update Declarch manifests' -- "${PATHS[@]}" || \
+    emit e 'Package commit failed; changes are preserved. Fix Git/signing and retry chezmoi-declarch-commit.' 1
+{{- end }}
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

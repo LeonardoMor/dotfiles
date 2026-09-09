@@ -2,11 +2,17 @@
         -- Main LSP Configuration
         'neovim/nvim-lspconfig',
         dependencies = {
+            {{- if eq .chezmoi.os "windows" }}
             { 'mason-org/mason.nvim', opts = {} },
             'mason-org/mason-lspconfig.nvim',
+            {{- else if eq .chezmoi.os "darwin" }}
+            { 'mason-org/mason.nvim', opts = { PATH = 'append' } },
+            {{- end }}
             { 'j-hui/fidget.nvim', opts = {} },
             'saghen/blink.cmp',
+            {{- if ne .chezmoi.os "linux" }}
             'WhoIsSethDaniel/mason-tool-installer.nvim',
+            {{- end }}
         },
         config = function()
             vim.api.nvim_create_autocmd('LspAttach', {
@@ -214,6 +220,8 @@
                 {{- end }}
             }
 
+            {{- if eq .chezmoi.os "windows" }}
+
             require('mason-lspconfig').setup {
                 ensure_installed = vim.tbl_keys(servers or {}),
                 automatic_installation = true,
@@ -228,6 +236,13 @@
                     end,
                 },
             }
+            {{- else }}
+            -- Declarch owns Unix tool installation; Neovim only configures PATH executables.
+            for server_name, server in pairs(servers) do
+              server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+              require('lspconfig')[server_name].setup(server)
+            end
+            {{- end }}
         end,
     }
 {{- /*

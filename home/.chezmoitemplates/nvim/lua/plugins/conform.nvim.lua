@@ -145,6 +145,14 @@
                         },
                     },
                     prettier = {
+                        {{- if ne .chezmoi.os "windows" }}
+                        prepend_args = function(_, ctx)
+                          if vim.bo[ctx.buf].filetype == 'awk' then
+                            return { '--plugin', vim.fn.expand '~/.local/lib/node_modules/prettier-plugin-awk/out/index.js', '--parser', 'awk' }
+                          end
+                          return {}
+                        end,
+                        {{- end }}
                         options = {
                             ft_parsers = {
                                 html = 'html',

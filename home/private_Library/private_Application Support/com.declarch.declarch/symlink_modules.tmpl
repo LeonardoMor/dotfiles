@@ -1,0 +1,6 @@
+{{- if eq .chezmoi.os "darwin" -}}
+{{ joinPath .chezmoi.sourceDir ".externally_modified" "declarch" }}
+{{- end -}}
+{{/*
+vim: filetype=gotmpl
+*/}}

@@ -1,0 +1,33 @@
+// Canonical desired packages; editable through Declarch modules.
+pkg {
+    native {
+        "arch-install-scripts"
+        "awk-language-server"
+        "base-devel"
+        "bats"
+        "breezy"
+        "devtools"
+        "docker"
+        "docker-compose"
+        "git-lfs"
+        "github-cli"
+        "hyprls"
+        "lemminx"
+        "mercurial"
+        "namcap"
+        "opencode"
+        "prosemd-lsp"
+        "python-black"
+        "python-isort"
+        "python-pipx"
+        "qt6-declarative"
+        "qt6-languageserver"
+        "scdoc"
+        "strace"
+        "subversion"
+        "taplo-cli"
+        "unixodbc"
+        "uvicorn"
+        "vim-language-server"
+    }
+}

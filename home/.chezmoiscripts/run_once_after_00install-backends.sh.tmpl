@@ -1,19 +1,20 @@
 {{- if ne .osid "windows" -}}
 #!/usr/bin/env bash
 
-source -p ~/bin utils.sh
+source -p ~/bin utils.sh || exit 1
 
 set-system-package-manager
-_install python-pipx nvm
-source -p ~ .profile
-
-# Install node
+{{ if eq .chezmoi.os "darwin" -}}
+_install pipx nvm || exit 1
+{{ else -}}
+_install python-pipx nvm || exit 1
+{{ end -}}
+source -p ~ .profile || exit 1
 emit i 'Installing node Iron...'
-if nvm install --lts=iron; then
-    nvm use --lts=iron || emit e "Failed using node Iron"
-else
-    emit e "Failed to install node Iron"
-fi
+nvm install --lts=iron || emit e 'Failed to install Node Iron' 1
+nvm use --lts=iron || emit e 'Failed to select Node Iron' 1
+command -v declarch >/dev/null || \
+    bash {{ joinPath .chezmoi.sourceDir ".." ".bootstrap" "install-declarch.sh" | quote }} || exit 1
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl

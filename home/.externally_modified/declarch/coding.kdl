@@ -1,0 +1,36 @@
+// Canonical desired packages; editable through Declarch modules.
+pkg {
+    native {
+        "basedpyright"
+        "bash-language-server"
+        "bats-assert"
+        "bats-file"
+        "biome"
+        "checkmake"
+        "cmake"
+        "delve"
+        "dockerfile-language-server"
+        "gawk"
+        "go"
+        "jq-lsp"
+        "libxml2"
+        "lua-language-server"
+        "marksman"
+        "neovim"
+        "nvm"
+        "prettierd"
+        "shellcheck"
+        "shfmt"
+        "stylua"
+        "tree-sitter-cli"
+        "typos-lsp"
+        "uv"
+        "vim"
+        "vscode-langservers-extracted"
+    }
+    npm {
+        "corepack"
+        "prettier"
+        "prettier-plugin-awk"
+    }
+}

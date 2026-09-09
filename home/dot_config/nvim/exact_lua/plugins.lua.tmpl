@@ -16,7 +16,9 @@ return {
 {{ includeTemplate "nvim/lua/plugins/lualine.nvim.lua" . }},
 {{ includeTemplate "nvim/lua/plugins/luvit-meta.lua" . }},
 {{ includeTemplate "nvim/lua/plugins/markdown.nvim.lua" . }},
+{{ if eq .chezmoi.os "darwin" -}}
 {{ includeTemplate "nvim/lua/plugins/mason-tool-installer.nvim.lua" . }},
+{{ end -}}
 {{ includeTemplate "nvim/lua/plugins/maximize.nvim.lua" . }},
 {{ includeTemplate "nvim/lua/plugins/neo-tree.lua" . }},
 {{ if ne .chezmoi.hostname .workHost }}
