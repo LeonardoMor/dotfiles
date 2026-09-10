@@ -1,8 +1,8 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-~/bin/decl sync upgrade --no-sync || exit 1
-~/bin/decl sync --hooks || exit 1
+declarch sync upgrade --no-sync || exit 1
+declarch sync --hooks || exit 1
 
 {{- if eq .osid "darwin" }}
 

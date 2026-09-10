@@ -3,9 +3,6 @@
 
 source -p ~/bin utils.sh || exit 1
 
-# The outer wrapper waits for install rollback and late failures before committing.
-[[ ${DECLARCH_DEFER_COMMIT:-} = 1 ]] && exit 0
-
 SOURCE_DIR={{ .chezmoi.sourceDir | quote }}
 REPO=$(chezmoi git -- rev-parse --show-toplevel) || exit 1
 SOURCE_REPO=$(git -C "$SOURCE_DIR" rev-parse --show-toplevel) || exit 1

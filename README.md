@@ -201,47 +201,53 @@ backend availability, configuration validity, and the package plan before syncin
 ```bash
 declarch info --doctor
 declarch lint --mode validate
-decl --dry-run sync --hooks
+declarch --dry-run sync --hooks
 ```
 
-After reviewing the plan, run `decl sync --hooks`. The Linux service hook
+After reviewing the plan, run `declarch sync --hooks`. The Linux service hook
 configures greetd, Kanata, libvirt, kanata-switcher and OpenRazer when their
 packages are installed; it may request sudo. Membership changes may require
 logging in again. Native sync hooks also run when packages are already synchronized.
 
 ### Daily workflow and commits
 
-Use `~/bin/decl` (available as `decl` after loading `.profile`):
+Use Declarch directly. Add package declarations to an explicit module, review
+the plan, then synchronize. For example, on Linux:
 
 ```bash
-decl install native:PACKAGE
-decl install native:PACKAGE --module coding
-decl edit coding
-decl sync --hooks
-update
+declarch install native:PACKAGE --module linux --no-sync
+declarch --dry-run sync --hooks
+declarch sync --hooks
 ```
 
-Without `--module`, `decl install` records packages in `linux.kdl` on Linux or
-`darwin.kdl` on macOS, under `home/.externally_modified/declarch/`. `native`
-selects the package-manager backend, not the module. Use `--module` to choose
-a shared or platform-specific coding module explicitly.
+Use `--module darwin` on macOS, or choose a shared/coding module when appropriate.
+`--module linux` writes to `home/.externally_modified/declarch/linux.kdl`;
+`--module darwin` writes to `darwin.kdl` in the same directory. `native` selects
+the package-manager backend, not the module. Without `--module`, Declarch uses
+`modules/others.kdl` and may add an import to the generated root configuration;
+always choose a predeclared module instead.
 
-The `decl` wrapper forwards to the real `declarch` and checks package-file changes
-after modifying operations—even when an operation fails after editing a manifest. Dry runs,
-diff previews and help do not commit. Native `post-sync`/`on-failure` hooks call
-the same helper; the wrapper covers install, edit and upgrade paths where
-upstream does not dispatch those hooks. Wrapped native hooks defer their commit
-until the outer command finishes. Calling `declarch` directly bypasses that
-extra coverage, and its sync hooks still require `--hooks`.
+To edit an existing module, use `declarch edit coding`, for example, then review
+and sync. The `update` helper runs `declarch sync upgrade --no-sync` followed by
+`declarch sync --hooks`.
+
+**Hook-enabled sync is the Git checkpoint.** Native `post-sync` and `on-failure`
+hooks call `chezmoi-declarch-commit` when those phases are reached. Hooks require
+`--hooks`; the configuration already enables them. A no-op sync also runs the
+post-sync hook. Standalone edits and installs do not automatically commit:
+`install` disables hooks in its automatic sync, while `--no-sync` only records
+the declaration. Changes wait for the next explicit `declarch sync --hooks`.
+Failures before hook execution leave changes uncommitted.
 
 Upstream does **not** honor `--dry-run` for `init`, `sync upgrade`, `sync cache` or
 the hidden `self-update`, and `edit --create` (`-c`)/`--auto-format` can write before
-checking preview flags. `decl` recognizes edit's `-p`/`-c` even in short-option
-clusters and rejects unsafe preview combinations before invoking Declarch. It also adds
-`--dry-run` to diff previews, since native `sync --diff --hooks` can execute hooks.
-For subcommands, place hook flags after the subcommand: `decl sync prune --hooks`
-or `decl sync update --hooks`, not `decl sync --hooks prune`. Native `switch`
-updates installed packages/state but not manifests; edit the desired module too.
+checking preview flags. Do not use those combinations as previews. Use
+`declarch --dry-run sync --hooks` to inspect synchronization safely;
+`sync --diff --hooks` alone can execute hooks. For subcommands, place hook flags
+after the subcommand: `declarch sync prune --hooks` or
+`declarch sync update --hooks`, not `declarch sync --hooks prune`.
+Native `switch` updates installed packages/state but not manifests; edit the
+desired module too.
 
 `chezmoi-declarch-commit` stages and commits **only changed KDL files** under the
 two canonical Declarch source directories. It handles additions/deletions,
@@ -256,9 +262,9 @@ Do not edit the generated `declarch.kdl` or run `init`/`sync import` over it:
 upstream may write imports into that generated file, which Chezmoi would replace.
 State, caches and full installed-package exports are deliberately not committed.
 
-To remove a package, edit its module, inspect `decl --dry-run sync prune`, then
-run `decl sync prune` only after reviewing removals. Ordinary sync is additive;
-orphans are kept. Pruning is an explicit, reviewed operation, not unattended
+To remove a package, edit its module, inspect `declarch --dry-run sync prune`,
+then run `declarch sync prune --hooks` only after reviewing removals. Ordinary
+sync is additive; orphans are kept. Pruning is an explicit, reviewed operation, not unattended
 cleanup. Paru upgrades use full `-Syu`, never a partial
 `pacman -Sy` refresh.
 
