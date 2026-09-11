@@ -279,11 +279,4 @@ packages = [
 packages = ["corepack", "npm", "prettier", "prettier-plugin-awk"]
 
 [pipx]
-packages = [
-  { name = "markitdown", hooks = { after_sync = [
-    "sh",
-    "-lc",
-    "$HOME/bin/update-markitdown-mcp",
-  ] } },
-  "vdf2json",
-]
+packages = ["vdf2json"]
