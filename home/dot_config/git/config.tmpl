@@ -13,6 +13,11 @@
 	signingkey = {{ if eq .chezmoi.hostname .workHost }}{{ onepasswordRead "op://Employee/workKey/public key" "cisco" }}{{ else }}{{ onepasswordRead "op://Private/personal_id_ed25519/public key" "my" }}{{ end }}
 [core]
 	editor = nvim
+[filter "lfs"]
+       required = true
+       clean = git-lfs clean -- %f
+       smudge = git-lfs smudge -- %f
+       process = git-lfs filter-process
 {{- if eq .chezmoi.os "windows" }}
 	autocrlf = true
 	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
