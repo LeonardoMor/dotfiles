@@ -54,7 +54,7 @@
                     pattern = 'markdown',
                     callback = function()
                         local path = vim.fn.expand '%:p'
-                        if string.match(path, '^' .. vim.fn.expand '~/source/repos/Codice' .. '/') then
+                        if string.match(path, '^' .. vim.fn.expand '~/Projects/Codice' .. '/') then
                             vim.opt_local.conceallevel = 2
                         end
                     end,

@@ -1,7 +1,7 @@
 {{ if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-source -p ~/bin utils.sh
+source -p ~/bin utils.sh || exit 1
 
 git --version >/dev/null 2>&1 || {
     emit w 'git is not yet installed. Clone vaults manually later' 0
@@ -38,16 +38,17 @@ setup-codice() {
 }
 {{ end }}
 
-[[ -d $VAULTSDIR ]] || mkdir -p "$VAULTSDIR"
+[[ -d $VAULTSDIR ]] || mkdir -p "$VAULTSDIR" || exit 1
 {{ if eq .chezmoi.hostname "infinity" }}
-setup-codice
+[[ -L $VAULTSDIR/Codice && $(readlink "$VAULTSDIR/Codice") == /mnt/Codice ]] || setup-codice || exit 1
 {{ end }}
 
 for vault in "${VAULTS[@]}"; do
-    (
-        change-dir "$VAULTSDIR"
-        [[ -d $vault ]] || git clone "https://github.com/LeonardoMor/${vault}.git"
-    )
+    [[ -d $VAULTSDIR/$vault ]] && continue
+    [[ ! -e $VAULTSDIR/$vault && ! -L $VAULTSDIR/$vault ]] || {
+        emit e "Refusing to replace $VAULTSDIR/$vault" 1
+    }
+    git clone "https://github.com/LeonardoMor/${vault}.git" "$VAULTSDIR/$vault" || exit 1
 done
 {{ end -}}
 {{/*

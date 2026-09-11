@@ -48,7 +48,7 @@ prompt = true
 osid = {{ $osid | quote }}
 workHost = {{ $workHost | quote }}
 name = {{ $name | quote }}
-vaultsDir = {{ joinPath .chezmoi.homeDir "source" "repos" | quote }}
+vaultsDir = {{ joinPath .chezmoi.homeDir "Projects" | quote }}
 monitorProfile = {{ $monitorProfile | quote }}
 monitorModel = {{ $monitorModel | quote }}
 {{ if eq .chezmoi.hostname $workHost -}}

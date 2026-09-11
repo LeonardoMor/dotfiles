@@ -31,7 +31,7 @@ require('lazy').setup {
   },
   install = { colorscheme = { 'tokyonight' } },
   dev = {
-    path = '~/source/repos',
+    path = '~/Projects',
     fallback = true,
   },
   rocks = {

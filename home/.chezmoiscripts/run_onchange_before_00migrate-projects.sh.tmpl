@@ -1,0 +1,88 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/usr/bin/env bash
+
+shopt -s nullglob dotglob
+PROJECTS="$HOME/Projects"
+sources=()
+for path in "$HOME/source"/* "$HOME/source/repos"/*; do
+    [[ $path == "$HOME/source/repos" ]] && continue
+    [[ -d $path || -L $path ]] || continue
+    destination="$PROJECTS/${path##*/}"
+    [[ ! -e $destination && ! -L $destination ]] || {
+        printf 'Refusing to overwrite %s with %s\n' "$destination" "$path" >&2
+        exit 1
+    }
+    for previous in "${sources[@]}"; do
+        [[ ${previous##*/} != "${path##*/}" ]] || exit 1
+    done
+    sources+=("$path")
+done
+
+registry="${XDG_CONFIG_HOME:-$HOME/.config}/obsidian/obsidian.json"
+{{ if eq .chezmoi.os "darwin" -}}
+registry="$HOME/Library/Application Support/obsidian/obsidian.json"
+{{ end -}}
+if [[ -f $registry ]]; then
+    command -v jq >/dev/null || exit 1
+    jq empty "$registry" || exit 1
+fi
+if ((${#sources[@]})); then
+    if pgrep -if obsidian >/dev/null; then
+        printf 'Close Obsidian before migrating projects.\n' >&2
+        exit 1
+    fi
+    mkdir -p "$PROJECTS" || exit 1
+    for path in "${sources[@]}"; do
+        mv "$path" "$PROJECTS/${path##*/}" || exit 1
+        printf 'Moved %s -> %s\n' "$path" "$PROJECTS/${path##*/}"
+    done
+fi
+
+# Repair linked worktrees after both their main and working directories move.
+for path in "$PROJECTS"/*; do
+    [[ -d $path/.git && ! -L $path ]] || continue
+    worktrees=$(git -C "$path" worktree list --porcelain) || exit 1
+    while IFS= read -r line; do
+        [[ $line == 'worktree '* ]] || continue
+        worktree=${line#worktree }
+        case $worktree in
+            "$HOME/source/repos/"*) worktree="$PROJECTS/${worktree#"$HOME/source/repos/"}" ;;
+            "$HOME/source/"*) worktree="$PROJECTS/${worktree#"$HOME/source/"}" ;;
+            *) continue ;;
+        esac
+        [[ -f $worktree/.git ]] || continue
+        git -C "$path" worktree repair "$worktree" || exit 1
+    done <<< "$worktrees"
+    settings=$(git -C "$path" config --local --get-regexp 'remote\..*\.(url|pushurl)|core\.worktree')
+    while IFS= read -r setting; do
+        key=${setting%% *}
+        value=${setting#* }
+        case $value in
+            "$HOME/source/"*|file://"$HOME/source/"*|*localhost:"$HOME/source/"*)
+                updated=${value/"$HOME/source/repos/"/"$PROJECTS/"}
+                updated=${updated/"$HOME/source/"/"$PROJECTS/"}
+                git -C "$path" config --local --fixed-value --replace-all "$key" "$updated" "$value" || exit 1
+                ;;
+        esac
+    done <<< "$settings"
+done
+
+if [[ -f $registry ]]; then
+    temporary=$(mktemp "${registry}.XXXXXX") || exit 1
+    jq --arg old "$HOME/source/" --arg new "$PROJECTS/" '
+        (.vaults[]?.path) |=
+        if startswith($old + "repos/") then $new + ltrimstr($old + "repos/")
+        elif startswith($old) then $new + ltrimstr($old)
+        else . end
+    ' "$registry" > "$temporary" || { rm -f "$temporary"; exit 1; }
+    if cmp -s "$registry" "$temporary"; then
+        rm -f "$temporary" || exit 1
+    else
+        cp -p "$registry" "${registry}.before-projects-migration" &&
+            mv "$temporary" "$registry" || exit 1
+    fi
+fi
+{{- end }}
+{{/*
+vim: filetype=sh.gotmpl
+*/}}
