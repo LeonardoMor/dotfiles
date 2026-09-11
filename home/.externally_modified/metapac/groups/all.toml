@@ -79,6 +79,7 @@ packages = [
     "-lc",
     "sudo systemctl enable --now libvirtd.service; sudo usermod -aG libvirt $USER",
   ] } },
+  "lean-ctx",
   "lib32-libva-intel-driver",
   "lib32-mesa",
   "lib32-nvidia-utils",

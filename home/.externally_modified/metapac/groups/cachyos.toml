@@ -198,7 +198,6 @@ arch = { packages = [
   "lib32-libjpeg-turbo",
   "lib32-libnl",
   "lib32-libnm",
-  "lib32-libpcap",
   "lib32-libpipewire",
   "lib32-libpng",
   "lib32-librsvg",
