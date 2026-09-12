@@ -56,6 +56,10 @@ if [[ -f /etc/bash_completion ]] && ! shopt -oq posix; then
     source /etc/bash_completion
 fi
 
+if [[ -r ~/.local/share/bash-completion/completions/openspec ]]; then
+    source ~/.local/share/bash-completion/completions/openspec
+fi
+
 # Starship Prompt
 eval "$(starship init bash)"
 
