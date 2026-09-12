@@ -79,7 +79,7 @@ packages = [
     "-lc",
     "sudo systemctl enable --now libvirtd.service; sudo usermod -aG libvirt $USER",
   ] } },
-  "lean-ctx",
+  "lean-ctx-bin",
   "lib32-libva-intel-driver",
   "lib32-mesa",
   "lib32-nvidia-utils",
@@ -277,7 +277,13 @@ packages = [
 ]
 
 [npm]
-packages = ["corepack", "npm", "prettier", "prettier-plugin-awk"]
+packages = [
+  "@fission-ai/openspec",
+  "corepack",
+  "npm",
+  "prettier",
+  "prettier-plugin-awk",
+]
 
 [pipx]
 packages = ["vdf2json"]
