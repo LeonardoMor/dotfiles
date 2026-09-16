@@ -1,3 +1,4 @@
 .tasks
 *.swp
+__pycache__/
 home/dot_config/quickshell/AGENTS.md

@@ -1,17 +1,27 @@
-{{- if ne .chezmoi.os "windows" -}}
+{{- if eq .osid "linux-cachyos" -}}
 #!/usr/bin/env bash
 
-source -p ~ .profile
+set -euo pipefail
 
-{{ if eq .chezmoi.os "darwin" -}}
-{{ range $pm, $args := .packageManagers -}}
-xargs {{ $args.command }} {{ template "toShellArgs" $args.install }} <<EOF
-{{ index $ $pm | keys | sortAlpha | join "\n" }}
-EOF
-{{ end -}}
-{{ else -}}
-metapac sync --no-confirm || metapac sync --no-confirm || metapac sync --no-confirm
-{{ end -}}
+source "$HOME/.profile"
+
+config_home=${XDG_CONFIG_HOME:-$HOME/.config}
+for module in all cachyos; do
+    path=$config_home/declarch/modules/$module.kdl
+    [[ -r $path ]] || {
+        printf 'Missing Declarch module: %s\n' "$path" >&2
+        exit 1
+    }
+done
+
+declarch lint --mode validate
+declarch --yes sync
+plan=$(declarch info --plan)
+printf '%s\n' "$plan"
+grep -qx 'Planned install: 0' <<<"$plan" || {
+    printf 'Declarch left package installations pending\n' >&2
+    exit 1
+}
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl

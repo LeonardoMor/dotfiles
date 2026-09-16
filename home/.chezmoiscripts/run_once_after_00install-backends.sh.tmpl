@@ -1,19 +1,13 @@
-{{- if ne .osid "windows" -}}
+{{- if eq .osid "linux-cachyos" -}}
 #!/usr/bin/env bash
 
-source -p ~/bin utils.sh
+set -euo pipefail
 
-set-system-package-manager
-_install python-pipx nvm
-source -p ~ .profile
+source "$HOME/.profile"
 
-# Install node
-emit i 'Installing node Iron...'
-if nvm install --lts=iron; then
-    nvm use --lts=iron || emit e "Failed using node Iron"
-else
-    emit e "Failed to install node Iron"
-fi
+printf 'Installing the current Node.js Iron LTS release\n'
+nvm install --lts=iron
+nvm use --lts=iron
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl

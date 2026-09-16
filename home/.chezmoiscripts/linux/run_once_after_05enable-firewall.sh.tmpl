@@ -1,5 +1,7 @@
-{{ if eq .chezmoi.os "linux" -}}
+{{ if eq .osid "linux-cachyos" -}}
 #!/usr/bin/env bash
+
+set -euo pipefail
 
 sudo ufw default deny incoming
 sudo ufw default allow outgoing

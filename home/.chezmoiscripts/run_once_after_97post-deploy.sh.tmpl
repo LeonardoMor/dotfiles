@@ -1,12 +1,12 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-source -p ~ .profile
-source -p ~/bin utils.sh
+source "$HOME/.profile"
+source "$HOME/bin/utils.sh"
 
 emit i 'Executing post-deploy tasks...'
 
-{{ if eq .chezmoi.os "linux" -}}
+{{ if eq .osid "linux-cachyos" -}}
 emit i "Setting default shell to bash..."
 chsh -s /usr/bin/bash
 {{ end -}}
