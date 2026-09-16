@@ -410,7 +410,7 @@ class ServiceStateTest(unittest.TestCase):
         self.assertIn("dms-greeter enable --yes", setup)
         self.assertIn("dms-greeter sync --yes", setup)
         self.assertNotIn('tee "$GREETD_CONFIG"', setup)
-        self.assertNotIn("pam_gnome_keyring", setup)
+        self.assertIn("pam_gnome_keyring", setup)
         self.assertNotIn("dankinstall", setup)
         for unit in (
             "NetworkManager.service",
@@ -515,9 +515,13 @@ class ServiceStateTest(unittest.TestCase):
             home = fixture / "home"
             etc = fixture / "etc"
             bin_dir = fixture / "bin"
-            etc.mkdir(parents=True)
+            (etc / "pam.d").mkdir(parents=True)
             home.mkdir()
             bin_dir.mkdir()
+            (etc / "pam.d/greetd").write_text(
+                "auth include system-local-login\nsession include system-local-login\n",
+                encoding="utf-8",
+            )
             config = fixture / "chezmoi.toml"
             config.write_text(
                 '[data]\nosid="linux-cachyos"\nname="Fixture"\nemail="fixture@example.invalid"\n'
@@ -598,6 +602,9 @@ class ServiceStateTest(unittest.TestCase):
                 self.assertIn("systemctl --user enable dms.service", trace)
                 self.assertIn("sudo systemctl enable cups.service libvirtd.service", trace)
                 self.assertFalse((etc / "greetd/config.toml").exists())
+                greetd_pam = (etc / "pam.d/greetd").read_text(encoding="utf-8")
+                self.assertIn("auth       optional     pam_gnome_keyring.so", greetd_pam)
+                self.assertIn("session    optional     pam_gnome_keyring.so", greetd_pam)
                 self.assertTrue((etc / "udev/rules.d/99-input.rules").is_file())
                 self.assertEqual("unchanged\n", canary.read_text(encoding="utf-8"))
                 failed = subprocess.run(
