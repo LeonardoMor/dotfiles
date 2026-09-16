@@ -1,0 +1,22 @@
+meta {
+    title "CachyOS workstation"
+}
+
+backends {
+    "backends/paru.kdl"
+    "backends/npm.kdl"
+    "backends/pipx.kdl"
+}
+
+imports {
+    "modules/all.kdl"
+    "modules/cachyos.kdl"
+}
+
+policy {
+    require_backend "true"
+    forbid_hooks "true"
+    on_duplicate "error"
+    on_conflict "error"
+    orphans "remove"
+}

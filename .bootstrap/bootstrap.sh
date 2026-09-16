@@ -1,17 +1,6 @@
 #!/usr/bin/env bash
 
-# Prepares the current system to deploy the dotfiles via chezmoi
-# This is a pre-requisite, pure bash script. In particular, templating syntax
-# is not available here
-
-OS=
-FINAL_STAGE="$(mktemp)"
-
-cleanup() {
-    rm -f "$FINAL_STAGE"
-}
-
-trap cleanup EXIT
+set -euo pipefail
 
 emit() {
     local level=${1:-} message=${2:-} exit_code=${3:-}
@@ -30,94 +19,52 @@ emit() {
     [[ -z $exit_code ]] || exit "$exit_code"
 }
 
-change-dir() {
-    cd "$1" || emit f "Failed to change directory to $1" $?
-}
+os_release=${DOTFILES_OS_RELEASE:-/etc/os-release}
+[[ -r $os_release ]] || emit f "Cannot read $os_release" 1
+os_id=$(awk -F= '$1 == "ID" { value=$2; gsub(/^"|"$/, "", value); print value; exit }' "$os_release")
+[[ $os_id == cachyos ]] || emit f "Unsupported OS: ${os_id:-unknown}; CachyOS is required" 1
 
-is-installed() {
-    command -v "$1" >/dev/null 2>&1 || {
-        emit w "$1 is not installed"
-        return 1
-    }
-}
+if ! command -v paru >/dev/null 2>&1; then
+    emit i 'Installing paru from the CachyOS repository'
+    sudo pacman --sync --refresh --sysupgrade --needed --noconfirm paru
+fi
 
-install-system-package-manager() {
-    emit i "Installing $1"
-    case "$1" in
-        brew)
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            ;;
-        paru)
-            (
-                change-dir "$HOME"
-                sudo pacman --sync --sysupgrade
-                sudo pacman --sync --needed base-devel
-                git clone https://aur.archlinux.org/paru.git
-                sudo mv paru /opt
-                change-dir /opt/paru
-                makepkg -si
-            )
-            ;;
-        *) emit e "$1 package manager not supported" 1 ;;
-    esac
-}
+emit i 'Installing bootstrap prerequisites'
+paru --sync --refresh --sysupgrade --needed --noconfirm \
+    1password \
+    1password-cli \
+    chezmoi \
+    curl \
+    nvm \
+    python-pipx
 
-set-INSTALL() {
-    local opt OPTIND OPTARG
-    while getopts 'p:' opt; do
-        case "$opt" in
-            p)
-                INSTALL="${OPTARG}/"
-                ;;
-            *)
-                emit i "set-INSTALL: wrong option"
-                ;;
-        esac
-    done
-    shift $((OPTIND - 1))
+if ! command -v declarch >/dev/null 2>&1; then
+    emit i 'Installing Declarch 0.8.2 with its official release installer'
+    (
+        installer=$(mktemp)
+        trap 'rm -f "$installer"' EXIT
+        curl -fsSL https://raw.githubusercontent.com/nixval/declarch/v0.8.2/install.sh -o "$installer"
+        printf '%s  %s\n' \
+            bce51b98ae7af63b5fa58669ae8f6b9d601e14114ec8bb002de2b9523c1c288a \
+            "$installer" | sha256sum -c -
+        DECLARCH_VERSION=0.8.2 bash "$installer"
+    )
+    hash -r
+fi
 
-    is-installed "$1" || install-system-package-manager "$1"
-    INSTALL+="$1"
-    shift
-    [[ ${1-} == "--" ]] && shift
-    ARGS=("$@")
-}
+for command in op chezmoi declarch; do
+    command -v "$command" >/dev/null 2>&1 || emit f "$command is unavailable after prerequisite installation" 1
+done
 
-set-system-managers() {
-    OS="$(uname)"
-    case "$OS" in
-        Darwin) OS=darwin ;;
-        Linux) OS="$(grep -E '^ID_LIKE' /etc/os-release | cut -d'=' -f2)" ;;
-    esac
+if ! op whoami >/dev/null 2>&1; then
+    emit i 'Authenticating 1Password'
+    if ! signin=$(op signin </dev/tty); then
+        emit i 'Adding a 1Password account'
+        signin=$(op account add --signin </dev/tty) || emit f '1Password sign-in failed' 1
+    fi
+    eval "$signin"
+    unset signin
+    op whoami >/dev/null 2>&1 || emit f '1Password sign-in failed' 1
+fi
 
-    case "$OS" in
-        arch)
-            set-INSTALL paru -- --sync --refresh --sysupgrade --needed --noconfirm
-            METAPM=metapac
-            ;;
-        darwin)
-            set-INSTALL -p "/opt/homebrew/bin" -- brew install
-            METAPM=meta-package-manager
-            ;;
-        *) emit i "Unsupported OS" 1 ;;
-    esac
-}
-
-_install() {
-    "$INSTALL" "${ARGS[@]}" "$@"
-}
-
-# Entry point
-set-system-managers
-PREREQUISITES=(
-    1password
-    1password-cli
-    chezmoi
-    "$METAPM"
-)
-
-_install "${PREREQUISITES[@]}"
-
-grep export <<<"$(op account add --signin </dev/tty)" >"$FINAL_STAGE"
-echo "chezmoi init --apply --branch ${BRANCH:-master} LeonardoMor </dev/tty" >>"$FINAL_STAGE"
-bash -x "$FINAL_STAGE"
+chezmoi init --apply --branch "${BRANCH:-master}" LeonardoMor </dev/tty

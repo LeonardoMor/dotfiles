@@ -1,58 +1,15 @@
-{{- if eq .chezmoi.os "linux" -}}
+{{- if eq .osid "linux-cachyos" -}}
 #!/usr/bin/env bash
 
 set -euo pipefail
 
-# DankMaterialShell — install via dankinstall (headless)
-DMS_SENTINEL=~/.local/share/danklinux/installed
-[[ -f $DMS_SENTINEL ]] || {
-    arch=$(uname -m)
-    case $arch in
-    x86_64) dl_arch=amd64 ;;
-    aarch64) dl_arch=arm64 ;;
-    *)
-        echo "Unsupported arch: $arch" >&2
-        exit 1
-        ;;
-    esac
+ETC=${DOTFILES_ETC:-/etc}
 
-    tmp=$(mktemp -d)
-    trap 'rm -rf "$tmp"' EXIT
+sudo -v
 
-    base="https://github.com/AvengeMedia/DankMaterialShell/releases/latest/download"
-    curl -fsSL "$base/dankinstall-${dl_arch}.gz" -o "$tmp/dankinstall.gz"
-    curl -fsSL "$base/dankinstall-${dl_arch}.gz.sha256" -o "$tmp/dankinstall.gz.sha256"
-
-    expected=$(awk '{print $1}' "$tmp/dankinstall.gz.sha256")
-    actual=$(sha256sum "$tmp/dankinstall.gz" | awk '{print $1}')
-    if [[ $expected != "$actual" ]]; then
-        echo "dankinstall checksum mismatch" >&2
-        exit 1
-    fi
-
-    gunzip "$tmp/dankinstall.gz"
-    chmod +x "$tmp/dankinstall"
-
-    # Cache sudo so the installer's privileged steps don't prompt mid-run.
-    sudo -v
-
-    "$tmp/dankinstall" \
-        -c hyprland \
-        -t ghostty \
-        --include-deps dms-greeter \
-        -y
-
-    mkdir -p "$(dirname "$DMS_SENTINEL")"
-    touch "$DMS_SENTINEL"
-}
-
-# Configure greetd via DMS
-DMS_GREETER_SENTINEL=~/.local/share/danklinux/greeter-installed
-[[ -f $DMS_GREETER_SENTINEL ]] || {
-    sudo -v
-    dms greeter install
-    mkdir -p "$(dirname "$DMS_GREETER_SENTINEL")"
-    sudo tee /etc/greetd/hypr.conf > /dev/null << 'EOF'
+dms-greeter enable --yes
+sudo install -d "$ETC/greetd" "$ETC/udev/rules.d"
+sudo tee "$ETC/greetd/hypr.conf" >/dev/null <<'EOF'
 env = DMS_RUN_GREETER,1
 
 misc {
@@ -60,42 +17,47 @@ misc {
 }
 EOF
 
-    GREETD_CONFIG=/etc/greetd/config.toml
-    sudo install -d /etc/greetd
-    [[ -f $GREETD_CONFIG ]] || sudo tee "$GREETD_CONFIG" >/dev/null << 'EOF'
+GREETD_CONFIG=$ETC/greetd/config.toml
+sudo tee "$GREETD_CONFIG" >/dev/null <<EOF
 [terminal]
-vt = ""
+vt = 1
 
 [default_session]
-command = ""
+command = "dms-greeter --command hyprland --config $ETC/greetd/hypr.conf --remember-last-session true --remember-last-user true"
 user = "greeter"
 EOF
 
-    dmscmd='dms-greeter --command hyprland --config /etc/greetd/hypr.conf --remember-last-session true --remember-last-user true' \
-        dasel --in toml --out toml --root \
-        'if (terminal.vt != 1) {
-            terminal.vt = 1
-        } elseif (default_session.command != $dmscmd) {
-            default_session.command = $dmscmd
-        } elseif (default_session.user != "greeter") {
-            default_session.user = "greeter"
-        } else {
-            $root
-        }' <"$GREETD_CONFIG" | sudo tee "$GREETD_CONFIG.tmp" >/dev/null
-
-    if [[ -s ${GREETD_CONFIG}.tmp ]]; then
-        sudo mv "$GREETD_CONFIG.tmp" "$GREETD_CONFIG"
-    else
-        sudo rm -f "$GREETD_CONFIG.tmp"
-    fi
-
-    touch "$DMS_GREETER_SENTINEL"
-}
-
-# Configure PAM to unlock gnome-keyring on login
-GREETD_PAM="/etc/pam.d/greetd"
-grep -q pam_gnome_keyring "$GREETD_PAM" || {
+GREETD_PAM=$ETC/pam.d/greetd
+if ! grep -q pam_gnome_keyring "$GREETD_PAM"; then
     sudo sed -i '/^auth.*include.*system-local-login/a auth       optional     pam_gnome_keyring.so' "$GREETD_PAM"
     sudo sed -i '/^session.*include.*system-local-login/a session    optional     pam_gnome_keyring.so' "$GREETD_PAM"
-}
+fi
+
+for group in uinput plugdev openrazer; do
+    getent group "$group" >/dev/null || sudo groupadd "$group"
+done
+sudo usermod -aG input,uinput,libvirt,plugdev,openrazer "$USER"
+printf '%s\n' 'KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"' | \
+    sudo tee "$ETC/udev/rules.d/99-input.rules" >/dev/null
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+sudo systemctl enable greetd.service cups.service libvirtd.service
+sudo systemctl enable --now \
+    NetworkManager.service \
+    bluetooth.service \
+    cups.socket \
+    cups.path
+
+systemctl --user daemon-reload
+systemctl --user enable \
+    dms.service \
+    hyprpolkitagent.service \
+    kanata.service \
+    kanata-switcher.service \
+    openrazer-daemon.service
 {{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

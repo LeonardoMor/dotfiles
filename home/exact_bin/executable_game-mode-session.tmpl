@@ -1,7 +1,7 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 
-source -p ~/bin utils.sh || exit 1
+source "$HOME/bin/utils.sh" || exit 1
 
 LOG_DIR=${XDG_STATE_HOME:-$HOME/.local/state}
 LOG_FILE=$LOG_DIR/game-mode-session.log
