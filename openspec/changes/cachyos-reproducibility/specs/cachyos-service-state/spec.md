@@ -30,7 +30,7 @@ Chezmoi's finite CachyOS setup SHALL own activation for the following user units
 ### Requirement: Intended system services are activatable
 Chezmoi's finite CachyOS setup SHALL own activation for the following package-owned system units. The deployment SHALL produce this state:
 
-- `greetd.service`: package-owned unit with DMS/Chezmoi-authored greeter configuration; enabled and started by the normal boot target.
+- `greetd.service`: package-owned unit configured and enabled through the packaged `dms-greeter` CLI invoked by Chezmoi; started by the normal boot target.
 - `NetworkManager.service`: package-owned; enabled and running.
 - `bluetooth.service`: package-owned; enabled and running.
 - `sshd.service`: package-owned with explicit Chezmoi setup; enabled and running.
@@ -44,7 +44,7 @@ Chezmoi's finite CachyOS setup SHALL own activation for the following package-ow
 - **AND** an enabled Infinity service not declared as intent is not copied automatically
 
 ### Requirement: DMS configuration does not duplicate package installation
-DMS-native setup SHALL configure DMS or its greeter only after declared packages exist and SHALL NOT independently install packages already owned by the package declaration.
+DMS-native setup SHALL use the standalone packaged `dms-greeter` CLI to enable greetd and sync DMS theme/settings only after declared packages exist, and SHALL NOT independently install packages already owned by the package declaration.
 
 #### Scenario: Desktop setup executes
 - **WHEN** DMS desktop or greeter setup runs after package provisioning

@@ -8,31 +8,9 @@ ETC=${DOTFILES_ETC:-/etc}
 sudo -v
 
 dms-greeter enable --yes
-sudo install -d "$ETC/greetd" "$ETC/udev/rules.d"
-sudo tee "$ETC/greetd/hypr.conf" >/dev/null <<'EOF'
-env = DMS_RUN_GREETER,1
+dms-greeter sync --yes
 
-misc {
-    disable_hyprland_logo = true
-}
-EOF
-
-GREETD_CONFIG=$ETC/greetd/config.toml
-sudo tee "$GREETD_CONFIG" >/dev/null <<EOF
-[terminal]
-vt = 1
-
-[default_session]
-command = "dms-greeter --command hyprland --config $ETC/greetd/hypr.conf --remember-last-session true --remember-last-user true"
-user = "greeter"
-EOF
-
-GREETD_PAM=$ETC/pam.d/greetd
-if ! grep -q pam_gnome_keyring "$GREETD_PAM"; then
-    sudo sed -i '/^auth.*include.*system-local-login/a auth       optional     pam_gnome_keyring.so' "$GREETD_PAM"
-    sudo sed -i '/^session.*include.*system-local-login/a session    optional     pam_gnome_keyring.so' "$GREETD_PAM"
-fi
-
+sudo install -d "$ETC/udev/rules.d"
 for group in uinput plugdev openrazer; do
     getent group "$group" >/dev/null || sudo groupadd "$group"
 done
@@ -42,7 +20,7 @@ printf '%s\n' 'KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_n
 sudo udevadm control --reload-rules
 sudo udevadm trigger
 
-sudo systemctl enable greetd.service cups.service libvirtd.service
+sudo systemctl enable cups.service libvirtd.service
 sudo systemctl enable --now \
     NetworkManager.service \
     bluetooth.service \

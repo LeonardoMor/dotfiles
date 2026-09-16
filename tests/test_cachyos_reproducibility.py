@@ -9,7 +9,6 @@ import shlex
 import shutil
 import subprocess
 import tempfile
-import tomllib
 import unittest
 
 
@@ -409,9 +408,11 @@ class ServiceStateTest(unittest.TestCase):
         self.assertIn("DOTFILES_ETC", setup)
         self.assertNotIn("dasel", setup)
         self.assertIn("dms-greeter enable --yes", setup)
+        self.assertIn("dms-greeter sync --yes", setup)
+        self.assertNotIn('tee "$GREETD_CONFIG"', setup)
+        self.assertNotIn("pam_gnome_keyring", setup)
         self.assertNotIn("dankinstall", setup)
         for unit in (
-            "greetd.service",
             "NetworkManager.service",
             "bluetooth.service",
             "sshd.service",
@@ -514,13 +515,9 @@ class ServiceStateTest(unittest.TestCase):
             home = fixture / "home"
             etc = fixture / "etc"
             bin_dir = fixture / "bin"
-            (etc / "pam.d").mkdir(parents=True)
+            etc.mkdir(parents=True)
             home.mkdir()
             bin_dir.mkdir()
-            (etc / "pam.d/greetd").write_text(
-                "auth include system-local-login\nsession include system-local-login\n",
-                encoding="utf-8",
-            )
             config = fixture / "chezmoi.toml"
             config.write_text(
                 '[data]\nosid="linux-cachyos"\nname="Fixture"\nemail="fixture@example.invalid"\n'
@@ -596,17 +593,11 @@ class ServiceStateTest(unittest.TestCase):
             try:
                 self.assertEqual(0, result.returncode, result.stderr)
                 trace = log.read_text(encoding="utf-8")
+                self.assertIn("dms-greeter enable --yes", trace)
+                self.assertIn("dms-greeter sync --yes", trace)
                 self.assertIn("systemctl --user enable dms.service", trace)
-                self.assertIn("sudo systemctl enable greetd.service cups.service libvirtd.service", trace)
-                self.assertTrue((etc / "greetd/config.toml").is_file())
-                greetd = tomllib.loads((etc / "greetd/config.toml").read_text(encoding="utf-8"))
-                self.assertEqual(1, greetd["terminal"]["vt"])
-                self.assertEqual("greeter", greetd["default_session"]["user"])
-                self.assertEqual(
-                    f"dms-greeter --command hyprland --config {etc}/greetd/hypr.conf "
-                    "--remember-last-session true --remember-last-user true",
-                    greetd["default_session"]["command"],
-                )
+                self.assertIn("sudo systemctl enable cups.service libvirtd.service", trace)
+                self.assertFalse((etc / "greetd/config.toml").exists())
                 self.assertTrue((etc / "udev/rules.d/99-input.rules").is_file())
                 self.assertEqual("unchanged\n", canary.read_text(encoding="utf-8"))
                 failed = subprocess.run(
@@ -615,7 +606,7 @@ class ServiceStateTest(unittest.TestCase):
                         ["/usr/bin/bash", str(rendered)],
                         {
                             "DOTFILES_ETC": str(etc),
-                            "FAIL_SYSTEMCTL": "greetd.service",
+                            "FAIL_SYSTEMCTL": "cups.service",
                             "HOME": str(home),
                             "PATH": f"{bin_dir}:/usr/bin",
                             "USER": "fixture",
