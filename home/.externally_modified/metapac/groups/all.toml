@@ -33,7 +33,6 @@ packages = [
   "dgop",
   "discord",
   "dms-shell",
-  "deskflow",
   "docker",
   "docker-compose",
   "dolphin",
