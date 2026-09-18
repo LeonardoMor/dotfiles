@@ -79,6 +79,8 @@ packages = [
     "sudo systemctl enable --now libvirtd.service; sudo usermod -aG libvirt $USER",
   ] } },
   "lean-ctx-bin",
+  "onnxruntime-cpu",
+  "cpuinfo",
   "lib32-libva-intel-driver",
   "lib32-mesa",
   "lib32-nvidia-utils",
@@ -279,6 +281,7 @@ packages = [
 packages = [
   "@fission-ai/openspec",
   "corepack",
+  "firecrawl-cli",
   "npm",
   "prettier",
   "prettier-plugin-awk",

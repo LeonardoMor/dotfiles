@@ -67,6 +67,7 @@ arch = { packages = [
   "gst-plugins-ugly",
   "gtkmm3",
   "hdparm",
+  "heroic-games-launcher",
   "hwdetect",
   "hwinfo",
   "inetutils",
