@@ -73,6 +73,7 @@ packages = [
   "kitty",
   "kservice",
   "kvantum",
+  "lan-mouse",
   { name = "libvirt", hooks = { after_sync = [
     "sh",
     "-lc",
