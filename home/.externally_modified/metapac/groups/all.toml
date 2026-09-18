@@ -58,7 +58,6 @@ packages = [
   "greetd-dms-greeter-git",
   "gtk-engine-murrine",
   "gum",
-  "heroic-games-launcher-bin",
   "hyprland",
   "hyprpolkitagent",
   "intel-media-driver",
