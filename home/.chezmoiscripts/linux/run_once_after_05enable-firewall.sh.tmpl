@@ -6,6 +6,7 @@ sudo ufw default allow outgoing
 
 sudo ufw allow 53317/udp comment 'LocalSend'
 sudo ufw allow 53317/tcp comment 'LocalSend'
+sudo ufw allow 4242/udp comment 'Lan Mouse'
 sudo ufw allow 22/tcp comment 'SSH'
 sudo ufw allow 4096/tcp comment 'OpenCode'
 sudo ufw allow in on docker0 to any port 53 comment 'Docker DNS'
