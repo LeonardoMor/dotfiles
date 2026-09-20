@@ -1,19 +1,33 @@
 {{- if ne .chezmoi.os "windows" -}}
 #!/usr/bin/env bash
 
-set -euo pipefail
+source "$HOME/bin/utils.sh" || exit 1
+
+CANDIDATE=
+
+cleanup() {
+    [[ -z $CANDIDATE ]] || sudo rm -f "$CANDIDATE" || emit w "Failed to remove $CANDIDATE"
+}
+
+trap cleanup EXIT
 
 {{- $sed := or (lookPath "gsed") (lookPath "sed") }}
-
-sudo {{ $sed }} -i'' -Ef {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" ".disable_ssh_pass.sed" }} /etc/ssh/sshd_config
+CANDIDATE=$(sudo mktemp /etc/ssh/sshd_config.XXXXXX) || emit f 'Failed to create a staged SSH configuration' 1
+sudo cp -p /etc/ssh/sshd_config "$CANDIDATE" || emit f 'Failed to stage the SSH configuration' 1
+sudo {{ $sed }} -i'' -Ef {{ joinPath .chezmoi.sourceDir ".chezmoiscripts" ".disable_ssh_pass.sed" }} "$CANDIDATE" || \
+    emit f 'Failed to disable SSH password authentication' 1
+sudo sshd -t -f "$CANDIDATE" || emit f 'The staged SSH daemon configuration is invalid' 1
 {{- if eq .osid "linux-cachyos" }}
-sudo sshd -t
-effective=$(sudo sshd -T)
-grep -qx 'passwordauthentication no' <<<"$effective"
-grep -qx 'kbdinteractiveauthentication no' <<<"$effective"
-sudo systemctl enable sshd.service
-sudo systemctl restart sshd.service
+effective=$(sudo sshd -T -f "$CANDIDATE") || emit f 'Failed to inspect the staged SSH daemon configuration' 1
+grep -qx 'passwordauthentication no' <<<"$effective" || emit f 'SSH password authentication is still enabled' 1
+grep -qx 'kbdinteractiveauthentication no' <<<"$effective" || emit f 'SSH keyboard-interactive authentication is still enabled' 1
+{{- end }}
+sudo mv "$CANDIDATE" /etc/ssh/sshd_config || emit f 'Failed to publish the SSH daemon configuration' 1
+CANDIDATE=
+{{- if eq .osid "linux-cachyos" }}
+sudo systemctl enable sshd.service || emit f 'Failed to enable the SSH daemon' 1
+sudo systemctl restart sshd.service || emit f 'Failed to restart the SSH daemon' 1
 {{- else if eq .chezmoi.os "darwin" }}
-sudo systemsetup -setremotelogin on
+sudo systemsetup -setremotelogin on || emit f 'Failed to enable Remote Login' 1
 {{- end }}
 {{- end -}}

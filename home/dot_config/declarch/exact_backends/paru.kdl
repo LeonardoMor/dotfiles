@@ -2,7 +2,6 @@ backend "paru" {
     meta {
         title "Paru"
         description "Feature-packed AUR helper written in Rust"
-        maintained "nixval"
         tags "arch" "linux" "aur" "helper" "rust" "paru"
         url "-"
         homepage "https://github.com/Morganamilo/paru"

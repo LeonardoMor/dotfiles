@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-~/bin/chezmoi-mpm upgrade
+{{- if eq .osid "linux-cachyos" }}
+source "$HOME/bin/utils.sh" || exit 1
+
+declarch sync --yes --hooks update || emit f 'Failed to update packages with Declarch' 1
+{{- end }}
 
 {{- if eq .osid "darwin" }}
 

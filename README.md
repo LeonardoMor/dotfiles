@@ -19,7 +19,7 @@ The complete CachyOS package declaration is split by reuse scope:
 - `home/dot_config/declarch/exact_modules/all.kdl`
 - `home/dot_config/declarch/exact_modules/cachyos.kdl`
 
-Paru owns Arch/AUR packages, npm owns global Node packages, and pipx owns isolated Python applications. Declarch configuration is rendered to `~/.config/declarch`.
+Paru owns Arch/AUR packages, npm owns global Node packages, and pipx owns isolated Python applications. Declarch configuration is rendered to `~/.config/declarch`. `dms-shell`, `greetd`, and `greetd-dms-greeter-git` are declared in `all.kdl`; the desktop setup does not install them a second time.
 
 Before changing the live package state:
 
@@ -36,7 +36,7 @@ declarch --dry-run sync
 declarch info --list --scope unmanaged
 ```
 
-Edit the Chezmoi source module, render `~/.config/declarch`, and review the native Declarch plan. Real sync, update, upgrade, cache-clean, or prune operations require explicit approval.
+Edit a rendered module with `declarch edit all` or `declarch edit cachyos`, then review the native Declarch plan. A successful `declarch sync --hooks` records the two modules with Chezmoi and creates a module-only Git commit; pushing remains explicit. Real sync, update, upgrade, cache-clean, or prune operations require explicit approval.
 
 Declarch prune removes packages that were represented in its state and later undeclared. It does not remove arbitrary unmanaged packages. After deleting a tracked declaration, preview and execute prune directly:
 
@@ -49,9 +49,9 @@ for module in all cachyos; do
     }
 done
 declarch lint --mode validate
-declarch --dry-run sync prune
+declarch --dry-run sync --hooks prune
 # after explicit review and approval
-declarch sync prune
+declarch sync --hooks prune
 ```
 
 Do not run a plain sync between declaration removal and the intended prune; Declarch 0.8.2 may first drop the removed package from its state.
@@ -66,7 +66,7 @@ DMS owns its generated Hyprland modules. Chezmoi owns `hyprland.lua` and `custom
 
 ## Service state
 
-CachyOS setup uses package-provided units where available and Chezmoi only for authored units and finite activation commands. Privileged group, udev, PAM, greetd, SSH, firewall, printing, networking, Bluetooth, and virtualization changes remain explicit.
+CachyOS setup uses package-provided units where available and Chezmoi only for authored units and finite activation commands. The base CachyOS installer owns NetworkManager activation. Chezmoi owns the remaining selected workstation state: Kanata's `uinput` group and udev rule, required device-group membership, PAM, greetd, SSH, firewall, printing, Bluetooth, virtualization, and user-service activation.
 
 Infinity-specific mounts, symlinks, and hardware behavior remain hostname-gated. Infinity is a read-only reference during development and is never an acceptance target.
 

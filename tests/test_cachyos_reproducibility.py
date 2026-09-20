@@ -38,6 +38,9 @@ def sandbox_command(temp: Path, argv: list[str], env: dict[str, str]) -> list[st
     for runtime in ("/bin", "/lib", "/lib64"):
         if Path(runtime).exists():
             command.extend(("--ro-bind", runtime, runtime))
+    fixture_etc = temp / "etc"
+    if fixture_etc.is_dir():
+        command.extend(("--dir", "/etc", "--bind", str(fixture_etc), "/etc"))
     command.extend(
         (
             "--dir",
@@ -59,6 +62,20 @@ def sandbox_command(temp: Path, argv: list[str], env: dict[str, str]) -> list[st
         command.extend(("--setenv", name, value))
     command.extend(argv)
     return command
+
+
+def write_fixture_utils(home: Path) -> None:
+    bin_dir = home / "bin"
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    (bin_dir / "utils.sh").write_text(
+        "emit() {\n"
+        "    local level=${1:-} message=${2:-} exit_code=${3:-}\n"
+        "    printf '%s: %s\\n' \"$level\" \"$message\" >&2\n"
+        "    [[ -z $exit_code ]] || exit \"$exit_code\"\n"
+        "}\n"
+        "is-installed() { command -v \"$1\" >/dev/null 2>&1; }\n",
+        encoding="utf-8",
+    )
 
 
 class PackageMigrationTest(unittest.TestCase):
@@ -112,7 +129,7 @@ class PackageMigrationTest(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn('eq .osid "linux-cachyos"', install)
-        self.assertIn("declarch --yes sync", install)
+        self.assertIn("declarch sync --yes --hooks", install)
         self.assertIn("Missing Declarch module", install)
         self.assertNotIn("metapac", install.lower())
 
@@ -132,6 +149,7 @@ class PackageMigrationTest(unittest.TestCase):
             modules = home / ".config/declarch/modules"
             modules.mkdir(parents=True)
             bin_dir.mkdir()
+            write_fixture_utils(home)
             for module in ("all", "cachyos"):
                 (modules / f"{module}.kdl").write_text("meta {}\n", encoding="utf-8")
             log = fixture / "commands.log"
@@ -194,7 +212,7 @@ class PackageMigrationTest(unittest.TestCase):
             trace = log.read_text(encoding="utf-8")
             self.assertIn("nvm install --lts=iron", trace)
             self.assertIn("declarch lint --mode validate", trace)
-            self.assertIn("declarch --yes sync", trace)
+            self.assertIn("declarch sync --yes --hooks", trace)
             self.assertIn("declarch info --plan", trace)
 
             missing_module = modules / "cachyos.kdl"
@@ -353,7 +371,7 @@ class PackageMigrationTest(unittest.TestCase):
             self.assertEqual(0, plan.returncode, plan.stdout + plan.stderr)
             self.assertIn("Planned install: 1", plan.stdout)
 
-    def test_metapac_has_no_active_configuration_or_linux_wrapper(self) -> None:
+    def test_metapac_and_its_wrapper_are_retired(self) -> None:
         retired = {
             HOME_SOURCE / ".chezmoitemplates/metapac/config.toml",
             HOME_SOURCE / "dot_config/metapac/config.toml.tmpl",
@@ -361,23 +379,173 @@ class PackageMigrationTest(unittest.TestCase):
             HOME_SOURCE / "dot_config/metapac/exact_groups/symlink_cachyos.toml.tmpl",
             HOME_SOURCE / ".externally_modified/metapac/groups/all.toml",
             HOME_SOURCE / ".externally_modified/metapac/groups/cachyos.toml",
+            HOME_SOURCE / "exact_bin/executable_chezmoi-mpm.tmpl",
         }
         self.assertEqual([], sorted(str(path.relative_to(ROOT)) for path in retired if path.exists()))
-        wrapper = (HOME_SOURCE / "exact_bin/executable_chezmoi-mpm.tmpl").read_text(encoding="utf-8")
-        self.assertNotIn("metapac", wrapper.lower())
+        update = (HOME_SOURCE / "exact_bin/executable_update.tmpl").read_text(encoding="utf-8")
+        self.assertNotIn("chezmoi-mpm", update)
+        self.assertIn("declarch sync --yes --hooks update", update)
+        removals = (HOME_SOURCE / ".chezmoiremove").read_text(encoding="utf-8")
+        self.assertIn("bin/chezmoi-mpm", removals.splitlines())
+
+    def test_declarch_sync_uses_native_required_commit_hook(self) -> None:
+        config = (DECLARCH / "declarch.kdl").read_text(encoding="utf-8")
+        self.assertIn('on-success "declarch-commit" --required', config)
+        self.assertIn('"enable-hooks"', config)
+        self.assertIn('forbid_hooks "false"', config)
+        helper = HOME_SOURCE / "exact_bin/executable_declarch-commit"
+        self.assertTrue(helper.is_file())
+        self.assertNotIn("push", helper.read_text(encoding="utf-8"))
+
+    def test_declarch_commit_hook_checkpoints_only_modules(self) -> None:
+        chezmoi = os.environ.get("CHEZMOI_BIN")
+        declarch = os.environ.get("DECLARCH_BIN")
+        if not chezmoi or not declarch:
+            self.skipTest("CHEZMOI_BIN and DECLARCH_BIN are required for hook validation")
+
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory)
+            home = fixture / "home"
+            source = home / ".local/share/chezmoi"
+            (source / ".chezmoitemplates").mkdir(parents=True)
+            (source / "exact_bin").mkdir()
+            (source / "dot_config/declarch/exact_modules").mkdir(parents=True)
+            shutil.copy2(HOME_SOURCE / ".chezmoitemplates/utils", source / ".chezmoitemplates/utils")
+            shutil.copy2(HOME_SOURCE / "exact_bin/utils.sh.tmpl", source / "exact_bin/utils.sh.tmpl")
+            shutil.copy2(
+                HOME_SOURCE / "exact_bin/executable_declarch-commit",
+                source / "exact_bin/executable_declarch-commit",
+            )
+            (source / "dot_config/declarch/declarch.kdl").write_text(
+                'meta { title "Fixture" }\n'
+                'imports { "modules/all.kdl" "modules/cachyos.kdl" }\n'
+                'hooks { on-success "declarch-commit" --required }\n'
+                'experimental { "enable-hooks" }\n'
+                'policy { forbid_hooks "false" }\n',
+                encoding="utf-8",
+            )
+            for module in ("all", "cachyos"):
+                (source / f"dot_config/declarch/exact_modules/{module}.kdl").write_text(
+                    f'meta {{ title "{module}" }}\npkg {{}}\n',
+                    encoding="utf-8",
+                )
+
+            environment = os.environ | {
+                "GIT_CONFIG_GLOBAL": "/dev/null",
+                "HOME": str(home),
+                "PATH": f"{home / 'bin'}:{Path(chezmoi).parent}:/usr/bin",
+                "XDG_CONFIG_HOME": str(home / ".config"),
+            }
+            subprocess.run(["git", "init", "-q", str(source)], check=True, env=environment)
+            subprocess.run(["git", "-C", str(source), "config", "user.name", "Fixture"], check=True, env=environment)
+            subprocess.run(
+                ["git", "-C", str(source), "config", "user.email", "fixture@example.invalid"],
+                check=True,
+                env=environment,
+            )
+            subprocess.run(["git", "-C", str(source), "add", "."], check=True, env=environment)
+            subprocess.run(
+                ["git", "-C", str(source), "commit", "-q", "-m", "fixture baseline"],
+                check=True,
+                env=environment,
+            )
+            subprocess.run(
+                [chezmoi, "--source", str(source), "--destination", str(home), "apply"],
+                check=True,
+                env=environment,
+            )
+
+            rendered_all = home / ".config/declarch/modules/all.kdl"
+            rendered_all.write_text(rendered_all.read_text(encoding="utf-8") + "// changed\n", encoding="utf-8")
+            unrelated = source / "unrelated.txt"
+            unrelated.write_text("staged but unrelated\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(source), "add", "unrelated.txt"], check=True, env=environment)
+            baseline = subprocess.run(
+                ["git", "-C", str(source), "rev-parse", "HEAD"],
+                check=True,
+                text=True,
+                capture_output=True,
+                env=environment,
+            ).stdout.strip()
+
+            for arguments in ([declarch, "sync", "--yes"], [declarch, "--dry-run", "sync", "--hooks"]):
+                result = subprocess.run(arguments, text=True, capture_output=True, check=False, env=environment)
+                self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+                current = subprocess.run(
+                    ["git", "-C", str(source), "rev-parse", "HEAD"],
+                    check=True,
+                    text=True,
+                    capture_output=True,
+                    env=environment,
+                ).stdout.strip()
+                self.assertEqual(baseline, current)
+
+            result = subprocess.run(
+                [declarch, "sync", "--yes", "--hooks"],
+                text=True,
+                capture_output=True,
+                check=False,
+                env=environment,
+            )
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            committed = subprocess.run(
+                ["git", "-C", str(source), "show", "--format=", "--name-only", "HEAD"],
+                check=True,
+                text=True,
+                capture_output=True,
+                env=environment,
+            ).stdout.splitlines()
+            self.assertEqual(["dot_config/declarch/exact_modules/all.kdl"], committed)
+            staged = subprocess.run(
+                ["git", "-C", str(source), "diff", "--cached", "--name-only"],
+                check=True,
+                text=True,
+                capture_output=True,
+                env=environment,
+            ).stdout.splitlines()
+            self.assertEqual(["unrelated.txt"], staged)
+
+            head = subprocess.run(
+                ["git", "-C", str(source), "rev-parse", "HEAD"],
+                check=True,
+                text=True,
+                capture_output=True,
+                env=environment,
+            ).stdout.strip()
+            result = subprocess.run(
+                [declarch, "sync", "--yes", "--hooks"],
+                text=True,
+                capture_output=True,
+                check=False,
+                env=environment,
+            )
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertEqual(
+                head,
+                subprocess.run(
+                    ["git", "-C", str(source), "rev-parse", "HEAD"],
+                    check=True,
+                    text=True,
+                    capture_output=True,
+                    env=environment,
+                ).stdout.strip(),
+            )
 
 
 class OwnershipTest(unittest.TestCase):
-    def test_bash_sources_use_builtin_syntax(self) -> None:
-        paths = list((HOME_SOURCE / ".chezmoiscripts").rglob("*.tmpl")) + list(
-            (HOME_SOURCE / "exact_bin").rglob("*.tmpl")
+    def test_changed_shell_entrypoints_handle_failures_explicitly(self) -> None:
+        paths = (
+            BOOTSTRAP,
+            HOME_SOURCE / ".chezmoiscripts/run_once_after_00install-backends.sh.tmpl",
+            HOME_SOURCE / ".chezmoiscripts/run_once_after_01install-packages.sh.tmpl",
+            HOME_SOURCE / ".chezmoiscripts/linux/run_once_after_02setup-desktop.sh.tmpl",
+            HOME_SOURCE / ".chezmoiscripts/linux/run_once_after_05enable-firewall.sh.tmpl",
+            HOME_SOURCE / ".chezmoiscripts/run_once_after_95ssh-access.sh.tmpl",
         )
-        offenders = [
-            str(path.relative_to(ROOT))
-            for path in paths
-            if "source -p" in path.read_text(encoding="utf-8")
-        ]
-        self.assertEqual([], offenders)
+        for path in paths:
+            source = path.read_text(encoding="utf-8")
+            self.assertNotRegex(source, r"(?m)^set -[eu]")
+            self.assertNotIn("eval ", source)
 
     def test_generated_state_is_not_managed(self) -> None:
         unmanaged = {
@@ -405,7 +573,7 @@ class ServiceStateTest(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn('eq .osid "linux-cachyos"', setup)
-        self.assertIn("DOTFILES_ETC", setup)
+        self.assertNotIn("DOTFILES_ETC", setup)
         self.assertNotIn("dasel", setup)
         self.assertIn("dms-greeter enable --yes", setup)
         self.assertIn("dms-greeter sync --yes", setup)
@@ -413,7 +581,6 @@ class ServiceStateTest(unittest.TestCase):
         self.assertIn("pam_gnome_keyring", setup)
         self.assertNotIn("dankinstall", setup)
         for unit in (
-            "NetworkManager.service",
             "bluetooth.service",
             "sshd.service",
             "cups.service",
@@ -427,6 +594,8 @@ class ServiceStateTest(unittest.TestCase):
             "openrazer-daemon.service",
         ):
             self.assertIn(unit, setup)
+        self.assertNotIn("NetworkManager.service", setup)
+        self.assertNotIn("plugdev", setup)
         self.assertIn("ufw enable", setup)
 
         hyprland = (HOME_SOURCE / "dot_config/hypr/hyprland.lua").read_text(encoding="utf-8")
@@ -441,14 +610,19 @@ class ServiceStateTest(unittest.TestCase):
             fixture = Path(directory)
             bin_dir = fixture / "bin"
             home = fixture / "home"
+            (fixture / "etc/ssh").mkdir(parents=True)
+            (fixture / "etc/ssh/sshd_config").write_text("PasswordAuthentication yes\n", encoding="utf-8")
             bin_dir.mkdir()
             home.mkdir()
+            write_fixture_utils(home)
             log = fixture / "commands.log"
             (bin_dir / "sudo").write_text(
                 "#!/usr/bin/env bash\n"
                 f"printf '%s\\n' \"$*\" >>{log!s}\n"
                 "[[ $* == *\"${FAIL_AT:?}\"* ]] && exit 42\n"
-                "if [[ $* == 'sshd -T' ]]; then\n"
+                "if [[ $* == 'mktemp /etc/ssh/sshd_config.XXXXXX' ]]; then\n"
+                "    printf '/etc/ssh/sshd_config.fixture\\n'\n"
+                "elif [[ $* == sshd\\ -T\\ -f* ]]; then\n"
                 "    printf 'passwordauthentication no\\nkbdinteractiveauthentication no\\n'\n"
                 "fi\n",
                 encoding="utf-8",
@@ -503,7 +677,11 @@ class ServiceStateTest(unittest.TestCase):
                     check=False,
                 )
                 self.assertNotEqual(0, result.returncode)
-                self.assertNotIn(forbidden, log.read_text(encoding="utf-8"))
+                trace = log.read_text(encoding="utf-8")
+                self.assertNotIn(forbidden, trace)
+                if fail_at == "sshd -t":
+                    self.assertIn("sshd -t -f /etc/ssh/sshd_config.fixture", trace)
+                    self.assertNotIn("mv /etc/ssh/sshd_config.fixture /etc/ssh/sshd_config", trace)
 
     def test_rendered_service_setup_uses_only_fixture_mutations(self) -> None:
         chezmoi = os.environ.get("CHEZMOI_BIN")
@@ -518,6 +696,7 @@ class ServiceStateTest(unittest.TestCase):
             (etc / "pam.d").mkdir(parents=True)
             home.mkdir()
             bin_dir.mkdir()
+            write_fixture_utils(home)
             (etc / "pam.d/greetd").write_text(
                 "auth include system-local-login\nsession include system-local-login\n",
                 encoding="utf-8",
@@ -583,7 +762,6 @@ class ServiceStateTest(unittest.TestCase):
                     fixture,
                     ["/usr/bin/bash", str(rendered)],
                     {
-                    "DOTFILES_ETC": str(etc),
                     "HOME": str(home),
                     "HOST_CANARY": str(canary),
                     "PATH": f"{bin_dir}:/usr/bin",
@@ -612,7 +790,6 @@ class ServiceStateTest(unittest.TestCase):
                         fixture,
                         ["/usr/bin/bash", str(rendered)],
                         {
-                            "DOTFILES_ETC": str(etc),
                             "FAIL_SYSTEMCTL": "cups.service",
                             "HOME": str(home),
                             "PATH": f"{bin_dir}:/usr/bin",
@@ -642,6 +819,9 @@ class BootstrapTest(unittest.TestCase):
             log = fixture / "commands.log"
             os_release = fixture / "os-release"
             os_release.write_text(f"ID={os_id}\n", encoding="utf-8")
+            etc = fixture / "etc"
+            etc.mkdir()
+            os_release.rename(etc / "os-release")
 
             for command in ("paru", "chezmoi"):
                 script = bin_dir / command
@@ -659,13 +839,13 @@ class BootstrapTest(unittest.TestCase):
                 f"[[ {'1' if 'op' in failing_commands else '0'} == 1 ]] && exit 1\n"
                 + (
                     "case $* in\n"
-                    "  whoami) [[ -n ${OP_SESSION_fixture-} ]] ;;\n"
-                    "  signin) exit 1 ;;\n"
-                    "  'account add --signin') printf 'export OP_SESSION_fixture=fixture-session\\n' ;;\n"
+                    "  whoami) [[ -n ${OP_SESSION-} ]] ;;\n"
+                    "  'signin --raw') exit 1 ;;\n"
+                    "  'account add --signin --raw') printf 'fixture-session\\n' ;;\n"
                     "  *) exit 99 ;;\n"
                     "esac\n"
                     if first_time_account
-                    else "exit 0\n"
+                    else "[[ $* == 'signin --raw' ]] && printf 'fixture-session\\n'\nexit 0\n"
                 ),
                 encoding="utf-8",
             )
@@ -710,7 +890,6 @@ class BootstrapTest(unittest.TestCase):
                 {
                     "BRANCH": "refactor/cachyos-reproducibility",
                     "DECLARCH_FIXTURE_INSTALLER": str(installer),
-                    "DOTFILES_OS_RELEASE": str(os_release),
                     "HOME": str(fixture / "home"),
                     "PATH": f"{bin_dir}:/usr/bin",
                     "USER": "fixture",
@@ -774,8 +953,8 @@ class BootstrapTest(unittest.TestCase):
     def test_first_time_onepassword_account_is_added_and_verified(self) -> None:
         result, commands = self.run_bootstrap("cachyos", first_time_account=True)
         self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("op signin", commands)
-        self.assertIn("op account add --signin", commands)
+        self.assertIn("op signin --raw", commands)
+        self.assertIn("op account add --signin --raw", commands)
         self.assertEqual(2, commands.count("op whoami"))
 
     def test_unavailable_onepassword_fails_closed(self) -> None:
@@ -798,6 +977,8 @@ class DocumentationTest(unittest.TestCase):
         self.assertIn("installer SHA-256", readme)
         self.assertIn("declarch --dry-run sync", readme)
         self.assertIn("declarch info --list --scope unmanaged", readme)
+        self.assertIn("greetd-dms-greeter-git", readme)
+        self.assertIn("declarch sync --hooks", readme)
         self.assertEqual(2, readme.count("Missing Declarch module"))
         self.assertIn("does not remove arbitrary unmanaged packages", readme)
         self.assertNotIn("Run `chezmoi apply` right after", readme)

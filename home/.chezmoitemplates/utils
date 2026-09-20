@@ -21,6 +21,10 @@ change-dir() {
     cd "$1" || emit f "Failed to change $1" 1
 }
 
+is-installed() {
+    command -v "$1" >/dev/null 2>&1
+}
+
 set-INSTALL() {
     local opt OPTIND OPTARG
     while getopts 'p:' opt; do

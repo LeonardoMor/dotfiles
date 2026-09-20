@@ -13,9 +13,17 @@ imports {
     "modules/cachyos.kdl"
 }
 
+hooks {
+    on-success "declarch-commit" --required
+}
+
+experimental {
+    "enable-hooks"
+}
+
 policy {
     require_backend "true"
-    forbid_hooks "true"
+    forbid_hooks "false"
     on_duplicate "error"
     on_conflict "error"
     orphans "remove"

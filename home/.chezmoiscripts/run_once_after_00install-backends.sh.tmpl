@@ -1,13 +1,16 @@
 {{- if eq .osid "linux-cachyos" -}}
 #!/usr/bin/env bash
 
-set -euo pipefail
+source "$HOME/bin/utils.sh" || exit 1
+source "$HOME/.profile" || emit f 'Failed to load ~/.profile' 1
 
-source "$HOME/.profile"
+if ! is-installed nvm; then
+    emit f 'nvm is unavailable after package installation' 1
+fi
 
-printf 'Installing the current Node.js Iron LTS release\n'
-nvm install --lts=iron
-nvm use --lts=iron
+nvm install --lts=iron || emit f 'Failed to install Node.js Iron LTS' 1
+nvm use --lts=iron || emit f 'Failed to activate Node.js Iron LTS' 1
+nvm alias default lts/iron || emit f 'Failed to select Node.js Iron LTS as the default' 1
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl

@@ -1,27 +1,20 @@
 {{- if eq .osid "linux-cachyos" -}}
 #!/usr/bin/env bash
 
-set -euo pipefail
-
-source "$HOME/.profile"
+source "$HOME/bin/utils.sh" || exit 1
+source "$HOME/.profile" || emit f 'Failed to load ~/.profile' 1
 
 config_home=${XDG_CONFIG_HOME:-$HOME/.config}
 for module in all cachyos; do
     path=$config_home/declarch/modules/$module.kdl
-    [[ -r $path ]] || {
-        printf 'Missing Declarch module: %s\n' "$path" >&2
-        exit 1
-    }
+    [[ -r $path ]] || emit f "Missing Declarch module: $path" 1
 done
 
-declarch lint --mode validate
-declarch --yes sync
-plan=$(declarch info --plan)
-printf '%s\n' "$plan"
-grep -qx 'Planned install: 0' <<<"$plan" || {
-    printf 'Declarch left package installations pending\n' >&2
-    exit 1
-}
+declarch lint --mode validate || emit f 'Declarch configuration validation failed' 1
+declarch sync --yes --hooks || emit f 'Declarch package synchronization failed' 1
+plan=$(declarch info --plan) || emit f 'Failed to inspect the post-sync Declarch plan' 1
+printf '%s\n' "$plan" || emit f 'Failed to print the Declarch plan' 1
+grep -qx 'Planned install: 0' <<<"$plan" || emit f 'Declarch left package installations pending' 1
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl

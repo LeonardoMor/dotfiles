@@ -28,10 +28,10 @@ Chezmoi's finite CachyOS setup SHALL own activation for the following user units
 - **AND** package-supplied units and Chezmoi-authored units resolve from their respective owners
 
 ### Requirement: Intended system services are activatable
-Chezmoi's finite CachyOS setup SHALL own activation for the following package-owned system units. The deployment SHALL produce this state:
+The CachyOS base installer and Chezmoi's finite CachyOS setup SHALL each own only the package-owned system-unit activation assigned below. The deployment SHALL produce this state:
 
 - `greetd.service`: package-owned unit configured and enabled through the packaged `dms-greeter` CLI invoked by Chezmoi; started by the normal boot target.
-- `NetworkManager.service`: package-owned; enabled and running.
+- `NetworkManager.service`: package-owned and enabled by the CachyOS base installer; Chezmoi does not duplicate its activation.
 - `bluetooth.service`: package-owned; enabled and running.
 - `sshd.service`: package-owned with explicit Chezmoi setup; enabled and running.
 - `ufw.service`: package-owned and configured through UFW; enabled with the firewall active.

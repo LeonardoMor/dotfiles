@@ -63,6 +63,22 @@ Package linting, configuration validation, and dry-run planning SHALL perform no
 - **THEN** the operation remains blocked pending explicit approval
 - **AND** its native preview is reviewed separately first
 
+### Requirement: Native sync checkpoints package declarations
+A hook-enabled Declarch sync SHALL use Declarch's native lifecycle to record the rendered `all` and `cachyos` modules with Chezmoi and create one module-only Git commit without pushing or disturbing unrelated staged changes.
+
+#### Scenario: Approved hook-enabled sync changes a module
+- **WHEN** an approved `declarch sync --hooks` succeeds after either rendered module changes
+- **THEN** the on-success hook records the two modules in Chezmoi source and commits only those source paths
+- **AND** pushing remains an explicit separate action
+
+#### Scenario: Sync has no declaration change
+- **WHEN** hook-enabled sync succeeds without changing either module
+- **THEN** the hook exits successfully without creating an empty commit
+
+#### Scenario: Preview or hooks-disabled sync runs
+- **WHEN** a dry run or a sync without `--hooks` runs
+- **THEN** no declaration commit hook executes
+
 ### Requirement: Native prune behavior is represented honestly
 The workflow SHALL use native Declarch prune behavior without a reconciliation wrapper and SHALL NOT claim that it removes arbitrary unmanaged explicit packages.
 

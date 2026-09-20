@@ -1,20 +1,19 @@
 {{ if eq .osid "linux-cachyos" -}}
 #!/usr/bin/env bash
 
-set -euo pipefail
+source "$HOME/bin/utils.sh" || exit 1
 
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
+sudo ufw default deny incoming || emit f 'Failed to set the incoming firewall policy' 1
+sudo ufw default allow outgoing || emit f 'Failed to set the outgoing firewall policy' 1
 
-sudo ufw allow 53317/udp comment 'LocalSend'
-sudo ufw allow 53317/tcp comment 'LocalSend'
-sudo ufw allow 22/tcp comment 'SSH'
-sudo ufw allow 4096/tcp comment 'OpenCode'
-sudo ufw allow in on docker0 to any port 53 comment 'Docker DNS'
+sudo ufw allow 53317/udp comment 'LocalSend' || emit f 'Failed to allow LocalSend UDP traffic' 1
+sudo ufw allow 53317/tcp comment 'LocalSend' || emit f 'Failed to allow LocalSend TCP traffic' 1
+sudo ufw allow 22/tcp comment 'SSH' || emit f 'Failed to allow SSH traffic' 1
+sudo ufw allow 4096/tcp comment 'OpenCode' || emit f 'Failed to allow OpenCode traffic' 1
+sudo ufw allow in on docker0 to any port 53 comment 'Docker DNS' || emit f 'Failed to allow Docker DNS traffic' 1
 
-# Turn on the firewall
-sudo ufw enable
-sudo ufw reload
+sudo ufw enable || emit f 'Failed to enable the firewall' 1
+sudo ufw reload || emit f 'Failed to reload the firewall' 1
 {{- end -}}
 
 {{/*

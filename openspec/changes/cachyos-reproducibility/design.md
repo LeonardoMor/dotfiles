@@ -54,7 +54,7 @@ Alternative rejected: derive modules from `pacman -Qqe`, split packages by curre
 
 ### 4. Use native Declarch reconciliation honestly
 
-The production workflow uses Declarch's lint and dry-run surfaces before sync. A real sync, prune, update, upgrade, cache clean, or hook execution requires explicit approval.
+The production workflow uses Declarch's lint and dry-run surfaces before sync. An explicitly hook-enabled sync uses Declarch's native on-success lifecycle to record the two rendered modules with Chezmoi and create a module-only commit; it never pushes. A real sync, prune, update, upgrade, cache clean, or hook execution requires explicit approval.
 
 Declarch 0.8.2 prune operates on packages recorded in Declarch state; it does not promise removal of every manually installed explicit package absent from the modules. Therefore:
 
@@ -74,11 +74,11 @@ Alternative rejected: wrap Declarch and paru to emulate Metapac clean semantics.
 Metapac `after_sync` shell hooks are not copied into Declarch modules. Packages declare packages; Chezmoi owns the smallest necessary system/user setup, and systemd owns activation state.
 
 - Chezmoi-authored user units remain under `~/.config/systemd/user`.
-- Package-supplied units are enabled by finite CachyOS setup scripts only where the intended enabled state is evidenced on Infinity.
+- Package-supplied units are enabled by the CachyOS base installer or finite CachyOS setup scripts according to one explicit authority map; Chezmoi does not duplicate NetworkManager activation already owned by the base installer.
 - Group membership, udev, PAM, greetd, SSH, UFW, and fstab changes remain explicit privileged boundaries and are independently previewable where the native tool permits.
 - Fixture execution substitutes harmless commands and paths; it never invokes real systemctl mutation, package mutation, firewall changes, or writes under `/etc`.
 
-Alternative rejected: enable Declarch hooks and reproduce the current shell payloads. Declarch intentionally rejects embedded sudo/shell constructs, and package changes should not hide unrelated privileged mutations.
+Alternative rejected: reproduce the privileged service payloads in Declarch hooks. The sole Declarch on-success hook checkpoints package declarations after an explicitly hook-enabled sync; privileged system setup remains separate and visible.
 
 ### 6. Package declarations, not DMS installer side effects, own packages
 

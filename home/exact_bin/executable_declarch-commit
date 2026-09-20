@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+source "$HOME/bin/utils.sh" || exit 1
+
+STATUS_FILE=
+
+cleanup() {
+    [[ -z $STATUS_FILE ]] || rm -f "$STATUS_FILE" || emit w "Failed to remove $STATUS_FILE"
+}
+
+trap cleanup EXIT INT TERM HUP QUIT
+
+repo=$(chezmoi git -- rev-parse --show-toplevel) || emit f 'Failed to locate the dotfiles repository' 1
+git_dir=$(chezmoi git -- rev-parse --path-format=absolute --git-dir) || emit f 'Failed to locate the dotfiles Git directory' 1
+for marker in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-apply rebase-merge; do
+    [[ ! -e $git_dir/$marker ]] || emit f 'Refusing to commit during an in-progress Git operation' 1
+done
+
+config_home=${XDG_CONFIG_HOME:-$HOME/.config}
+targets=(
+    "$config_home/declarch/modules/all.kdl"
+    "$config_home/declarch/modules/cachyos.kdl"
+)
+for target in "${targets[@]}"; do
+    [[ -r $target ]] || emit f "Missing Declarch module: $target" 1
+done
+
+chezmoi add -- "${targets[@]}" || emit f 'Failed to record Declarch modules with Chezmoi' 1
+
+source_paths=()
+for target in "${targets[@]}"; do
+    source_path=$(chezmoi source-path "$target") || emit f "Failed to locate the Chezmoi source for $target" 1
+    [[ $source_path == "$repo/"* ]] || emit f "Declarch source is outside the dotfiles repository: $source_path" 1
+    source_paths+=("${source_path#"$repo/"}")
+done
+
+STATUS_FILE=$(mktemp) || emit f 'Failed to create a temporary Git status file' 1
+chezmoi git -- status --porcelain=v1 -z -- "${source_paths[@]}" >"$STATUS_FILE" || \
+    emit f 'Failed to inspect Declarch source changes' 1
+[[ -s $STATUS_FILE ]] || exit 0
+
+chezmoi git -- commit --only -m 'chore(packages): update Declarch declarations' -- "${source_paths[@]}" || \
+    emit f 'Failed to commit Declarch declaration changes' 1

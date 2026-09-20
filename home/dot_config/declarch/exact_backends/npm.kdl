@@ -2,7 +2,6 @@ backend "npm" {
     meta {
         title "NPM"
         description "Node.js package manager"
-        maintained "nixval"
         tags "package-manager" "nodejs" "javascript"
         platforms "linux" "macos"
         requires "npm"
