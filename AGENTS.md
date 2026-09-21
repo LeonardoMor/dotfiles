@@ -35,8 +35,8 @@ where `FILE` is an absolute path to a file that was modified.
 #### Shared Utilities
 
 The shared utils library is defined in `~/.chezmoitemplates/utils` and rendered
-to `~/bin/utils.sh`. It provides the `emit()` logging function and
-`change-dir()`. Source it in scripts that run after chezmoi has deployed:
+to `~/bin/utils.sh`. It provides `emit()`, `change-dir()`, and `is-installed()`.
+Source it in scripts that run after chezmoi has deployed:
 
 ```bash
 source "$HOME/bin/utils.sh" || exit 1
