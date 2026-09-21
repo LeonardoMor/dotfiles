@@ -4,9 +4,7 @@
 source "$HOME/bin/utils.sh" || exit 1
 source "$HOME/.profile" || emit f 'Failed to load ~/.profile' 1
 
-if ! is-installed nvm; then
-    emit f 'nvm is unavailable after package installation' 1
-fi
+is-installed nvm || emit f 'nvm is unavailable after package installation' 1
 
 nvm install --lts=iron || emit f 'Failed to install Node.js Iron LTS' 1
 nvm use --lts=iron || emit f 'Failed to activate Node.js Iron LTS' 1

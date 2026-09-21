@@ -5,12 +5,12 @@ Defines the authoritative CachyOS package declaration, its exact migration accou
 ## ADDED Requirements
 
 ### Requirement: Exact migration accounting
-The migration SHALL account for every source declaration: the Declarch result SHALL contain 485 unique Arch package names, 5 npm package names, and 1 pipx package name, while recording `alacritty` as the sole deliberate omission from the 486-name Arch source.
+The migration SHALL account for every current source declaration: the Declarch result SHALL contain 488 unique Arch package names, 6 npm package names, and 1 pipx package name, while recording `alacritty` as the sole deliberate omission from the 489-name Arch source.
 
 #### Scenario: Package declarations are compared
 - **WHEN** source Metapac data and resulting Declarch modules are compared programmatically
-- **THEN** all 485 retained Arch names match exactly
-- **AND** all 5 npm and 1 pipx names match exactly
+- **THEN** all 488 retained Arch names match exactly
+- **AND** all 6 npm and 1 pipx names match exactly
 - **AND** the only source name absent from the result is `alacritty`
 
 #### Scenario: Unexpected package difference exists
@@ -24,7 +24,7 @@ The CachyOS package authority SHALL select the shared package module and CachyOS
 #### Scenario: Complete module set loads
 - **WHEN** package configuration is resolved for the CachyOS machine class
 - **THEN** both selected modules load
-- **AND** their Arch union contains exactly 485 unique names
+- **AND** their Arch union contains exactly 488 unique names
 
 #### Scenario: Required module is absent
 - **WHEN** either selected module is missing or cannot be loaded

@@ -1,6 +1,6 @@
 ## Context
 
-See `proposal.md` for motivation. The repository is a Chezmoi source tree with a separate live checkout on Infinity. Its maintained package intent is split between two Metapac group files containing 486 unique Arch names, plus 5 npm and 1 pipx names. This change deliberately removes Alacritty and migrates the other 485 Arch names. Desktop provisioning overlaps with those declarations, and several package hooks also perform privileged service setup. Stable authored Hyprland policy is mixed intentionally with DMS-generated modules; other tracked files, notably Discord and pavucontrol state, are application-generated.
+See `proposal.md` for motivation. The repository is a Chezmoi source tree with a separate live checkout on Infinity. Its current maintained package intent is split between two Metapac group files containing 489 unique Arch names, plus 6 npm and 1 pipx names. This change deliberately removes Alacritty and migrates the other 488 Arch names. Desktop provisioning overlaps with those declarations, and several package hooks also perform privileged service setup. Stable authored Hyprland policy is mixed intentionally with DMS-generated modules; other tracked files, notably Discord and pavucontrol state, are application-generated.
 
 The implementation must be developed and tested on the VPS. Infinity remains read-only throughout this change. A minimal CachyOS installation, not the current installed-package snapshot, is the starting model.
 
@@ -44,8 +44,8 @@ Alternative rejected: preserve the broken AUR installation path or add a local P
 
 The root Declarch configuration imports two selected modules corresponding to the current `all` and `cachyos` groups. Package strings are quoted and compared programmatically:
 
-- `paru`: 485 unique names, preserving 237 names in `all` and 248 retained names in `cachyos`, with zero overlap; `alacritty` is the one recorded omission from the 249-name source module.
-- `npm`: 5 names, using Declarch's official npm backend.
+- `paru`: 488 unique names, preserving 239 names in `all` and 249 retained names in `cachyos`, with zero overlap; `alacritty` is the one recorded omission from the 250-name source module.
+- `npm`: 6 names, using Declarch's official npm backend.
 - `pipx`: 1 name, using a minimal custom backend because the official registry provides pip rather than pipx.
 
 The official `paru` backend owns both repository and AUR packages. The migration does not reclassify names among pacman/AUR backends. Metapac config, group symlinks, the Metapac package script, and the package-editing wrapper are removed only after exact source/result parity and fixture validation. The bootstrap prerequisite transition must not leave Metapac and Declarch as competing steady-state authorities.
@@ -74,7 +74,7 @@ Alternative rejected: wrap Declarch and paru to emulate Metapac clean semantics.
 Metapac `after_sync` shell hooks are not copied into Declarch modules. Packages declare packages; Chezmoi owns the smallest necessary system/user setup, and systemd owns activation state.
 
 - Chezmoi-authored user units remain under `~/.config/systemd/user`.
-- Package-supplied units are enabled by the CachyOS base installer or finite CachyOS setup scripts according to one explicit authority map; Chezmoi does not duplicate NetworkManager activation already owned by the base installer.
+- Package-supplied units are enabled by the CachyOS base installer or finite CachyOS setup scripts according to one explicit authority map; Chezmoi does not duplicate NetworkManager activation already owned by the minimal installer, while it activates Bluetooth and CUPS because CachyOS reserves those actions for desktop-profile installs.
 - Group membership, udev, PAM, greetd, SSH, UFW, and fstab changes remain explicit privileged boundaries and are independently previewable where the native tool permits.
 - Fixture execution substitutes harmless commands and paths; it never invokes real systemctl mutation, package mutation, firewall changes, or writes under `/etc`.
 
@@ -125,10 +125,10 @@ After those non-mutating checks pass, end-to-end convergence from a minimal Cach
 ## Risks / Trade-offs
 
 - **[Declarch cannot prune arbitrary unmanaged explicit packages]** → State the limitation, expose native unmanaged reporting, and do not add a wrapper.
-- **[A missing imported module can make a prune preview unsafe]** → Require both module files, exactly 485 retained Arch names, and an explicit one-name Alacritty omission before any prune preview.
+- **[A missing imported module can make a prune preview unsafe]** → Require both module files, exactly 488 retained Arch names, and an explicit one-name Alacritty omission before any prune preview.
 - **[A plain sync can forget a removed declaration before prune]** → Preview and execute the approved prune directly after the declaration change.
 - **[The pipx backend adds local configuration]** → Keep it to the minimal documented list/install/remove mapping and test it with a mock binary.
-- **[Removing DMS package-install side effects may omit undocumented dependencies]** → Preserve the 485 retained Arch declarations exactly; verify static behavior in non-mutating fixtures and real convergence only in the separately approved disposable acceptance machine.
+- **[Removing DMS package-install side effects may omit undocumented dependencies]** → Preserve the 488 retained Arch declarations exactly; verify static behavior in non-mutating fixtures and real convergence only in the separately approved disposable acceptance machine.
 - **[One-shot desktop state has drifted from current DMS behavior]** → Query the installed/current DMS CLI and validate generated destinations before replacing the stale setup.
 - **[Secret rendering blocks unattended global Chezmoi checks]** → Use synthetic non-secret fixture data; reserve real secret-backed acceptance for an explicitly approved interactive run.
 - **[End-to-end acceptance performs real package and service mutations]** → Run it only after explicit approval in a disposable minimal-CachyOS machine; never use Infinity.

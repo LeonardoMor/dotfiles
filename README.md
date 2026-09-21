@@ -24,9 +24,9 @@ Paru owns Arch/AUR packages, npm owns global Node packages, and pipx owns isolat
 Before changing the live package state:
 
 ```bash
-config_home=${XDG_CONFIG_HOME:-$HOME/.config}
 for module in all cachyos; do
-    test -r "$config_home/declarch/modules/$module.kdl" || {
+    module_file=$XDG_CONFIG_HOME/declarch/modules/$module.kdl
+    test -r "$module_file" || {
         printf 'Missing Declarch module: %s\n' "$module" >&2
         exit 1
     }
@@ -41,9 +41,9 @@ Edit a rendered module with `declarch edit all` or `declarch edit cachyos`, then
 Declarch prune removes packages that were represented in its state and later undeclared. It does not remove arbitrary unmanaged packages. After deleting a tracked declaration, preview and execute prune directly:
 
 ```bash
-config_home=${XDG_CONFIG_HOME:-$HOME/.config}
 for module in all cachyos; do
-    test -r "$config_home/declarch/modules/$module.kdl" || {
+    module_file=$XDG_CONFIG_HOME/declarch/modules/$module.kdl
+    test -r "$module_file" || {
         printf 'Missing Declarch module: %s\n' "$module" >&2
         exit 1
     }
@@ -66,7 +66,7 @@ DMS owns its generated Hyprland modules. Chezmoi owns `hyprland.lua` and `custom
 
 ## Service state
 
-CachyOS setup uses package-provided units where available and Chezmoi only for authored units and finite activation commands. The base CachyOS installer owns NetworkManager activation. Chezmoi owns the remaining selected workstation state: Kanata's `uinput` group and udev rule, required device-group membership, PAM, greetd, SSH, firewall, printing, Bluetooth, virtualization, and user-service activation.
+CachyOS setup uses package-provided units where available and Chezmoi only for authored units and finite activation commands. The minimal no-desktop CachyOS installer owns NetworkManager activation; its desktop-only Bluetooth and CUPS activation does not run for this bootstrap baseline. Chezmoi owns the remaining selected workstation state: Kanata's `uinput` group and udev rule, required device-group membership, PAM, greetd, SSH, firewall, printing, Bluetooth, virtualization, and user-service activation. `hyprpolkitagent.service` supplies graphical authorization prompts for applications that request elevated privileges.
 
 Infinity-specific mounts, symlinks, and hardware behavior remain hostname-gated. Infinity is a read-only reference during development and is never an acceptance target.
 

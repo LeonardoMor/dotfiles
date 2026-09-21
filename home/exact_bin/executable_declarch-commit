@@ -16,10 +16,9 @@ for marker in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-apply rebase-merge;
     [[ ! -e $git_dir/$marker ]] || emit f 'Refusing to commit during an in-progress Git operation' 1
 done
 
-config_home=${XDG_CONFIG_HOME:-$HOME/.config}
 targets=(
-    "$config_home/declarch/modules/all.kdl"
-    "$config_home/declarch/modules/cachyos.kdl"
+    "$XDG_CONFIG_HOME/declarch/modules/all.kdl"
+    "$XDG_CONFIG_HOME/declarch/modules/cachyos.kdl"
 )
 for target in "${targets[@]}"; do
     [[ -r $target ]] || emit f "Missing Declarch module: $target" 1

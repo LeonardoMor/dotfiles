@@ -5,7 +5,7 @@ The current bootstrap mixes package, desktop, service, generated-state, and hist
 ## What Changes
 
 - Make one bootstrap invocation finish the Chezmoi deployment; no follow-up `chezmoi apply` is required.
-- Replace the active Metapac package authority with selected Declarch modules containing 485 Arch, 5 npm, and 1 pipx declaration names; the sole deliberate omission from the 486-name Arch source is unused Alacritty.
+- Replace the active Metapac package authority with selected Declarch modules containing 488 Arch, 6 npm, and 1 pipx declaration names; the sole deliberate omission from the current 489-name Arch source is unused Alacritty.
 - Keep package installation, desktop setup, and service activation under one explicit authority each; do not reproduce DMS-installed packages or package-hook shell orchestration in parallel.
 - Preserve stable authored CachyOS user configuration and let applications own generated state.
 - Apply the documented configuration-location rule per tool: centralize only when supported operating systems require different native destinations; do not add non-CachyOS behavior.

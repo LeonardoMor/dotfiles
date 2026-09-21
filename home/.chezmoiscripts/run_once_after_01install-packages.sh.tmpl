@@ -4,10 +4,9 @@
 source "$HOME/bin/utils.sh" || exit 1
 source "$HOME/.profile" || emit f 'Failed to load ~/.profile' 1
 
-config_home=${XDG_CONFIG_HOME:-$HOME/.config}
 for module in all cachyos; do
-    path=$config_home/declarch/modules/$module.kdl
-    [[ -r $path ]] || emit f "Missing Declarch module: $path" 1
+    module_file=$XDG_CONFIG_HOME/declarch/modules/$module.kdl
+    [[ -r $module_file ]] || emit f "Missing Declarch module: $module_file" 1
 done
 
 declarch lint --mode validate || emit f 'Declarch configuration validation failed' 1

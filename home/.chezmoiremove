@@ -3,6 +3,7 @@
 .config/bat/themes/tokyonight_night.tmTheme
 bin/update-markitdown-mcp
 bin/chezmoi-mpm
+bin/update
 {{- if eq .osid "linux-cachyos" }}
 .config/alacritty
 {{- end }}

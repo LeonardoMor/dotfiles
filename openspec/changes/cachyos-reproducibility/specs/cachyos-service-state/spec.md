@@ -16,7 +16,7 @@ Each required CachyOS service or system integration SHALL have one explicit setu
 Chezmoi's finite CachyOS setup SHALL own activation for the following user units, except that the authored Hyprland configuration SHALL start `hyprland-session.target`. The deployment SHALL produce this state:
 
 - `dms.service`: package-owned; enabled and running in the graphical user session.
-- `hyprpolkitagent.service`: package-owned; enabled and running in the graphical user session.
+- `hyprpolkitagent.service`: package-owned; enabled and running in the graphical user session to provide authorization prompts for GUI applications requesting elevated privileges.
 - `kanata.service`: Chezmoi-owned; enabled and running for the user.
 - `kanata-switcher.service`: package-owned; enabled and running for the user.
 - `openrazer-daemon.service`: package-owned; enabled and running for the user.
@@ -31,11 +31,11 @@ Chezmoi's finite CachyOS setup SHALL own activation for the following user units
 The CachyOS base installer and Chezmoi's finite CachyOS setup SHALL each own only the package-owned system-unit activation assigned below. The deployment SHALL produce this state:
 
 - `greetd.service`: package-owned unit configured and enabled through the packaged `dms-greeter` CLI invoked by Chezmoi; started by the normal boot target.
-- `NetworkManager.service`: package-owned and enabled by the CachyOS base installer; Chezmoi does not duplicate its activation.
-- `bluetooth.service`: package-owned; enabled and running.
+- `NetworkManager.service`: package-owned and enabled by the minimal no-desktop CachyOS installer; Chezmoi does not duplicate its activation.
+- `bluetooth.service`: package-owned; enabled and running through Chezmoi because CachyOS enables it only for installer-selected desktop profiles.
 - `sshd.service`: package-owned with explicit Chezmoi setup; enabled and running.
 - `ufw.service`: package-owned and configured through UFW; enabled with the firewall active.
-- `cups.socket` and `cups.path`: enabled and running; `cups.service`: enabled and activatable through those native units.
+- `cups.socket` and `cups.path`: enabled and running through Chezmoi because CachyOS enables printing only for installer-selected desktop profiles; `cups.service`: enabled and activatable through those native units.
 - `libvirtd.service`: enabled and activatable through libvirt's native unit relationships; it is not required to run continuously while idle.
 
 #### Scenario: Disposable acceptance reaches system targets

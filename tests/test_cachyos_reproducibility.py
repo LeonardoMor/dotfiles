@@ -114,14 +114,18 @@ class PackageMigrationTest(unittest.TestCase):
             "pipx": sorted(shared["pipx"]),
         }
         expected = {
-            "arch": (485, "74d9913698082a111d5a806f879ccc139579a9f5326d4745ec763bfe6acc7535"),
-            "npm": (5, "bfb38b0f839cb1cf270bde4d5d3c839580ac099b8f1f6f88550d0b08e20ef305"),
+            "arch": (488, "242b171194a91ba89ce1a774a6081276dba697abb590e926b89a0b1f1f5a84aa"),
+            "npm": (6, "e5d73a8bce9ab3b3aab6d5582e1bb4844daf3e9d767e733164ac8065e3c93eaa"),
             "pipx": (1, "980853a12ff2186fbc0a820c721c504b8490cb9003d706e46b71d022a57d4e3f"),
         }
         for name, values in inventories.items():
             digest = hashlib.sha256(("\n".join(values) + "\n").encode()).hexdigest()
             self.assertEqual(expected[name], (len(values), digest))
         self.assertNotIn("alacritty", inventories["arch"])
+        for package in ("cpuinfo", "heroic-games-launcher", "lan-mouse", "onnxruntime-cpu"):
+            self.assertIn(package, inventories["arch"])
+        self.assertNotIn("heroic-games-launcher-bin", inventories["arch"])
+        self.assertIn("firecrawl-cli", inventories["npm"])
         self.assertIn("metapac", inventories["arch"])
 
     def test_package_apply_uses_declarch_only(self) -> None:
@@ -131,7 +135,15 @@ class PackageMigrationTest(unittest.TestCase):
         self.assertIn('eq .osid "linux-cachyos"', install)
         self.assertIn("declarch sync --yes --hooks", install)
         self.assertIn("Missing Declarch module", install)
+        self.assertNotIn("config_home=", install)
+        self.assertNotRegex(install, r"(?mi)^\s*path\s*=")
         self.assertNotIn("metapac", install.lower())
+
+        backends = (HOME_SOURCE / ".chezmoiscripts/run_once_after_00install-backends.sh.tmpl").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("is-installed nvm || emit f", backends)
+        self.assertNotIn("if ! is-installed nvm", backends)
 
     def test_prune_policy_removes_only_declarch_tracked_orphans(self) -> None:
         root = (DECLARCH / "declarch.kdl").read_text(encoding="utf-8")
@@ -380,13 +392,12 @@ class PackageMigrationTest(unittest.TestCase):
             HOME_SOURCE / ".externally_modified/metapac/groups/all.toml",
             HOME_SOURCE / ".externally_modified/metapac/groups/cachyos.toml",
             HOME_SOURCE / "exact_bin/executable_chezmoi-mpm.tmpl",
+            HOME_SOURCE / "exact_bin/executable_update.tmpl",
         }
         self.assertEqual([], sorted(str(path.relative_to(ROOT)) for path in retired if path.exists()))
-        update = (HOME_SOURCE / "exact_bin/executable_update.tmpl").read_text(encoding="utf-8")
-        self.assertNotIn("chezmoi-mpm", update)
-        self.assertIn("declarch sync --yes --hooks update", update)
         removals = (HOME_SOURCE / ".chezmoiremove").read_text(encoding="utf-8")
         self.assertIn("bin/chezmoi-mpm", removals.splitlines())
+        self.assertIn("bin/update", removals.splitlines())
 
     def test_declarch_sync_uses_native_required_commit_hook(self) -> None:
         config = (DECLARCH / "declarch.kdl").read_text(encoding="utf-8")
@@ -395,7 +406,9 @@ class PackageMigrationTest(unittest.TestCase):
         self.assertIn('forbid_hooks "false"', config)
         helper = HOME_SOURCE / "exact_bin/executable_declarch-commit"
         self.assertTrue(helper.is_file())
-        self.assertNotIn("push", helper.read_text(encoding="utf-8"))
+        helper_source = helper.read_text(encoding="utf-8")
+        self.assertNotIn("push", helper_source)
+        self.assertNotIn("config_home=", helper_source)
 
     def test_declarch_commit_hook_checkpoints_only_modules(self) -> None:
         chezmoi = os.environ.get("CHEZMOI_BIN")
@@ -597,6 +610,7 @@ class ServiceStateTest(unittest.TestCase):
         self.assertNotIn("NetworkManager.service", setup)
         self.assertNotIn("plugdev", setup)
         self.assertIn("ufw enable", setup)
+        self.assertIn("ufw allow 4242/udp comment 'Lan Mouse'", setup)
 
         hyprland = (HOME_SOURCE / "dot_config/hypr/hyprland.lua").read_text(encoding="utf-8")
         self.assertIn("systemctl --user start hyprland-session.target", hyprland)
