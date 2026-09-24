@@ -24,7 +24,18 @@ for target in "${targets[@]}"; do
     [[ -r $target ]] || emit f "Missing Declarch module: $target" 1
 done
 
-chezmoi add -- "${targets[@]}" || emit f 'Failed to record Declarch modules with Chezmoi' 1
+# Preserve template data while disabling automatic Git actions for this import.
+config=$(chezmoi execute-template '
+    {{- $config := .chezmoi.config -}}
+    {{- $_ := set $config.git "autoadd" false -}}
+    {{- $_ := set $config.git "autocommit" false -}}
+    {{- $_ := set $config.git "autopush" false -}}
+    {{- $_ := set $config "persistentState" ($config.persistentState | default (joinPath (dir .chezmoi.configFile) "chezmoistate.boltdb")) -}}
+    {{- $config | toJson -}}
+') && [[ -n $config ]] || emit f 'Failed to prepare Chezmoi configuration' 1
+printf '%s\n' "$config" | chezmoi --config /dev/stdin --config-format json \
+    add -- "${targets[@]}" || emit f 'Failed to record Declarch modules with Chezmoi' 1
+unset config
 
 source_paths=()
 for target in "${targets[@]}"; do

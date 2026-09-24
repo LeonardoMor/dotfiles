@@ -407,8 +407,9 @@ class PackageMigrationTest(unittest.TestCase):
         helper = HOME_SOURCE / "exact_bin/executable_declarch-commit"
         self.assertTrue(helper.is_file())
         helper_source = helper.read_text(encoding="utf-8")
-        self.assertNotIn("push", helper_source)
+        self.assertNotRegex(helper_source, r"\bpush\b")
         self.assertNotIn("config_home=", helper_source)
+        self.assertNotIn("| jq", helper_source)
 
     def test_declarch_commit_hook_checkpoints_only_modules(self) -> None:
         chezmoi = os.environ.get("CHEZMOI_BIN")
@@ -419,8 +420,20 @@ class PackageMigrationTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             fixture = Path(directory)
             home = fixture / "home"
-            source = home / ".local/share/chezmoi"
+            repository = home / ".local/share/chezmoi"
+            source = repository / "home"
             (source / ".chezmoitemplates").mkdir(parents=True)
+            shutil.copy2(ROOT / ".chezmoiroot", repository / ".chezmoiroot")
+            for metadata in (".chezmoiignore", ".chezmoiremove"):
+                shutil.copy2(HOME_SOURCE / metadata, source / metadata)
+            chezmoi_config = home / ".config/chezmoi/chezmoi.toml"
+            chezmoi_config.parent.mkdir(parents=True)
+            custom_state = home / ".local/state/chezmoi/fixture.boltdb"
+            template_data = (
+                f'persistentState="{custom_state}"\n'
+                '[data]\nworkHost="fixture-work"\nosid="linux-cachyos"\n'
+            )
+            chezmoi_config.write_text(template_data, encoding="utf-8")
             (source / "exact_bin").mkdir()
             (source / "dot_config/declarch/exact_modules").mkdir(parents=True)
             shutil.copy2(HOME_SOURCE / ".chezmoitemplates/utils", source / ".chezmoitemplates/utils")
@@ -443,37 +456,59 @@ class PackageMigrationTest(unittest.TestCase):
                     encoding="utf-8",
                 )
 
-            environment = os.environ | {
+            fixture_bin = fixture / "bin"
+            fixture_bin.mkdir()
+            shutil.copy2(chezmoi, fixture_bin / "chezmoi")
+            shutil.copy2(declarch, fixture_bin / "declarch")
+            chezmoi = str(fixture_bin / "chezmoi")
+            declarch = str(fixture_bin / "declarch")
+
+            def run_in_fixture(argv, **kwargs):
+                return subprocess.run(sandbox_command(fixture, argv, kwargs.pop("env")), **kwargs)
+
+            environment = {
                 "GIT_CONFIG_GLOBAL": "/dev/null",
+                "GIT_CONFIG_NOSYSTEM": "1",
                 "HOME": str(home),
                 "PATH": f"{home / 'bin'}:{Path(chezmoi).parent}:/usr/bin",
                 "XDG_CONFIG_HOME": str(home / ".config"),
+                "XDG_DATA_HOME": str(home / ".local/share"),
+                "XDG_STATE_HOME": str(home / ".local/state"),
+                "XDG_CACHE_HOME": str(home / ".cache"),
             }
-            subprocess.run(["git", "init", "-q", str(source)], check=True, env=environment)
-            subprocess.run(["git", "-C", str(source), "config", "user.name", "Fixture"], check=True, env=environment)
-            subprocess.run(
+            run_in_fixture(["git", "init", "-q", str(repository)], check=True, env=environment)
+            run_in_fixture(["git", "-C", str(source), "config", "user.name", "Fixture"], check=True, env=environment)
+            run_in_fixture(
                 ["git", "-C", str(source), "config", "user.email", "fixture@example.invalid"],
                 check=True,
                 env=environment,
             )
-            subprocess.run(["git", "-C", str(source), "add", "."], check=True, env=environment)
-            subprocess.run(
+            run_in_fixture(["git", "-C", str(repository), "add", "."], check=True, env=environment)
+            run_in_fixture(
                 ["git", "-C", str(source), "commit", "-q", "-m", "fixture baseline"],
                 check=True,
                 env=environment,
             )
-            subprocess.run(
-                [chezmoi, "--source", str(source), "--destination", str(home), "apply"],
+            run_in_fixture(
+                [chezmoi, "--source", str(repository), "--destination", str(home), "apply"],
                 check=True,
                 env=environment,
             )
 
+            chezmoi_config.write_text(
+                template_data + '[git]\nautoAdd=true\nautoCommit=true\nautoPush=true\n'
+                'commitMessageTemplate="unwanted automatic commit"\n',
+                encoding="utf-8",
+            )
+
+            original_config = chezmoi_config.read_bytes()
+            (repository / "unstaged.txt").write_text("unrelated and untracked\n", encoding="utf-8")
             rendered_all = home / ".config/declarch/modules/all.kdl"
             rendered_all.write_text(rendered_all.read_text(encoding="utf-8") + "// changed\n", encoding="utf-8")
-            unrelated = source / "unrelated.txt"
+            unrelated = repository / "unrelated.txt"
             unrelated.write_text("staged but unrelated\n", encoding="utf-8")
-            subprocess.run(["git", "-C", str(source), "add", "unrelated.txt"], check=True, env=environment)
-            baseline = subprocess.run(
+            run_in_fixture(["git", "-C", str(repository), "add", "unrelated.txt"], check=True, env=environment)
+            baseline = run_in_fixture(
                 ["git", "-C", str(source), "rev-parse", "HEAD"],
                 check=True,
                 text=True,
@@ -482,9 +517,9 @@ class PackageMigrationTest(unittest.TestCase):
             ).stdout.strip()
 
             for arguments in ([declarch, "sync", "--yes"], [declarch, "--dry-run", "sync", "--hooks"]):
-                result = subprocess.run(arguments, text=True, capture_output=True, check=False, env=environment)
+                result = run_in_fixture(arguments, text=True, capture_output=True, check=False, env=environment)
                 self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-                current = subprocess.run(
+                current = run_in_fixture(
                     ["git", "-C", str(source), "rev-parse", "HEAD"],
                     check=True,
                     text=True,
@@ -493,7 +528,7 @@ class PackageMigrationTest(unittest.TestCase):
                 ).stdout.strip()
                 self.assertEqual(baseline, current)
 
-            result = subprocess.run(
+            result = run_in_fixture(
                 [declarch, "sync", "--yes", "--hooks"],
                 text=True,
                 capture_output=True,
@@ -501,16 +536,16 @@ class PackageMigrationTest(unittest.TestCase):
                 env=environment,
             )
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-            committed = subprocess.run(
-                ["git", "-C", str(source), "show", "--format=", "--name-only", "HEAD"],
+            committed = run_in_fixture(
+                ["git", "-C", str(repository), "show", "--format=", "--name-only", "HEAD"],
                 check=True,
                 text=True,
                 capture_output=True,
                 env=environment,
             ).stdout.splitlines()
-            self.assertEqual(["dot_config/declarch/exact_modules/all.kdl"], committed)
-            staged = subprocess.run(
-                ["git", "-C", str(source), "diff", "--cached", "--name-only"],
+            self.assertEqual(["home/dot_config/declarch/exact_modules/all.kdl"], committed)
+            staged = run_in_fixture(
+                ["git", "-C", str(repository), "diff", "--cached", "--name-only"],
                 check=True,
                 text=True,
                 capture_output=True,
@@ -518,14 +553,14 @@ class PackageMigrationTest(unittest.TestCase):
             ).stdout.splitlines()
             self.assertEqual(["unrelated.txt"], staged)
 
-            head = subprocess.run(
+            head = run_in_fixture(
                 ["git", "-C", str(source), "rev-parse", "HEAD"],
                 check=True,
                 text=True,
                 capture_output=True,
                 env=environment,
             ).stdout.strip()
-            result = subprocess.run(
+            result = run_in_fixture(
                 [declarch, "sync", "--yes", "--hooks"],
                 text=True,
                 capture_output=True,
@@ -535,7 +570,7 @@ class PackageMigrationTest(unittest.TestCase):
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
             self.assertEqual(
                 head,
-                subprocess.run(
+                run_in_fixture(
                     ["git", "-C", str(source), "rev-parse", "HEAD"],
                     check=True,
                     text=True,
@@ -543,6 +578,81 @@ class PackageMigrationTest(unittest.TestCase):
                     env=environment,
                 ).stdout.strip(),
             )
+            self.assertEqual(original_config, chezmoi_config.read_bytes())
+            self.assertTrue(custom_state.is_file())
+            default_state = chezmoi_config.parent / "chezmoistate.boltdb"
+            self.assertFalse(default_state.exists())
+            chezmoi_config.write_text(original_config.decode().split("\n", 1)[1], encoding="utf-8")
+            result = run_in_fixture(
+                [declarch, "sync", "--yes", "--hooks"], text=True, capture_output=True, env=environment,
+            )
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertTrue(default_state.is_file())
+            chezmoi_config.write_bytes(original_config)
+            self.assertEqual(
+                "1",
+                run_in_fixture(
+                    ["git", "-C", str(repository), "rev-list", "--count", f"{baseline}..HEAD"],
+                    check=True, text=True, capture_output=True, env=environment,
+                ).stdout.strip(),
+            )
+            self.assertEqual(
+                "?? unstaged.txt",
+                run_in_fixture(
+                    ["git", "-C", str(repository), "status", "--porcelain=v1", "--", "unstaged.txt"],
+                    check=True, text=True, capture_output=True, env=environment,
+                ).stdout.strip(),
+            )
+
+            module_source = source / "dot_config/declarch/exact_modules/all.kdl"
+            recorded = module_source.read_bytes()
+            rendered_all.write_text(rendered_all.read_text(encoding="utf-8") + "// pending\n", encoding="utf-8")
+            marker = repository / ".git/MERGE_HEAD"
+            marker.write_text(head + "\n", encoding="utf-8")
+            result = run_in_fixture(
+                [str(home / "bin/declarch-commit")], text=True, capture_output=True, env=environment,
+            )
+            self.assertNotEqual(0, result.returncode)
+            self.assertIn("in-progress Git operation", result.stderr)
+            self.assertEqual(recorded, module_source.read_bytes())
+            marker.unlink()
+
+            native_chezmoi = fixture_bin / "chezmoi-native"
+            Path(chezmoi).rename(native_chezmoi)
+            for response in ("exit 23", "exit 0", "printf '{'", "printf 'null'"):
+                with self.subTest(config_failure=response):
+                    Path(chezmoi).write_text(
+                        '#!/usr/bin/env bash\n'
+                        f'if [[ $1 == execute-template ]]; then {response}; exit; fi\n'
+                        f'exec {shlex.quote(str(native_chezmoi))} "$@"\n',
+                        encoding="utf-8",
+                    )
+                    Path(chezmoi).chmod(0o755)
+                    result = run_in_fixture(
+                        [str(home / "bin/declarch-commit")], text=True, capture_output=True, env=environment,
+                    )
+                    self.assertNotEqual(0, result.returncode)
+                    self.assertIn("FATAL: Failed to", result.stderr)
+                    self.assertEqual(recorded, module_source.read_bytes())
+            native_chezmoi.replace(chezmoi)
+
+            for key, value in (("commit.gpgsign", "true"), ("gpg.program", "/usr/bin/false")):
+                run_in_fixture(
+                    ["git", "-C", str(repository), "config", key, value], check=True, env=environment,
+                )
+            result = run_in_fixture(
+                [str(home / "bin/declarch-commit")], text=True, capture_output=True, env=environment,
+            )
+            self.assertNotEqual(0, result.returncode)
+            self.assertIn("Failed to commit Declarch declaration changes", result.stderr)
+            self.assertEqual(
+                head,
+                run_in_fixture(
+                    ["git", "-C", str(repository), "rev-parse", "HEAD"],
+                    check=True, text=True, capture_output=True, env=environment,
+                ).stdout.strip(),
+            )
+            self.assertEqual(original_config, chezmoi_config.read_bytes())
 
 
 class OwnershipTest(unittest.TestCase):

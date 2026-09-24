@@ -75,6 +75,12 @@ A hook-enabled Declarch sync SHALL use Declarch's native lifecycle to record the
 - **WHEN** hook-enabled sync succeeds without changing either module
 - **THEN** the hook exits successfully without creating an empty commit
 
+#### Scenario: Chezmoi automatic Git actions are enabled
+- **WHEN** the user's Chezmoi configuration enables automatic add, commit, or push
+- **THEN** the module-recording command disables those automatic actions in an in-memory configuration copy while retaining the active template data needed by `.chezmoiignore` and `.chezmoiremove`
+- **AND** the user's normal Chezmoi configuration remains unchanged
+- **AND** only the two module source paths may be committed, unrelated staged changes survive, and no push occurs
+
 #### Scenario: Preview or hooks-disabled sync runs
 - **WHEN** a dry run or a sync without `--hooks` runs
 - **THEN** no declaration commit hook executes

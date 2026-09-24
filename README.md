@@ -21,6 +21,8 @@ The complete CachyOS package declaration is split by reuse scope:
 
 Paru owns Arch/AUR packages, npm owns global Node packages, and pipx owns isolated Python applications. Declarch configuration is rendered to `~/.config/declarch`. `dms-shell`, `greetd`, and `greetd-dms-greeter-git` are declared in `all.kdl`; the desktop setup does not install them a second time.
 
+Backend definitions are deployed from `exact_backends/` and explicitly imported by `declarch.kdl`. Declarch 0.8.2 does not load built-in backends: plain `init` leaves an empty backend list, while `init --backend NAME` downloads a definition from its registry. This configuration supplies `paru` directly rather than the registry's `aur` backend, which selects Paru or Yay. No runtime backend download is needed.
+
 Before changing the live package state:
 
 ```bash
@@ -37,6 +39,8 @@ declarch info --list --scope unmanaged
 ```
 
 Edit a rendered module with `declarch edit all` or `declarch edit cachyos`, then review the native Declarch plan. A successful `declarch sync --hooks` records the two modules with Chezmoi and creates a module-only Git commit; pushing remains explicit. Real sync, update, upgrade, cache-clean, or prune operations require explicit approval.
+
+This uses the native `on-success "declarch-commit" --required` hook with `experimental { "enable-hooks" }`. Declarch schedules the command; `declarch-commit` only records and commits the two modules, preserves unrelated staged changes, and refuses an in-progress Git operation. Its `chezmoi add` uses Chezmoi's native template functions to retain the active configuration, template data, and state-file location while disabling only automatic Git actions in memory; normal Chezmoi settings are unchanged. Hook commands are executed directly, not through a shell, so shell variables and command chains cannot replace that body inline.
 
 Declarch prune removes packages that were represented in its state and later undeclared. It does not remove arbitrary unmanaged packages. After deleting a tracked declaration, preview and execute prune directly:
 
