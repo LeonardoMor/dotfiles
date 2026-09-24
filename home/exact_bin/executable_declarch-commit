@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+source "$HOME/bin/utils.sh" || exit 1
+
+STATUS_FILE=
+
+cleanup() {
+    [[ -z $STATUS_FILE ]] || rm -f "$STATUS_FILE" || emit w "Failed to remove $STATUS_FILE"
+}
+
+trap cleanup EXIT INT TERM HUP QUIT
+
+repo=$(chezmoi git -- rev-parse --show-toplevel) || emit f 'Failed to locate the dotfiles repository' 1
+git_dir=$(chezmoi git -- rev-parse --path-format=absolute --git-dir) || emit f 'Failed to locate the dotfiles Git directory' 1
+for marker in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-apply rebase-merge; do
+    [[ ! -e $git_dir/$marker ]] || emit f 'Refusing to commit during an in-progress Git operation' 1
+done
+
+source_root=$(chezmoi source-path) || emit f 'Failed to locate the Chezmoi source directory' 1
+[[ $source_root == "$repo/"* ]] || emit f "Chezmoi source is outside the dotfiles repository: $source_root" 1
+source_file="$source_root/.externally_modified/declarch/modules/all.kdl"
+[[ -r $source_file ]] || emit f "Missing Declarch module source: $source_file" 1
+source_file=${source_file#"$repo/"}
+
+STATUS_FILE=$(mktemp) || emit f 'Failed to create a temporary Git status file' 1
+chezmoi git -- status --porcelain=v1 -z -- "$source_file" >"$STATUS_FILE" || \
+    emit f 'Failed to inspect Declarch source changes' 1
+if [[ -s $STATUS_FILE ]]; then
+    chezmoi git -- add -- "$source_file" || emit f 'Failed to stage Declarch declaration changes' 1
+    chezmoi git -- commit --only -m 'chore(packages): update Declarch declarations' -- "$source_file" || \
+        emit f 'Failed to commit Declarch declaration changes' 1
+fi
+chezmoi git -- push || emit f 'Failed to push Declarch declaration changes' 1

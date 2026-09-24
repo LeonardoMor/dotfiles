@@ -1,0 +1,7 @@
+{{- if eq .osid "linux-cachyos" -}}
+{{- joinPath .chezmoi.sourceDir ".externally_modified" "declarch" "modules" "all.kdl" -}}
+{{- end -}}
+
+{{/*
+vim: filetype=gotmpl
+*/}}

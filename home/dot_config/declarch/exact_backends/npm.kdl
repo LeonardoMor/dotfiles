@@ -1,0 +1,43 @@
+backend "npm" {
+    meta {
+        title "NPM"
+        description "Node.js package manager"
+        tags "package-manager" "nodejs" "javascript"
+        platforms "linux" "macos"
+        requires "npm"
+        url "-"
+        install-guide "-"
+    }
+
+    binary "npm"
+
+    platforms "linux" "macos"
+
+    list "{binary} list -g --json" {
+        format "json_object_keys"
+        json_path "dependencies"
+        version_key "version"
+    }
+
+    install "{binary} install -g --silent {packages}"
+    remove "{binary} uninstall -g --silent {packages}"
+
+    update "-"
+    upgrade "{binary} update -g"
+    cache_clean "{binary} cache clean --force"
+
+    search "{binary} search {query} --json" {
+        format "npm_json"
+        name_key "name"
+        version_key "version"
+        desc_key "description"
+    }
+
+    search_local "{binary} list -g {query} --json" {
+        format "json_object_keys"
+        json_path "dependencies"
+        version_key "version"
+    }
+
+    needs_sudo "false"
+}

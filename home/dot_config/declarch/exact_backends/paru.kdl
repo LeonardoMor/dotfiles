@@ -1,0 +1,38 @@
+backend "paru" {
+    meta {
+        title "Paru"
+        description "Feature-packed AUR helper written in Rust"
+        tags "arch" "linux" "aur" "helper" "rust" "paru"
+        url "-"
+        homepage "https://github.com/Morganamilo/paru"
+        license "-"
+        platforms "linux"
+        requires "pacman"
+        install-guide "-"
+    }
+
+    binary "paru"
+
+    platforms "linux"
+
+    list "{binary} -Q" {
+        format "whitespace"
+        name_col 0
+        version_col 1
+    }
+
+    install "{binary} -S --needed {packages}"
+    remove "{binary} -Rsn {packages}"
+    update "{binary} -Sy"
+    upgrade "{binary} -Syu"
+    cache_clean "{binary} -Sc --noconfirm"
+
+    search "{binary} -Ss {query}" {
+        format "regex"
+        regex "^aur/([^\\s]+)|^community/([^\\s]+)|^extra/([^\\s]+)"
+        name_group 1
+    }
+
+    noconfirm "--noconfirm"
+    fallback "pacman"
+}

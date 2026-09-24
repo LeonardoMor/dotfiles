@@ -1,0 +1,20 @@
+backend "pipx" {
+    meta {
+        title "pipx"
+        description "Install Python applications in isolated environments"
+        platforms "linux"
+        requires "pipx"
+        homepage "https://pipx.pypa.io/"
+    }
+
+    binary "pipx"
+    platforms "linux"
+
+    list "{binary} list --short" {
+        format "whitespace"
+        name_col 0
+    }
+
+    install "{binary} install {packages}"
+    remove "{binary} uninstall {packages}"
+}

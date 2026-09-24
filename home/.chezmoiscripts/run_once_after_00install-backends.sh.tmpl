@@ -1,19 +1,14 @@
-{{- if ne .osid "windows" -}}
+{{- if eq .osid "linux-cachyos" -}}
 #!/usr/bin/env bash
 
-source -p ~/bin utils.sh
+source "$HOME/bin/utils.sh" || exit 1
+source "$HOME/.profile" || emit f 'Failed to load ~/.profile' 1
 
-set-system-package-manager
-_install python-pipx nvm
-source -p ~ .profile
+is-installed nvm || emit f 'nvm is unavailable after package installation' 1
 
-# Install node
-emit i 'Installing node Iron...'
-if nvm install --lts=iron; then
-    nvm use --lts=iron || emit e "Failed using node Iron"
-else
-    emit e "Failed to install node Iron"
-fi
+nvm install --lts=iron || emit f 'Failed to install Node.js Iron LTS' 1
+nvm use --lts=iron || emit f 'Failed to activate Node.js Iron LTS' 1
+nvm alias default lts/iron || emit f 'Failed to select Node.js Iron LTS as the default' 1
 {{- end -}}
 {{- /*
 vim: filetype=sh.gotmpl
