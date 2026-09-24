@@ -49,6 +49,7 @@ packages = [
   "glow",
   "gnome-keyring",
   "go",
+  "gpu-screen-recorder-ui",
   { name = "greetd", hooks = { after_sync = [
     "sh",
     "-lc",
