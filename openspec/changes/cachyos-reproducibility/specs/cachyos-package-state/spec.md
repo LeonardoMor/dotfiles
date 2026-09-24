@@ -19,7 +19,7 @@ The migration SHALL account for every current source declaration: the Declarch r
 - **AND** Metapac authority is retained
 
 ### Requirement: CachyOS module selection
-The CachyOS package authority SHALL select the shared package module and CachyOS package module together, containing 237 and 248 retained Arch names respectively with no overlap.
+The CachyOS package authority SHALL select the shared package module and CachyOS package module together, containing 239 and 249 retained Arch names respectively with no overlap.
 
 #### Scenario: Complete module set loads
 - **WHEN** package configuration is resolved for the CachyOS machine class
@@ -64,22 +64,28 @@ Package linting, configuration validation, and dry-run planning SHALL perform no
 - **AND** its native preview is reviewed separately first
 
 ### Requirement: Native sync checkpoints package declarations
-A hook-enabled Declarch sync SHALL use Declarch's native lifecycle to record the rendered `all` and `cachyos` modules with Chezmoi and create one module-only Git commit without pushing or disturbing unrelated staged changes.
+The rendered `all` module SHALL be a symlink to its tracked file under the Chezmoi source's `.externally_modified/declarch/modules` directory. Stable modules such as `cachyos` SHALL remain normal Chezmoi-managed files. A hook-enabled Declarch sync SHALL stage and commit only the mutable `all` backing file, preserve unrelated staged changes, and push the current branch.
 
-#### Scenario: Approved hook-enabled sync changes a module
-- **WHEN** an approved `declarch sync --hooks` succeeds after either rendered module changes
-- **THEN** the on-success hook records the two modules in Chezmoi source and commits only those source paths
-- **AND** pushing remains an explicit separate action
+#### Scenario: Declarch changes the mutable module
+- **WHEN** `declarch install BACKEND:PACKAGE --module all --no-sync` or `declarch edit all` changes the rendered module
+- **THEN** its tracked backing file changes directly without `chezmoi add`
+- **AND** the dotfiles repository reports that source file as changed before sync
+
+#### Scenario: Approved hook-enabled sync changes the mutable module
+- **WHEN** an approved `declarch sync --hooks` succeeds after `all` changes
+- **THEN** the on-success hook stages and commits only its tracked backing file
+- **AND** unrelated staged changes survive
+- **AND** the resulting branch is pushed
 
 #### Scenario: Sync has no declaration change
 - **WHEN** hook-enabled sync succeeds without changing either module
-- **THEN** the hook exits successfully without creating an empty commit
+- **THEN** the hook creates no empty commit
+- **AND** it still pushes so a previously committed change can recover from an earlier push failure
 
-#### Scenario: Chezmoi automatic Git actions are enabled
-- **WHEN** the user's Chezmoi configuration enables automatic add, commit, or push
-- **THEN** the module-recording command disables those automatic actions in an in-memory configuration copy while retaining the active template data needed by `.chezmoiignore` and `.chezmoiremove`
-- **AND** the user's normal Chezmoi configuration remains unchanged
-- **AND** only the two module source paths may be committed, unrelated staged changes survive, and no push occurs
+#### Scenario: Push fails
+- **WHEN** the module commit succeeds but its push fails
+- **THEN** the required hook fails with a direct diagnostic
+- **AND** a clean rerun retries the push without creating another commit
 
 #### Scenario: Preview or hooks-disabled sync runs
 - **WHEN** a dry run or a sync without `--hooks` runs

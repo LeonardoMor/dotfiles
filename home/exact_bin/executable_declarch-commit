@@ -16,38 +16,18 @@ for marker in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-apply rebase-merge;
     [[ ! -e $git_dir/$marker ]] || emit f 'Refusing to commit during an in-progress Git operation' 1
 done
 
-targets=(
-    "$XDG_CONFIG_HOME/declarch/modules/all.kdl"
-    "$XDG_CONFIG_HOME/declarch/modules/cachyos.kdl"
-)
-for target in "${targets[@]}"; do
-    [[ -r $target ]] || emit f "Missing Declarch module: $target" 1
-done
-
-# Preserve template data while disabling automatic Git actions for this import.
-config=$(chezmoi execute-template '
-    {{- $config := .chezmoi.config -}}
-    {{- $_ := set $config.git "autoadd" false -}}
-    {{- $_ := set $config.git "autocommit" false -}}
-    {{- $_ := set $config.git "autopush" false -}}
-    {{- $_ := set $config "persistentState" ($config.persistentState | default (joinPath (dir .chezmoi.configFile) "chezmoistate.boltdb")) -}}
-    {{- $config | toJson -}}
-') && [[ -n $config ]] || emit f 'Failed to prepare Chezmoi configuration' 1
-printf '%s\n' "$config" | chezmoi --config /dev/stdin --config-format json \
-    add -- "${targets[@]}" || emit f 'Failed to record Declarch modules with Chezmoi' 1
-unset config
-
-source_paths=()
-for target in "${targets[@]}"; do
-    source_path=$(chezmoi source-path "$target") || emit f "Failed to locate the Chezmoi source for $target" 1
-    [[ $source_path == "$repo/"* ]] || emit f "Declarch source is outside the dotfiles repository: $source_path" 1
-    source_paths+=("${source_path#"$repo/"}")
-done
+source_root=$(chezmoi source-path) || emit f 'Failed to locate the Chezmoi source directory' 1
+[[ $source_root == "$repo/"* ]] || emit f "Chezmoi source is outside the dotfiles repository: $source_root" 1
+source_file="$source_root/.externally_modified/declarch/modules/all.kdl"
+[[ -r $source_file ]] || emit f "Missing Declarch module source: $source_file" 1
+source_file=${source_file#"$repo/"}
 
 STATUS_FILE=$(mktemp) || emit f 'Failed to create a temporary Git status file' 1
-chezmoi git -- status --porcelain=v1 -z -- "${source_paths[@]}" >"$STATUS_FILE" || \
+chezmoi git -- status --porcelain=v1 -z -- "$source_file" >"$STATUS_FILE" || \
     emit f 'Failed to inspect Declarch source changes' 1
-[[ -s $STATUS_FILE ]] || exit 0
-
-chezmoi git -- commit --only -m 'chore(packages): update Declarch declarations' -- "${source_paths[@]}" || \
-    emit f 'Failed to commit Declarch declaration changes' 1
+if [[ -s $STATUS_FILE ]]; then
+    chezmoi git -- add -- "$source_file" || emit f 'Failed to stage Declarch declaration changes' 1
+    chezmoi git -- commit --only -m 'chore(packages): update Declarch declarations' -- "$source_file" || \
+        emit f 'Failed to commit Declarch declaration changes' 1
+fi
+chezmoi git -- push || emit f 'Failed to push Declarch declaration changes' 1

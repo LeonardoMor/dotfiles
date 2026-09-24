@@ -54,7 +54,7 @@ Alternative rejected: derive modules from `pacman -Qqe`, split packages by curre
 
 ### 4. Use native Declarch reconciliation honestly
 
-The production workflow uses Declarch's lint and dry-run surfaces before sync. An explicitly hook-enabled sync uses Declarch's native on-success lifecycle to record the two rendered modules with Chezmoi and create a module-only commit; it never pushes. A real sync, prune, update, upgrade, cache clean, or hook execution requires explicit approval.
+The production workflow uses Declarch's lint and dry-run surfaces before sync. Chezmoi renders the frequently edited `all` module as a symlink to a tracked file under `.externally_modified/declarch/modules`, so Declarch package edits change source state directly; the stable `cachyos` baseline remains a normal Chezmoi-managed file. An explicitly hook-enabled sync uses Declarch's native on-success lifecycle to stage and commit only the `all` backing file, preserve unrelated staged changes, and push the current branch. A failed push fails the required hook, and a clean rerun retries the push without creating another commit. A real sync, prune, update, upgrade, cache clean, or hook execution requires explicit approval.
 
 Declarch 0.8.2 prune operates on packages recorded in Declarch state; it does not promise removal of every manually installed explicit package absent from the modules. Therefore:
 

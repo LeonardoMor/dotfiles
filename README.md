@@ -16,10 +16,10 @@ The bootstrap accepts only CachyOS, installs its minimal prerequisites, and perf
 
 The complete CachyOS package declaration is split by reuse scope:
 
-- `home/dot_config/declarch/exact_modules/all.kdl`
+- `home/.externally_modified/declarch/modules/all.kdl`
 - `home/dot_config/declarch/exact_modules/cachyos.kdl`
 
-Paru owns Arch/AUR packages, npm owns global Node packages, and pipx owns isolated Python applications. Declarch configuration is rendered to `~/.config/declarch`. `dms-shell`, `greetd`, and `greetd-dms-greeter-git` are declared in `all.kdl`; the desktop setup does not install them a second time.
+Paru owns Arch/AUR packages, npm owns global Node packages, and pipx owns isolated Python applications. Chezmoi renders the frequently edited `~/.config/declarch/modules/all.kdl` as a symlink to its tracked source file, so Declarch edits immediately appear as unstaged dotfiles changes. The stable CachyOS baseline remains a normal Chezmoi-managed file. `dms-shell`, `greetd`, and `greetd-dms-greeter-git` are declared in `all.kdl`; the desktop setup does not install them a second time.
 
 Backend definitions are deployed from `exact_backends/` and explicitly imported by `declarch.kdl`. Declarch 0.8.2 does not load built-in backends: plain `init` leaves an empty backend list, while `init --backend NAME` downloads a definition from its registry. This configuration supplies `paru` directly rather than the registry's `aur` backend, which selects Paru or Yay. No runtime backend download is needed.
 
@@ -38,9 +38,9 @@ declarch --dry-run sync
 declarch info --list --scope unmanaged
 ```
 
-Edit a rendered module with `declarch edit all` or `declarch edit cachyos`, then review the native Declarch plan. A successful `declarch sync --hooks` records the two modules with Chezmoi and creates a module-only Git commit; pushing remains explicit. Real sync, update, upgrade, cache-clean, or prune operations require explicit approval.
+Add a package with `declarch install BACKEND:PACKAGE --module all --no-sync`, or edit it with `declarch edit all`, then review the native Declarch plan. A successful `declarch sync --hooks` stages the tracked `all.kdl`, creates a module-only Git commit, and pushes it. Rare baseline changes belong in the Chezmoi source for `cachyos.kdl`, not the live rendered file. Real sync, update, upgrade, cache-clean, or prune operations require explicit approval.
 
-This uses the native `on-success "declarch-commit" --required` hook with `experimental { "enable-hooks" }`. Declarch schedules the command; `declarch-commit` only records and commits the two modules, preserves unrelated staged changes, and refuses an in-progress Git operation. Its `chezmoi add` uses Chezmoi's native template functions to retain the active configuration, template data, and state-file location while disabling only automatic Git actions in memory; normal Chezmoi settings are unchanged. Hook commands are executed directly, not through a shell, so shell variables and command chains cannot replace that body inline.
+This uses the native `on-success "declarch-commit" --required` hook with `experimental { "enable-hooks" }`. Declarch schedules the command; `declarch-commit` stages and commits only the backing `all.kdl`, preserves unrelated staged changes, refuses an in-progress Git operation, and pushes the current branch. A failed push fails the required hook; rerunning it retries the push even when no new module commit is needed. Hook commands are executed directly, not through a shell, so shell variables and command chains cannot replace that body inline.
 
 Declarch prune removes packages that were represented in its state and later undeclared. It does not remove arbitrary unmanaged packages. After deleting a tracked declaration, preview and execute prune directly:
 
