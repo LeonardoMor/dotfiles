@@ -280,6 +280,8 @@ packages = [
   "kimageformats",
   "wireshark-cli",
   "vlc",
+  "scrcpy",
+  "android-tools",
 ]
 
 [npm]
