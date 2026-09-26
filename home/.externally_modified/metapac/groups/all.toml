@@ -42,6 +42,7 @@ packages = [
   "evtest",
   "expac",
   "ex-vi-compat",
+  "firecrawl-cli",
   "ghostscript",
   "ghostty",
   "github-cli",
@@ -50,6 +51,8 @@ packages = [
   "gnome-keyring",
   "go",
   "gpu-screen-recorder-ui",
+  "gpu-screen-recorder",
+  "gpu-screen-recorder-notification",
   { name = "greetd", hooks = { after_sync = [
     "sh",
     "-lc",
@@ -283,7 +286,6 @@ packages = [
 packages = [
   "@fission-ai/openspec",
   "corepack",
-  "firecrawl-cli",
   "npm",
   "prettier",
   "prettier-plugin-awk",
