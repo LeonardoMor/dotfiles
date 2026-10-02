@@ -79,6 +79,7 @@ ignore_clickable_check = false
 
 [hints.hotkeys]
 "Escape" = "idle"
+"Space" = "action left_click"
 "Backspace" = "action backspace"
 "Shift+L" = "action left_click"
 "Shift+R" = "action right_click"
