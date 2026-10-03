@@ -1,6 +1,7 @@
 enabled_backends = [
 {{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.idLike "cachyos") (eq .chezmoi.osRelease.idLike "arch")) }}
     "arch",
+    "uv",
 {{- else if eq .chezmoi.os "darwin" }}
     "brew",
 {{- end }}
