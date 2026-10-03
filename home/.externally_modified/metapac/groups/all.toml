@@ -282,6 +282,7 @@ packages = [
   "vlc",
   "scrcpy",
   "android-tools",
+  "shellcheck",
 ]
 
 [npm]
