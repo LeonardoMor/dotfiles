@@ -25,7 +25,8 @@
     "grep": "deny",
     "read": "deny"
   },
-  "plugin": [
-    "/home/leo/.config/opencode/adapters/ponytail-v2"
+  "plugins": [
+    "/home/leo/.config/opencode/adapters/ponytail-v2",
+    "superpowers@git+https://github.com/obra/superpowers.git"
   ]
 }
