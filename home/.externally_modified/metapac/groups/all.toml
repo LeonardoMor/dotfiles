@@ -292,6 +292,7 @@ packages = [
   "npm",
   "prettier",
   "prettier-plugin-awk",
+  "bash-language-server",
 ]
 
 [pipx]
