@@ -612,6 +612,28 @@ s/^\#?(SomeOption) +(yes|no)/\1 no/
 
 ## Argument Parsing
 
+### Help Text
+
+Prefer one `cat` heredoc for multiline help or usage text instead of a sequence
+of `echo` or `printf` commands. This keeps the text readable as it will appear
+in the terminal. A single-line usage message can still use `printf`.
+
+```bash
+show-help() {
+    cat <<'HERE'
+Usage: script [options]
+
+Options:
+    -h, --help    Show this help text
+HERE
+}
+```
+
+Quote the delimiter for literal text; leave it unquoted only when variable or
+command expansion is intentional. Keep the closing delimiter at column one.
+Print requested help to stdout; redirect usage printed for an error to stderr
+with `show-help >&2`. This use of `cat` is intentional, not a useless pipeline.
+
 ### Positional Arguments (most common)
 
 For positional-only interfaces, validate `$#` before reading `$1`:
