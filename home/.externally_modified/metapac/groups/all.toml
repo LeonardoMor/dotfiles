@@ -1,5 +1,6 @@
 [arch]
 packages = [
+  "sunshine",
   "1password",
   "1password-cli",
   "adobe-source-han-sans-cn-fonts",
