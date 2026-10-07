@@ -1,0 +1,14 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/usr/bin/env bash
+
+ssh infinity 'XDG_RUNTIME_DIR="/run/user/$(id -u)" WAYLAND_DISPLAY=wayland-1 wtype -k Shift_L' || exit $?
+
+for ((s = 15; s >= 1; s--)); do
+    printf '\rYou have %2d seconds to connect' "$s"
+    sleep 1 || exit $?
+done
+printf '\n'
+{{ end -}}
+{{/*
+vim: filetype=sh.gotmpl
+*/ -}}
