@@ -4,7 +4,7 @@
 INFINITY='192.168.100.7'
 
 ssh leo@"$INFINITY" 'XDG_RUNTIME_DIR="/run/user/$(id -u)" WAYLAND_DISPLAY=wayland-1 wtype -k Shift_L' &&
-    moonlight stream 192.168.100.7 Desktop
+    open -a Moonlight --args stream 192.168.100.7 Desktop
 {{ end -}}
 {{/*
 vim: filetype=sh.gotmpl
