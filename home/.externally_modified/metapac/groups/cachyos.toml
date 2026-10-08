@@ -242,6 +242,7 @@ arch = { packages = [
   "lsof",
   "lutris",
   "mangohud",
+  "moonshine-bin",
   "proton-cachyos-slr",
   "protontricks",
   "steam",
