@@ -171,6 +171,7 @@ arch = { packages = [
   # Gaming (Steam/Lutris/Wine)
   "7zip",
   "gamescope",
+  "gamescope-session-cachyos",
   "goverlay",
   "lib32-acl",
   "lib32-alsa-lib",
