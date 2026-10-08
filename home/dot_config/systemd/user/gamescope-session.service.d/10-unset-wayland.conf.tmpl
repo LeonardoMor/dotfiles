@@ -1,0 +1,4 @@
+{{- if eq .chezmoi.hostname "infinity" -}}
+[Service]
+UnsetEnvironment=WAYLAND_DISPLAY
+{{- end -}}
