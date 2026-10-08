@@ -171,7 +171,9 @@ arch = { packages = [
   # Gaming (Steam/Lutris/Wine)
   "7zip",
   "gamescope",
-  "gamescope-session-cachyos",
+  { name = "gamescope-session-cachyos", hooks = { after_sync = [
+    "systemctl", "--user", "daemon-reload",
+  ] } },
   "goverlay",
   "lib32-acl",
   "lib32-alsa-lib",
