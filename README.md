@@ -200,6 +200,43 @@ chezmoi git add .
 chezmoi git commit
 ```
 
+#### Moonshine headless streaming (infinity)
+
+`moonshine-bin` is in the CachyOS group. After pulling and running `metapac sync`,
+apply the infinity-only configuration:
+
+```bash
+chezmoi apply ~/.config/moonshine/config.toml
+moonshine ~/.config/moonshine/config.toml healthcheck
+```
+
+The first trial uses NVIDIA, SDR, and Steam Big Picture directly in Moonshine's
+headless compositor. Quit Steam and any running game first: Steam is
+single-instance per user. Moonshine supplies the streaming display environment;
+do not launch the physical-display `gamescope-session.target`.
+
+After the healthcheck passes, start a trial (not enabled at boot):
+
+```bash
+sudo loginctl enable-linger leo # Allow streaming without a local login.
+systemctl --user stop app-dev.lizardbyte.app.Sunshine.service
+sudo systemctl start moonshine@leo.service
+journalctl -u moonshine@leo.service -n 50 --no-pager
+```
+
+Pair Moonlight with this host; use the full pairing URL printed in the journal.
+Keep access LAN/VPN-only and do not forward these ports to the internet.
+Sunshine must be stopped because both hosts use the default streaming ports.
+For logged-out gamepad access, `leo` already belongs to `input` on infinity.
+No greeter autologin or custom service is needed.
+
+To end the trial and restore Sunshine:
+
+```bash
+sudo systemctl stop moonshine@leo.service
+systemctl --user start app-dev.lizardbyte.app.Sunshine.service
+```
+
 ### Windows
 
 Once setup, things should work in the same way as on Linux.

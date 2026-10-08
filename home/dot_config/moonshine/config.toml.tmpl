@@ -1,0 +1,14 @@
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "infinity") -}}
+name = "infinity (Moonshine)"
+application_scanner = []
+
+[compositor]
+gpu = "0000:01:00.0"
+hdr = false
+
+[[application]]
+title = "Steam"
+command = ["/usr/bin/steam", "steam://open/bigpicture"]
+stdout = "journal"
+stderr = "journal"
+{{- end -}}
