@@ -37,6 +37,10 @@ with tempfile.TemporaryDirectory() as source:
     assert mask.is_file(), 'Missing mask for the unsupported autologin helper'
     assert render(mask).strip() == '/dev/null'
     assert render(mask, 'other') == ''
+    dropin = root / 'home/dot_config/systemd/user/gamescope-session.service.d/10-unset-wayland.conf.tmpl'
+    assert dropin.is_file(), 'Missing stale Wayland display isolation'
+    assert render(dropin).strip() == '[Service]\nUnsetEnvironment=WAYLAND_DISPLAY'
+    assert render(dropin, 'other') == ''
 
 with tempfile.TemporaryDirectory() as config_home:
     config = Path(config_home) / 'scopebuddy'
