@@ -65,11 +65,11 @@ ignore_clickable_check = false
 
 [hints.hotkeys]
 "Escape" = "idle"
-"Space" = "action left_click"
+"Space" = ["action left_click", "idle"]
 "Backspace" = "action backspace"
-"Shift+L" = "action left_click"
-"Shift+R" = "action right_click"
-"Shift+M" = "action middle_click"
+"Shift+L" = ["action left_click", "idle"]
+"Shift+R" = ["action right_click", "idle"]
+"Shift+M" = ["action middle_click", "idle"]
 "Shift+I" = "action mouse_down"
 "Shift+U" = "action mouse_up"
 "Up" = "action move_mouse_relative --dx=0 --dy=-10"
