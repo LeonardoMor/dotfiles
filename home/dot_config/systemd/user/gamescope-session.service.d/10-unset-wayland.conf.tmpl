@@ -1,4 +1,7 @@
 {{- if eq .chezmoi.hostname "infinity" -}}
 [Service]
 UnsetEnvironment=WAYLAND_DISPLAY
+Environment="OUTPUT_CONNECTOR=DP-5"
+ExecStart=
+ExecStart=/usr/bin/prime-run /usr/lib/steamos/gamescope-session
 {{- end -}}
