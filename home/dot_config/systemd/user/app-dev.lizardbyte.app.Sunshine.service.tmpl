@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.hostname "infinity" -}}
+[Unit]
+Description=Self-hosted game stream host for Moonlight
+After=basic.target
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/bin/sunshine
+Restart=on-failure
+RestartSec=5
+Slice=background.slice
+UnsetEnvironment=DISPLAY WAYLAND_DISPLAY XAUTHORITY HYPRLAND_INSTANCE_SIGNATURE
+
+[Install]
+WantedBy=default.target
+Alias=sunshine.service
+{{/*
+vim: filetype=gotmpl
+*/}}
+{{- end -}}

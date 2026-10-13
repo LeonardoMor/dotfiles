@@ -1,4 +1,5 @@
 [Unit]
 Description=Hyprland session target
 BindsTo=graphical-session.target
-Wants=xdg-desktop-autostart.target
+Wants=graphical-session-pre.target xdg-desktop-autostart.target kanata.service kanata-switcher.service hyprpolkitagent.service
+After=graphical-session-pre.target

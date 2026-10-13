@@ -200,6 +200,48 @@ chezmoi git add .
 chezmoi git commit
 ```
 
+#### Gamescope session isolation (infinity)
+
+Apply the dotfiles. For first activation, reload the user units and restart
+Sunshine so any existing instance moves into its persistent slice:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user restart app-dev.lizardbyte.app.Sunshine.service
+```
+
+No packaged CachyOS launcher or unit is modified. Kanata, its layer switcher,
+and the Hyprland polkit agent belong to `hyprland-session.target`, not Gamescope.
+
+The packaged Gamescope launcher stops `graphical-session-pre.target` before
+starting its session. Our graphical-target drop-in also tears down the old
+graphical services. Before launching the compositor, Gamescope synchronously
+stops `app-*.scope` and `run-*.scope`: user application scopes close rather than
+survive into Gamescope. Save your desktop work before changing sessions.
+Independent background services, sockets, SSH/logind sessions, the user manager,
+and audio are not terminated. This is a clean graphical session, not a reboot
+or a reset of game/Steam preferences.
+
+Enter Gamescope through the greeter's packaged session launcher; starting its
+target directly from a running desktop bypasses that launcher's teardown.
+
+Sunshine starts with the lingering user manager and lives in `background.slice`,
+outside graphical teardown, so it remains available to stream the greetd/DMS
+greeter. Once Gamescope reports ready, a oneshot restarts the same Sunshine
+service to refresh capture; reconnect Moonlight if the stream disconnects.
+The encrypted disk must still be unlocked before boot-time services can run.
+
+After applying, remove obsolete enablement links via a separate SSH cleanup:
+`default.target.wants/kanata.service`,
+`graphical-session.target.wants/kanata-switcher.service`, and
+`graphical-session.target.wants/hyprpolkitagent.service`, all under
+`~/.config/systemd/user/`. No chezmoi deletion directives are used. Desktop
+conditions prevent those old links from running the remappers in Gamescope
+while cleanup is pending.
+
+Keep Steam's HDR toggle and Moonlight HDR disabled for SDR. On the Onn client,
+use H.264 rather than HEVC, which caused multi-second display delay.
+
 #### Moonshine headless streaming (infinity)
 
 `moonshine-bin` is in the CachyOS group. After pulling and running `metapac sync`,

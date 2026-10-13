@@ -1,0 +1,9 @@
+{{- if eq .chezmoi.hostname "infinity" -}}
+[Unit]
+Conflicts=hyprland-session.target
+After=hyprland-session.target
+Wants=gamescope-sunshine.service
+{{/*
+vim: filetype=gotmpl
+*/}}
+{{- end -}}

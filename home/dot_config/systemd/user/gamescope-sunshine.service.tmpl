@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.hostname "infinity" -}}
+[Unit]
+Description=Refresh Sunshine after Gamescope is ready
+Requisite=gamescope-session.service graphical-session.target
+After=gamescope-session.service graphical-session.target
+PartOf=gamescope-session.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/systemctl --user restart app-dev.lizardbyte.app.Sunshine.service
+{{/*
+vim: filetype=gotmpl
+*/}}
+{{- end -}}

@@ -1,7 +1,17 @@
 {{- if eq .chezmoi.hostname "infinity" -}}
+[Unit]
+After=hyprland-session.target
+
 [Service]
+TimeoutStartSec=120
 UnsetEnvironment=WAYLAND_DISPLAY
 Environment="OUTPUT_CONNECTOR=DP-5"
+# ponytail: clean application scopes, not the kernel or independent daemons; reboot for a full reset.
+ExecStartPre=/usr/bin/systemctl --user stop app-*.scope run-*.scope
+ExecStartPre=/usr/bin/systemctl --user unset-environment WAYLAND_DISPLAY DISPLAY XAUTHORITY HYPRLAND_INSTANCE_SIGNATURE HL_INITIAL_WORKSPACE_TOKEN
 ExecStart=
 ExecStart=/usr/bin/prime-run /usr/lib/steamos/gamescope-session
+{{/*
+vim: filetype=gotmpl
+*/}}
 {{- end -}}

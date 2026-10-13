@@ -1,0 +1,8 @@
+{{- if eq .chezmoi.hostname "infinity" -}}
+[Unit]
+PartOf=graphical-session-pre.target
+
+{{/*
+vim: filetype=gotmpl
+*/}}
+{{- end -}}

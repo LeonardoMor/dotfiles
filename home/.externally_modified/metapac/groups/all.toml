@@ -73,7 +73,7 @@ packages = [
   { name = "kanata", hooks = { after_sync = [
     "sh",
     "-lc",
-    "grep -q uinput /etc/group || sudo groupadd uinput; sudo usermod -aG input,uinput $USER; echo 'KERNEL==\"uinput\", MODE=\"0660\", GROUP=\"uinput\", OPTIONS+=\"static_node=uinput\"' | sudo tee /etc/udev/rules.d/99-input.rules >/dev/null; sudo udevadm control --reload-rules && sudo udevadm trigger; systemctl --user daemon-reload; systemctl --user enable kanata.service",
+    "grep -q uinput /etc/group || sudo groupadd uinput; sudo usermod -aG input,uinput $USER; echo 'KERNEL==\"uinput\", MODE=\"0660\", GROUP=\"uinput\", OPTIONS+=\"static_node=uinput\"' | sudo tee /etc/udev/rules.d/99-input.rules >/dev/null; sudo udevadm control --reload-rules && sudo udevadm trigger; systemctl --user daemon-reload",
   ] } },
   "kitty",
   "kservice",
@@ -105,7 +105,7 @@ packages = [
   { name = "kanata-switcher", hooks = { after_sync = [
     "sh",
     "-lc",
-    "systemctl --user daemon-reload; systemctl --user enable --now kanata-switcher.service",
+    "systemctl --user daemon-reload",
   ] } },
   "neovim",
   "nerd-fonts-inter",

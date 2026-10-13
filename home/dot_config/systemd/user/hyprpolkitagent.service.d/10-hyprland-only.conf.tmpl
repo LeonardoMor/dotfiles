@@ -1,0 +1,12 @@
+{{- if eq .chezmoi.hostname "infinity" -}}
+[Unit]
+PartOf=hyprland-session.target
+ConditionEnvironment=XDG_CURRENT_DESKTOP=Hyprland
+
+[Install]
+WantedBy=
+WantedBy=hyprland-session.target
+{{/*
+vim: filetype=gotmpl
+*/}}
+{{- end -}}
