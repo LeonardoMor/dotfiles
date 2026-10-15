@@ -42,6 +42,7 @@ with tempfile.TemporaryDirectory() as source:
     rendered_dropin = render(dropin)
     assert 'UnsetEnvironment=WAYLAND_DISPLAY' in rendered_dropin
     assert 'Environment="OUTPUT_CONNECTOR=DP-5"' in rendered_dropin
+    assert 'Environment="VK_DRIVER_FILES=/usr/share/vulkan/icd.d/nvidia_icd.json"' in rendered_dropin
     assert 'ExecStart=/usr/bin/prime-run /usr/lib/steamos/gamescope-session' in rendered_dropin
     assert 'unset-environment WAYLAND_DISPLAY DISPLAY XAUTHORITY HYPRLAND_INSTANCE_SIGNATURE' in rendered_dropin
     assert 'After=hyprland-session.target' in rendered_dropin
