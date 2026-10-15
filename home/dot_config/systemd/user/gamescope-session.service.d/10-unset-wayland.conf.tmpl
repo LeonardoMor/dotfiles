@@ -3,6 +3,7 @@
 After=hyprland-session.target
 
 [Service]
+Environment="PATH=%h/bin:%h/.local/bin:/usr/local/bin:/usr/bin"
 TimeoutStartSec=120
 UnsetEnvironment=WAYLAND_DISPLAY
 Environment="OUTPUT_CONNECTOR=DP-5"
