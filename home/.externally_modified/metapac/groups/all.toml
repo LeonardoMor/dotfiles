@@ -284,6 +284,7 @@ packages = [
   "scrcpy",
   "android-tools",
   "shellcheck",
+  "plezy",
 ]
 
 [npm]
