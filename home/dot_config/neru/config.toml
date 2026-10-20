@@ -37,7 +37,7 @@ text = "#E8EEFF"
 # See https://github.com/y3owk1n/neru/blob/main/docs/CLI.md
 [hotkeys]
 "Primary+Alt+Shift+Space" = "hints --action left_click"
-"Primary+Alt+Shift+G" = "recursive_grid"
+"Primary+Alt+Shift+G" = "recursive_grid --action left_click"
 "Primary+Alt+Shift+S" = "scroll"
 
 # Hint mode
@@ -129,9 +129,9 @@ enabled = true
 grid_cols = 5                 # Number of columns (>= 1)
 grid_rows = 4                 # Number of rows (>= 1)
 keys = "yuiophjkl;asdfgzxcvb" # Cell selection keys (must be grid_cols * grid_rows chars)
-min_size_width = 25           # Stop subdividing below this width (px)
-min_size_height = 25          # Stop subdividing below this height (px)
-max_depth = 10                # Maximum recursion levels (1–20)
+min_size_width = 1            # Stop subdividing below this width (px)
+min_size_height = 1           # Stop subdividing below this height (px)
+max_depth = 3                 # Three subdivisions; the fourth cell selection clicks
 
 [recursive_grid.animation]
 enabled = false   # Opt in to native depth transition animation on supported platforms
@@ -148,7 +148,7 @@ duration_ms = 180 # Recursive-grid animation duration in milliseconds
 "M" = "action move_monitor"
 "Shift+M" = "action middle_click"
 "Shift+D" = "action mouse_down"
-"Shift+U" = "action mouse_up"
+"Shift+U" = ["action mouse_up", "idle"]
 "Up" = "action move_mouse_relative --dx=0 --dy=-10"
 "Down" = "action move_mouse_relative --dx=0 --dy=10"
 "Left" = "action move_mouse_relative --dx=-10 --dy=0"
