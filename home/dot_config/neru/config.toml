@@ -38,6 +38,7 @@ text = "#E8EEFF"
 [hotkeys]
 "Primary+Alt+Shift+Space" = "hints --action left_click"
 "Primary+Alt+Shift+G" = "recursive_grid --action left_click"
+"Primary+Alt+Shift+F" = "recursive_grid"
 "Primary+Alt+Shift+S" = "scroll"
 
 # Hint mode
