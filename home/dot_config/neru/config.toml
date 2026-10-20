@@ -252,9 +252,9 @@ enabled = true # Show menu bar icon (false = headless mode)
 # Logging
 # See https://github.com/y3owk1n/neru/blob/main/docs/CONFIGURATION.md#logging
 [logging]
-log_level = "info"          # debug, info, warn, error
+log_level = "debug"         # debug, info, warn, error
 log_file = ""               # Custom log path (empty = default location)
-disable_file_logging = true # Console only (no file)
+disable_file_logging = false # Log to console and file
 max_file_size = 10          # MB before rotation
 max_backups = 5             # Old log files to keep
 max_age = 30                # Days to retain old logs
