@@ -124,7 +124,7 @@ grid_rows = 4                 # Number of rows (>= 1)
 keys = "yuiophjkl;asdfgzxcvb" # Cell selection keys (must be grid_cols * grid_rows chars)
 min_size_width = 1            # Stop subdividing below this width (px)
 min_size_height = 1           # Stop subdividing below this height (px)
-max_depth = 3                 # Three subdivisions; the fourth cell selection clicks
+max_depth = 2                 # Two subdivisions; the third cell selection clicks
 
 [recursive_grid.animation]
 enabled = false   # Opt in to native depth transition animation on supported platforms
