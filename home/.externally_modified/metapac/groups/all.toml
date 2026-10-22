@@ -285,6 +285,7 @@ packages = [
   "android-tools",
   "shellcheck",
   "plezy",
+  "neru-bin",
 ]
 
 [npm]
