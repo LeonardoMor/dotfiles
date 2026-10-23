@@ -7,6 +7,7 @@
 source -p ~/bin utils.sh || exit 1
 
 PREDND=
+RESUME_NERU=false
 
 FIXED_WRAPPERS=(
     game-performance
@@ -65,6 +66,21 @@ toggle-dnd() {
 }
 
 pre() {
+    local neru_state
+
+    neru_state=$(systemctl --user show --property=ActiveState --value neru.service) || {
+        emit e 'Unable to read Neru service state'
+        return 1
+    }
+    case $neru_state in
+        active|activating|reloading) RESUME_NERU=true ;;
+    esac
+    systemctl --user stop neru.service || {
+        emit e 'Unable to stop Neru'
+        post
+        return 1
+    }
+
     in-hyprland || return 0
 
     PREDND=$(query-dnd) || {
@@ -80,6 +96,11 @@ pre() {
 
 post() {
     local post_dnd=
+
+    if $RESUME_NERU; then
+        RESUME_NERU=false
+        systemctl --user start neru.service || emit w 'Unable to resume Neru'
+    fi
 
     in-hyprland || return 0
     [[ -n $PREDND ]] || return 0
@@ -110,7 +131,7 @@ trap post EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-pre
+pre || exit 1
 main "$@"
 {{- end -}}
 

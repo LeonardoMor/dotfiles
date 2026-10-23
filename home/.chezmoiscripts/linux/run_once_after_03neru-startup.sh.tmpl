@@ -1,0 +1,9 @@
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "infinity") -}}
+#!/usr/bin/env bash
+
+neru services install || exit 1
+{{- end -}}
+
+{{/*
+vim: filetype=sh.gotmpl
+*/}}

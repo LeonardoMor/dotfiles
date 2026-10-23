@@ -26,3 +26,8 @@ hl.bind('SUPER + SHIFT + D', hl.dsp.exec_cmd('dms ipc call notifications toggleD
 
 hl.bind('CTRL + ALT + space', hl.dsp.exec_cmd('switch-layout'), { description = 'Switch keyboard layout' })
 hl.bind('SUPER + SHIFT + A', hl.dsp.exec_cmd('dms ipc call audio cycleoutput'), { description = 'Switch audio output' })
+
+hl.bind('SUPER + ALT + SHIFT + space', hl.dsp.exec_cmd('neru hints --action left_click'), { description = 'Neru hints' })
+hl.bind('SUPER + ALT + SHIFT + g', hl.dsp.exec_cmd('neru recursive_grid --action left_click'), { description = 'Neru recursive grid with click' })
+hl.bind('SUPER + ALT + SHIFT + f', hl.dsp.exec_cmd('neru recursive_grid'), { description = 'Neru recursive grid' })
+hl.bind('SUPER + ALT + SHIFT + s', hl.dsp.exec_cmd('neru scroll'), { description = 'Neru scroll' })
