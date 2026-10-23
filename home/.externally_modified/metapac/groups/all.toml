@@ -286,6 +286,7 @@ packages = [
   "shellcheck",
   "plezy",
   "neru-bin",
+  "tesseract-data-eng",
 ]
 
 [npm]
