@@ -1,5 +1,8 @@
 (defcfg
   process-unmapped-keys yes
+{{- if eq .chezmoi.os "linux" }}
+  linux-dev-names-exclude ("neru-keyboard-proxy" "neru-pointer-proxy" "neru-keyboard")
+{{- end }}
 )
 
 (defvar
