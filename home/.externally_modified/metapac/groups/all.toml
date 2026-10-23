@@ -31,7 +31,7 @@ packages = [
   "ddcutil",
   "devtools",
   "dhclient",
-  "dgop",
+  "dux-gop",
   "discord",
   "dms-shell",
   "docker",
