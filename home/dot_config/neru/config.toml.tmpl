@@ -64,6 +64,9 @@ detect_mission_control = false
 clickable_roles = [
   "text_field",
   "text_area",
+{{- if eq .chezmoi.os "linux" }}
+  "atspi:combo box",
+{{- end }}
 ]
 {{- if ne .chezmoi.os "linux" }}
 ignore_clickable_check = false
