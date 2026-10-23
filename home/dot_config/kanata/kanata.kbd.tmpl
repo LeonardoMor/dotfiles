@@ -2,6 +2,14 @@
   process-unmapped-keys yes
 {{- if eq .chezmoi.os "linux" }}
   linux-dev-names-exclude ("neru-keyboard-proxy" "neru-pointer-proxy" "neru-keyboard")
+{{- if eq .chezmoi.hostname "infinity" }}
+  linux-dev (
+    /dev/input/by-path/platform-i8042-serio-0-event-kbd
+    /dev/input/by-id/usb-DELL_Technologies_Keyboard-event-kbd
+    /dev/input/by-id/usb-Keychron_Keychron_Q3_Pro-event-kbd
+    /dev/input/by-id/usb-Keychron_Keychron_Q3_Pro-if02-event-kbd
+  )
+{{- end }}
 {{- end }}
 )
 
