@@ -190,7 +190,9 @@ class NeruInstallerTests(unittest.TestCase):
 
 class NeruHyprlandBindingsTests(unittest.TestCase):
     def test_super_chords_match_mac_neru_actions(self):
-        config = tomllib.loads((ROOT / 'home/dot_config/neru/config.toml').read_text())
+        template = (ROOT / 'home/dot_config/neru/config.toml.tmpl').read_text()
+        hotkeys = template.split('\n[hotkeys]\n', 1)[1].split('\n[hints]\n', 1)[0]
+        config = tomllib.loads('[hotkeys]\n' + hotkeys)
         expected = {
             'SUPER + ALT + SHIFT + ' + chord.rsplit('+', 1)[1].lower(): 'neru ' + command
             for chord, command in config['hotkeys'].items()
