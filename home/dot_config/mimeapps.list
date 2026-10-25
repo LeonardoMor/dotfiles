@@ -10,7 +10,7 @@ application/xhtml+xml=zen.desktop
 application/x-extension-xhtml=zen.desktop
 application/x-extension-xht=zen.desktop
 text/plain=nvim.desktop
-x-scheme-handler/heroic=heroic.desktop
+x-scheme-handler/heroic=com.heroicgameslauncher.hgl.desktop
 inode/directory=org.kde.dolphin.desktop
 
 [Added Associations]

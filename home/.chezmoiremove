@@ -2,3 +2,4 @@
 .config/opencode/skills/bash/SKILL.md
 .config/bat/themes/tokyonight_night.tmTheme
 bin/update-markitdown-mcp
+.local/share/applications/heroic.desktop
