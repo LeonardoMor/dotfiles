@@ -21,15 +21,29 @@ hl.workspace_rule({
 hl.workspace_rule({ workspace = '7', monitor = 'desc:{{ $extMonitor }}', persistent = true })
 
 {{ end -}}
+local gameClasses = '^(steam_app_\\d+)|(.*marvel.*)|(cyberpunk2077.exe)|(gamescope)$'
+
 hl.window_rule({
   name = 'game-settings',
   match = {
-    initial_class = '^(steam_app_\\d+)|(.*marvel.*)|(cyberpunk2077.exe)|(gamescope)$',
-    title = 'negative:^(?i)(.*(Launcher|NetEase Game Security).*)$',
+    initial_class = gameClasses,
+    title = 'negative:(?i)^.*(launcher|NetEase Game Security).*$',
   },
   fullscreen = true,
   immediate = true,
   content = 'game',
+  workspace = '5',
+})
+
+hl.window_rule({
+  name = 'game-launchers',
+  match = {
+    initial_class = gameClasses,
+    title = '(?i)^.*launcher.*$',
+  },
+  float = true,
+  center = true,
+  fullscreen = false,
   workspace = '5',
 })
 
