@@ -40,9 +40,10 @@ with tempfile.TemporaryDirectory() as source:
     dropin = root / 'home/dot_config/systemd/user/gamescope-session.service.d/10-unset-wayland.conf.tmpl'
     assert dropin.is_file(), 'Missing stale Wayland display isolation'
     rendered_dropin = render(dropin)
-    assert 'Environment="PATH=%h/bin:%h/.local/bin:/usr/local/bin:/usr/bin"' in rendered_dropin
+    assert 'Environment="PATH=%h/.local/libexec/gamescope-session:%h/bin:%h/.local/bin:/usr/local/bin:/usr/bin"' in rendered_dropin
+    subprocess.run([sys.executable, str(root / 'scripts/verify-gamescope-display.py')], check=True)
+    assert 'Environment="OUTPUT_CONNECTOR=DP-5"' not in rendered_dropin
     assert 'UnsetEnvironment=WAYLAND_DISPLAY' in rendered_dropin
-    assert 'Environment="OUTPUT_CONNECTOR=DP-5"' in rendered_dropin
     assert 'Environment="VK_DRIVER_FILES=/usr/share/vulkan/icd.d/nvidia_icd.json"' in rendered_dropin
     assert 'ExecStart=/usr/bin/prime-run /usr/lib/steamos/gamescope-session' in rendered_dropin
     assert 'unset-environment WAYLAND_DISPLAY DISPLAY XAUTHORITY HYPRLAND_INSTANCE_SIGNATURE' in rendered_dropin
@@ -129,6 +130,10 @@ with tempfile.TemporaryDirectory() as config_home:
                      '("PROTON_ENABLE_WAYLAND", "SDL_GAMECONTROLLER_IGNORE_DEVICES", '
                      '"PROTON_DXVK_LOWLATENCY")}))\n')
     for desktop in ('gamescope', 'Hyprland'):
+        # A live Gaming Mode Steam process overrides desktop detection; isolate this config test.
+        for name in ('gamemode.conf', 'scb.conf'):
+            (config / name).write_text((config / 'common.conf').read_text() +
+                                      f'\nSCB_GAMEMODE={int(desktop == "gamescope")}\nSCB_NOSCOPE=1\n')
         result = subprocess.run(['scopebuddy', '--', sys.executable, str(probe)],
                                 capture_output=True, text=True, env={**os.environ,
                                 'XDG_CONFIG_HOME': config_home, 'XDG_CURRENT_DESKTOP': desktop,

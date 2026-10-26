@@ -1,0 +1,57 @@
+{{- if eq .chezmoi.hostname "infinity" -}}
+#!/usr/bin/env python3
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+
+def select_mode(text):
+    connector = None
+    candidates = []
+    for line in text.splitlines():
+        header = re.fullmatch(r'\s*\d+\s+\d+\s+(connected|disconnected)\s+([\w-]+)\s+\d+x\d+\s+\d+\s+\d+(?:,\s*\d+)*\s*', line)
+        if header:
+            connector = header[2] if header[1] == 'connected' else None
+        elif connector and line.lstrip().startswith('#'):
+            mode = re.match(r'\s*#\d+\s+\S+\s+(\d+(?:\.\d+)?)\s+(\d+)\s+\d+\s+\d+\s+\d+\s+(\d+)\s+', line)
+            if not mode:
+                raise ValueError('Unrecognized modetest mode: ' + line)
+            if 'interlace' in line.lower():
+                continue
+            width, height = int(mode[2]), int(mode[3])
+            refresh = int(float(mode[1]) + 0.5)
+            if not (0 < width <= 32768 and 0 < height <= 32768 and 0 < refresh <= 2000):
+                raise ValueError('Invalid display mode: ' + line)
+            external = not connector.startswith(('eDP-', 'LVDS-', 'DSI-'))
+            candidates.append(((external, width * height, width, height, refresh),
+                               (connector, width, height, refresh)))
+    if not candidates:
+        raise ValueError('No connected display with usable progressive modes')
+    return max(candidates, key=lambda item: item[0])[1]
+
+
+def main():
+    shim = str(Path.home() / '.local/libexec/gamescope-session') + ':'
+    os.environ['PATH'] = os.environ.get('PATH', '').removeprefix(shim)
+    args = sys.argv[1:]
+    # shortcut: packaged session starts with this flag; revisit if its launcher changes.
+    if args[:1] == ['--generate-drm-mode']:
+        try:
+            # This session is explicitly NVIDIA-only; query that same DRM driver.
+            result = subprocess.run(['/usr/bin/modetest', '-M', 'nvidia-drm', '-c'],
+                                    capture_output=True, text=True, check=True, timeout=12)
+            connector, width, height, refresh = select_mode(result.stdout)
+        except (OSError, ValueError, subprocess.SubprocessError) as error:
+            print('Gamescope display selection failed: ' + str(error), file=sys.stderr)
+            return 1
+        print(f'Gamescope auto display: {connector} {width}x{height}@{refresh}', file=sys.stderr)
+        args += ['--adaptive-sync', '-O', connector,
+                 '-W', str(width), '-H', str(height), '-r', str(refresh)]
+    os.execv('/usr/bin/gamescope', ['/usr/bin/gamescope', *args])
+
+
+if __name__ == '__main__':
+    sys.exit(main())
+{{- end -}}
