@@ -1,0 +1,39 @@
+#!/usr/bin/python3
+"""Wait for Kanata's literal linux-dev list before starting Neru."""
+
+import os
+from pathlib import Path
+import re
+import shlex
+import sys
+import time
+
+
+def wait_ready(pid, config, timeout=10):
+    # shortcut: literal linux-dev paths only; update if the config starts using variables.
+    match = re.search(r'\blinux-dev\s+\(([^()]*)\)', Path(config).read_text())
+    if not match:
+        raise ValueError('Kanata readiness requires an explicit linux-dev list')
+    devices = {str(Path(path).resolve()) for path in shlex.split(match[1]) if Path(path).exists()}
+    if not devices:
+        raise ValueError('No configured Kanata keyboards are connected')
+    deadline = time.monotonic() + timeout
+    while True:
+        opened = set()
+        for fd in Path(f'/proc/{pid}/fd').iterdir():
+            try:
+                opened.add(os.readlink(fd))
+            except FileNotFoundError:
+                continue
+        if devices <= opened:
+            return
+        if time.monotonic() >= deadline:
+            raise TimeoutError(f'Kanata did not open configured keyboards: {sorted(devices - opened)}')
+        time.sleep(0.1)
+
+
+if __name__ == '__main__':
+    try:
+        wait_ready(int(sys.argv[1]), sys.argv[2])
+    except (OSError, ValueError, TimeoutError) as error:
+        sys.exit(f'Kanata readiness failed: {error}')

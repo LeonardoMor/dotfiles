@@ -17,6 +17,10 @@ bin/edit_case_note.sh
 !.config/op
 {{- end }}
 
+{{- if not (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "infinity")) }}
+bin/kanata-wait-ready
+{{- end }}
+
 {{- if ne .chezmoi.os "windows" }}
 AppData
 OneDrive

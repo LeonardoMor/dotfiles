@@ -10,6 +10,10 @@ Environment=PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:$HOME/.cargo/bin
 Environment=DISPLAY=:0
 Type=simple
 ExecStart=/usr/bin/sh -c 'exec $$(which kanata) --cfg %h/.config/kanata/kanata.kbd -p 10000'
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "infinity") }}
+# Do not let Neru start until Kanata has registered its physical keyboards.
+ExecStartPost=/usr/bin/python3 %h/bin/kanata-wait-ready $MAINPID %h/.config/kanata/kanata.kbd
+{{- end }}
 Restart=on-failure
 RestartSec=5
 
