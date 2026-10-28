@@ -33,7 +33,7 @@ packages = [
   "dhclient",
   "dux-gop",
   "discord",
-  "dms-shell",
+  "dux-shell",
   "docker",
   "docker-compose",
   "dolphin",
