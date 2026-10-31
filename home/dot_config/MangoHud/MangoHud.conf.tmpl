@@ -41,6 +41,8 @@ ram_color=F9A8D4
 battery
 battery_color=FDE68A
 display_server
+exec=printf '%s' {{ .chezmoi.osRelease.name | quote }}
+exec=uname -r
 
 fps_limit_method=late
 toggle_fps_limit=Shift_L+F1
