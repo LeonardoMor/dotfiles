@@ -2,11 +2,10 @@ import importlib.machinery
 import importlib.util
 import os
 from pathlib import Path
+import select
 import subprocess
 import sys
 import tempfile
-import threading
-import time
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,40 +23,42 @@ class ReadinessTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             first, second, absent = [root / name for name in ('first', 'second', 'absent')]
-            first.touch()
-            second.touch()
+            os.mkfifo(first)
+            os.mkfifo(second)
             config = root / 'kanata.kbd'
             config.write_text(f'(defcfg linux-dev ("{first}" "{second}" "{absent}"))')
-            with first.open():
+            with first.open('r+b', buffering=0) as first_fd, select.epoll() as poll:
+                poll.register(first_fd, select.EPOLLIN)
                 with self.assertRaisesRegex(TimeoutError, 'keyboards'):
                     module.wait_ready(os.getpid(), config, timeout=0)
-                with second.open():
+                with second.open('r+b', buffering=0) as second_fd:
+                    # Opening a device is not readiness: Kanata can still be waiting for key-up.
+                    with self.assertRaisesRegex(TimeoutError, 'keyboards'):
+                        module.wait_ready(os.getpid(), config, timeout=0)
+                    poll.register(second_fd, select.EPOLLIN)
                     module.wait_ready(os.getpid(), config, timeout=0)
 
     def test_cli_waits_for_delayed_keyboard_registration(self):
         with tempfile.TemporaryDirectory() as directory:
             device = Path(directory) / 'keyboard'
-            device.touch()
+            os.mkfifo(device)
             config = Path(directory) / 'kanata.kbd'
             config.write_text(f'(defcfg linux-dev ("{device}"))')
-            release = threading.Event()
-
-            def register():
-                time.sleep(0.3)
-                with device.open():
-                    release.wait(5)
-
-            thread = threading.Thread(target=register)
-            thread.start()
-            try:
-                start = time.monotonic()
-                result = subprocess.run([sys.executable, str(HELPER), str(os.getpid()), str(config)],
-                                        capture_output=True, text=True, timeout=3)
-                self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertGreaterEqual(time.monotonic() - start, 0.25)
-            finally:
-                release.set()
-                thread.join()
+            with device.open('r+b', buffering=0) as fd, select.epoll() as poll:
+                process = subprocess.Popen(
+                    [sys.executable, str(HELPER), str(os.getpid()), str(config)],
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                )
+                try:
+                    with self.assertRaises(subprocess.TimeoutExpired):
+                        process.wait(timeout=0.2)
+                    poll.register(fd, select.EPOLLIN)
+                    _, stderr = process.communicate(timeout=3)
+                    self.assertEqual(process.returncode, 0, stderr)
+                finally:
+                    if process.poll() is None:
+                        process.kill()
+                    process.communicate()
 
     def test_cli_fails_closed_for_missing_devices_config_or_process(self):
         with tempfile.TemporaryDirectory() as directory:

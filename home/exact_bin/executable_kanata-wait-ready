@@ -19,16 +19,18 @@ def wait_ready(pid, config, timeout=10):
         raise ValueError('No configured Kanata keyboards are connected')
     deadline = time.monotonic() + timeout
     while True:
-        opened = set()
-        for fd in Path(f'/proc/{pid}/fd').iterdir():
+        registered = set()
+        # Kanata adds a device to epoll only after its grab/ungrab/grab sequence succeeds.
+        for info in Path(f'/proc/{pid}/fdinfo').iterdir():
             try:
-                opened.add(os.readlink(fd))
+                for fd in re.findall(r'^tfd:\s+(\d+)\s', info.read_text(), re.MULTILINE):
+                    registered.add(os.readlink(f'/proc/{pid}/fd/{fd}'))
             except FileNotFoundError:
                 continue
-        if devices <= opened:
+        if devices <= registered:
             return
         if time.monotonic() >= deadline:
-            raise TimeoutError(f'Kanata did not open configured keyboards: {sorted(devices - opened)}')
+            raise TimeoutError(f'Kanata did not register configured keyboards: {sorted(devices - registered)}')
         time.sleep(0.1)
 
 
