@@ -1,20 +1,22 @@
 legacy_layout=false
 
-
-background_alpha=0.6
-round_corners=0
-background_alpha=0.6
-background_color=000000
-
-font_size=20
-text_color=FFFFFF
+# Compact, centered performance strip.
 position=top-center
 horizontal
+horizontal_stretch=false
+font_size=20
+no_small_font
+text_color=E5E7EB
+background_alpha=0.65
+background_color=111827
+round_corners=6
+horizontal_separator_color=4B5563
 
+# Frame pacing first, then GPU, CPU, memory and display backend.
 fps
 fps_metrics=avg,0.01
 frame_timing
-frametime_color=00FF00
+frametime_color=6EE7B7
 
 pci_dev=0:01:00.0
 gpu_text=GPU
@@ -23,37 +25,26 @@ gpu_core_clock
 gpu_mem_clock
 gpu_temp
 gpu_power
-gpu_color=2E9762
+gpu_color=6EE7B7
+
 cpu_text=CPU
 cpu_stats
-
 cpu_mhz
 cpu_temp
 cpu_power
-cpu_color=2E97CB
+cpu_color=93C5FD
+
 vram
-vram_color=AD64C1
-vram_color=AD64C1
+vram_color=C4B5FD
 ram
-ram_color=C26693
+ram_color=F9A8D4
 battery
-battery_color=00FF00
+battery_color=FDE68A
 display_server
+
 fps_limit_method=late
 toggle_fps_limit=Shift_L+F1
-
 fps_limit=0
-custom_text=-
-exec=echo {{ .chezmoi.osRelease.name | quote }} 
-custom_text=-
-exec=uname -r
-#offset=0
-
-
-
-
-
-
 
 output_folder=/home/leo
 log_duration=30
