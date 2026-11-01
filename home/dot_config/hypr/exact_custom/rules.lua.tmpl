@@ -21,13 +21,13 @@ hl.workspace_rule({
 hl.workspace_rule({ workspace = '7', monitor = 'desc:{{ $extMonitor }}', persistent = true })
 
 {{ end -}}
-local gameClasses = '^(steam_app_\\d+)|(.*marvel.*)|(cyberpunk2077.exe)|(gamescope)$'
+local gameClasses = '(?i)^(steam_app_\\d+|.*marvel.*|.*\\.exe|gamescope)$'
 
 hl.window_rule({
   name = 'game-settings',
   match = {
     initial_class = gameClasses,
-    title = 'negative:(?i)^.*(launcher|NetEase Game Security).*$',
+    title = 'negative:(?i)^(\\s*|.*(launcher|NetEase Game Security).*)$',
   },
   fullscreen = true,
   immediate = true,
@@ -35,11 +35,12 @@ hl.window_rule({
   workspace = '5',
 })
 
+-- shortcut: launch geometry is static, use an event policy if reused windows need automatic transitions.
 hl.window_rule({
   name = 'game-launchers',
   match = {
     initial_class = gameClasses,
-    title = '(?i)^.*launcher.*$',
+    title = '(?i)^(\\s*|.*launcher.*)$',
   },
   float = true,
   center = true,
