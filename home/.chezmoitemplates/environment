@@ -13,6 +13,7 @@ NVM_DIR={{ joinPath .chezmoi.homeDir ".nvm" | quote }}
 DYLD_FALLBACK_LIBRARY_PATH={{ printf "%s/lib:$DYLD_FALLBACK_LIBRARY_PATH" .brewPrefix | quote }}
 LANG="en_US.UTF-8"
 LC_ALL="en_US.UTF-8"
+OP_BIOMETRIC_UNLOCK_ENABLED=true
 {{-     end }}
 {{-     if eq .chezmoi.hostname .workHost }}
 VAULT_ADDR=https://cluster-01-pdx10.prod.vault.splunkcloud.systems
