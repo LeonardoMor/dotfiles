@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+import os
+from pathlib import Path
+import sys
+
+
+def select_output(drm_root=Path('/sys/class/drm')):
+    for connector in sorted(drm_root.glob('card*-*')):
+        name = connector.name.split('-', 1)[1]
+        if name.startswith(('eDP-', 'LVDS-', 'DSI-')):
+            continue
+        try:
+            if (connector / 'status').read_text().strip() == 'connected' and (
+                connector / 'enabled'
+            ).read_text().strip() == 'enabled':
+                return name
+        except FileNotFoundError:
+            # Hot-unplug can remove a connector between enumeration and reading.
+            continue
+    return 'eDP-1'
+
+
+def main():
+    try:
+        output = select_output()
+        print(f'Sunshine startup: selecting {output}', file=sys.stderr, flush=True)
+        os.execv('/usr/bin/sunshine', ['sunshine', f'output_name={output}', *sys.argv[1:]])
+    except OSError as error:
+        print(f'Sunshine startup failed: {error}', file=sys.stderr)
+        return 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())
