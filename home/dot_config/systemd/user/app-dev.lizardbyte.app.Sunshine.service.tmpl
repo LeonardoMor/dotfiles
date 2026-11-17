@@ -7,7 +7,7 @@ StartLimitBurst=5
 
 [Service]
 ExecStartPre=/bin/sleep 5
-ExecStart=/usr/bin/sunshine
+ExecStart=/usr/bin/python3 %h/bin/sunshine-start
 Restart=on-failure
 RestartSec=5
 Slice=background.slice
