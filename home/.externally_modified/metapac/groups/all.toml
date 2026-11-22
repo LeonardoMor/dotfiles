@@ -287,6 +287,7 @@ packages = [
   "plezy",
   "neru-bin",
   "tesseract-data-eng",
+  "vivaldi",
 ]
 
 [npm]
