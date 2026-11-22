@@ -1,0 +1,8 @@
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "infinity") -}}
+[Unit]
+After=dms.service
+Requisite=dms.service
+{{/*
+vim: filetype=gotmpl
+*/}}
+{{- end -}}
