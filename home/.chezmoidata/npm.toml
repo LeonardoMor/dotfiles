@@ -1,6 +1,6 @@
 [npm]
   corepack = "0.34.7"
-  npm = "11.21.1"
-  prettier = "3.9.10"
+  npm = "11.21.3"
+  prettier = "3.10.1"
   prettier-plugin-awk = "0.4.0"
 
