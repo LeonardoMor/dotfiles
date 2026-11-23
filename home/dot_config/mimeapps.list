@@ -12,6 +12,8 @@ application/x-extension-xht=vivaldi-stable.desktop
 text/plain=nvim.desktop
 x-scheme-handler/heroic=com.heroicgameslauncher.hgl.desktop
 inode/directory=org.kde.dolphin.desktop
+x-scheme-handler/about=vivaldi-stable.desktop
+x-scheme-handler/unknown=vivaldi-stable.desktop
 
 [Added Associations]
 text/plain=nvim.desktop;
